@@ -1,0 +1,12 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "EventSourced.Net.Domain Class Library",
+    "authors": [ "Dan" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+
+    "frameworks": {
+        "dnx451": { }
+    }
+}
