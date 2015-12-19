@@ -1,12 +1,20 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using EventSourced.Net.Services.Persistence.EventStore;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace EventSourced.Net.WebApi
 {
   public class Startup
   {
+    public Startup(IHostingEnvironment hostEnv, IApplicationEnvironment appEnv) {
+      if (hostEnv.IsDevelopment()) {
+        GetEventStore.EnsureRunning(appEnv.ApplicationBasePath);
+      }
+    }
+
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services) {

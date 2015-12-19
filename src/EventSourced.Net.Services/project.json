@@ -6,7 +6,11 @@
     "projectUrl": "",
     "licenseUrl": "",
     "frameworks": {
-        "dnx451": { }
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.IO.Compression.FileSystem": "4.0.0.0"
+            }
+        }
     },
     "dependencies": {
         "EventSourced.Net.Domain": "1.0.0-*"

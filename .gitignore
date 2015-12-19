@@ -197,3 +197,6 @@ FakesAssemblies/
 
 # DNX project.lock.json files
 project.lock.json
+
+# Development databases
+/devdbs
