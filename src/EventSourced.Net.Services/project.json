@@ -15,6 +15,7 @@
     "dependencies": {
         "EventSourced.Net.Domain": "1.0.0-*",
         "EventStore.Client": "3.4.0",
+        "Newtonsoft.Json": "7.0.1",
         "SimpleInjector.Extensions.ExecutionContextScoping": "3.1.2"
     }
 }

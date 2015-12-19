@@ -2,9 +2,9 @@
 
 namespace EventSourced.Net.Services.Storage.EventStore.Configuration
 {
-  public class SslConfiguration
+  public class Ssl
   {
-    public SslConfiguration() {
+    public Ssl() {
       ValidateServer = true;
     }
 

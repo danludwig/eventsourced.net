@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Net;
 using EventStore.ClientAPI;
 
 namespace EventSourced.Net.Services.Storage.EventStore.Configuration
 {
-  public interface IConfigureEventStoreConnection
+  public interface IConfigureConnection
   {
     string Name { get; }
-    IPEndPoint GetTcpEndpoint();
+    System.Net.IPEndPoint GetTcpEndpoint();
     Uri GetUri();
     ConnectionSettings GetConnectionSettings();
     ClusterSettings GetClusterSettings();

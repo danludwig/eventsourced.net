@@ -5,7 +5,7 @@ using JetBrains.Annotations;
 
 namespace EventSourced.Net.Services.Storage.EventStore.Configuration
 {
-  public class SettingsConfiguration
+  public class Settings
   {
     public bool EnableVerboseLogging { get; [UsedImplicitly] set; } // false by default
     public int? MaxQueueSize { get; [UsedImplicitly] set; } // 5000 by default
@@ -20,15 +20,15 @@ namespace EventSourced.Net.Services.Storage.EventStore.Configuration
     public TimeSpan? HeartbeatInterval { get; [UsedImplicitly] set; }  // 750 ms by default
     public TimeSpan? HeartbeatTimeout { get; [UsedImplicitly] set; }  // 1500 ms by default
     public TimeSpan? ClientConnectionTimeout { get; [UsedImplicitly] set; } // 1000 ms by default
-    public UserCredentialConfiguration DefaultUserCredentials { get; [UsedImplicitly] set; } // null by default
-    public SslConfiguration Ssl { get; [UsedImplicitly] set; } // false by default
+    public UserCredential DefaultUserCredentials { get; [UsedImplicitly] set; } // null by default
+    public Ssl Ssl { get; [UsedImplicitly] set; } // false by default
     public string ClusterDns { get; [UsedImplicitly] set; } // null by default
     public int? MaxDiscoverAttempts { get; [UsedImplicitly] set; } // 10 by default
     public TimeSpan? GossipTimeout { get; [UsedImplicitly] set; } // 1000 ms by default
     public int? ExternalGossipPort { get; [UsedImplicitly] set; } //30778 by default
-    public GossipSeedConfiguration[] GossipSeeds { get; [UsedImplicitly] set; } // null by default
+    public GossipSeed[] GossipSeeds { get; [UsedImplicitly] set; } // null by default
 
-    public static implicit operator ConnectionSettings(SettingsConfiguration configuration) {
+    public static implicit operator ConnectionSettings(Settings configuration) {
       return configuration.ConfigureSettings().Build();
     }
 
@@ -69,7 +69,7 @@ namespace EventSourced.Net.Services.Storage.EventStore.Configuration
       if (MaxDiscoverAttempts.HasValue) builder.SetMaxDiscoverAttempts(MaxDiscoverAttempts.Value);
       if (GossipTimeout.HasValue) builder.SetGossipTimeout(GossipTimeout.Value);
       if (ExternalGossipPort.HasValue) builder.SetClusterGossipPort(ExternalGossipPort.Value);
-      if (GossipSeeds != null) builder.SetGossipSeedEndPoints(GossipSeeds.Select(x => (GossipSeed)x).ToArray());
+      if (GossipSeeds != null) builder.SetGossipSeedEndPoints(GossipSeeds.Select(x => (global::EventStore.ClientAPI.GossipSeed)x).ToArray());
 
       return builder;
     }
