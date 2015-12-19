@@ -1,0 +1,14 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "CommonDomain Class Library",
+    "authors": [ "Dan" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "frameworks": {
+        "dnx451": { }
+    },
+    "dependencies": {
+        "JetBrains.Annotations": "10.0.0"
+    }
+}

@@ -1,0 +1,14 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "EventSourced.Net.Services Class Library",
+    "authors": [ "Dan" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "frameworks": {
+        "dnx451": { }
+    },
+    "dependencies": {
+        "EventSourced.Net.Domain": "1.0.0-*"
+    }
+}
