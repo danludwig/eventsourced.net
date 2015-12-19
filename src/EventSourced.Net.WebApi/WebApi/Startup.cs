@@ -1,4 +1,4 @@
-﻿using EventSourced.Net.Services.Persistence.EventStore;
+﻿using EventSourced.Net.Services.Storage.EventStore;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Http;

@@ -6,7 +6,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 
-namespace EventSourced.Net.Services.Persistence.EventStore
+namespace EventSourced.Net.Services.Storage.EventStore
 {
   public static class GetEventStore
   {
@@ -154,10 +154,6 @@ namespace EventSourced.Net.Services.Persistence.EventStore
         _isWindows = Environment.OSVersion.VersionString.IndexOf("windows", StringComparison.OrdinalIgnoreCase) >= 0;
       }
       return _isWindows.Value;
-    }
-
-    internal static bool IsWindows(this object _) {
-      return IsWindows();
     }
   }
 }
