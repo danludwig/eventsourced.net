@@ -53,6 +53,7 @@ namespace EventSourced.Net.WebApi
       var packages = new IPackage[] {
         new Services.Storage.EventStore.Connection.Package(
           _configuration.GetConfiguration<Services.Storage.EventStore.Configuration.Connection>("eventStore:connection")),
+        new Services.Messaging.Commands.Package(),
       };
       _container.RegisterPackages(packages);
     }
