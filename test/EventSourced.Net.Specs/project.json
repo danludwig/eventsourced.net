@@ -1,4 +1,4 @@
-﻿{
+{
     "version": "1.0.0-*",
     "description": "EventSourced.Net.Specs Class Library",
     "authors": [ "Dan" ],
@@ -9,6 +9,6 @@
         "dnx451": { }
     },
     "dependencies": {
-        "EventSourced.Net.WebApi": "1.0.0-*"
+        "EventSourced.Net.Web": "1.0.0-*"
     }
 }

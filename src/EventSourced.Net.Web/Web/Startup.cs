@@ -9,7 +9,7 @@ using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Packaging;
 
-namespace EventSourced.Net.WebApi
+namespace EventSourced.Net.Web
 {
   public class Startup
   {
