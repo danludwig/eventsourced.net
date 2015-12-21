@@ -6,11 +6,11 @@ using SimpleInjector;
 
 namespace EventSourced.Net.Services.Messaging.Events
 {
-  public class SynchronousInProcessEventPublisher<TEvent> : IPublishEvent<TEvent> where TEvent : IEvent
+  public class ImmediatelyConsistentEventPublisher<TEvent> : IPublishEvent<TEvent> where TEvent : IEvent
   {
     private readonly Container _container;
 
-    public SynchronousInProcessEventPublisher(Container container) {
+    public ImmediatelyConsistentEventPublisher(Container container) {
       _container = container;
     }
 

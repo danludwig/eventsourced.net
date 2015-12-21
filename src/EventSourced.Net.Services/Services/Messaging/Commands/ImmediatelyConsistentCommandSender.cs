@@ -3,11 +3,11 @@ using SimpleInjector;
 
 namespace EventSourced.Net.Services.Messaging.Commands
 {
-  public class SynchronousInProcessCommandSender : ISendCommand
+  public class ImmediatelyConsistentCommandSender : ISendCommand
   {
     private readonly Container _container;
 
-    public SynchronousInProcessCommandSender(Container container) {
+    public ImmediatelyConsistentCommandSender(Container container) {
       _container = container;
     }
 

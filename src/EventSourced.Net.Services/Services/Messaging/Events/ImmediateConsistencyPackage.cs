@@ -6,11 +6,11 @@ using SimpleInjector.Packaging;
 
 namespace EventSourced.Net.Services.Messaging.Events
 {
-  public class Package : IPackage
+  public class ImmediateConsistencyPackage : IPackage
   {
     private readonly IEnumerable<Assembly> _handlerAssemblies;
 
-    public Package(params Assembly[] handlerAssemblies) {
+    public ImmediateConsistencyPackage(params Assembly[] handlerAssemblies) {
       if (handlerAssemblies == null || !handlerAssemblies.Any()) {
         handlerAssemblies = new[] { typeof(IHandleCommand<>).Assembly };
       }
@@ -18,7 +18,7 @@ namespace EventSourced.Net.Services.Messaging.Events
     }
 
     public void RegisterServices(Container container) {
-      container.Register(typeof(IPublishEvent<>), typeof(SynchronousInProcessEventPublisher<>), Lifestyle.Singleton);
+      container.Register(typeof(IPublishEvent<>), typeof(ImmediatelyConsistentEventPublisher<>), Lifestyle.Singleton);
       container.RegisterCollection(typeof(IHandleEvent<>), _handlerAssemblies);
     }
   }

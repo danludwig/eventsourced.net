@@ -18,7 +18,7 @@ namespace EventSourced.Net.Services.Messaging.Commands
     }
 
     public void RegisterServices(Container container) {
-      container.RegisterSingleton<ISendCommand, SynchronousInProcessCommandSender>();
+      container.RegisterSingleton<ISendCommand, ImmediatelyConsistentCommandSender>();
       container.Register(typeof(IHandleCommand<>), _handlerAssemblies, Lifestyle.Transient);
     }
   }

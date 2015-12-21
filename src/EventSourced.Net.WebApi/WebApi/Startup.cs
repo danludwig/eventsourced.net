@@ -51,8 +51,10 @@ namespace EventSourced.Net.WebApi
     private void ComposeRoot() {
       _container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
       var packages = new IPackage[] {
+
         new Services.Storage.EventStore.Connection.Package(
-          _configuration.GetConfiguration<Services.Storage.EventStore.Configuration.Connection>("eventStore:connection")),
+          _configuration.GetEventStoreConnectionConfiguration()),
+
         new Services.Messaging.Commands.Package(),
       };
       _container.RegisterPackages(packages);
