@@ -16,6 +16,8 @@
         "EventSourced.Net.Domain": "1.0.0-*",
         "EventStore.Client": "3.4.0",
         "Newtonsoft.Json": "7.0.1",
-        "SimpleInjector.Extensions.ExecutionContextScoping": "3.1.2"
+        "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
+        "SimpleInjector.Extensions.ExecutionContextScoping": "3.1.2",
+        "SimpleInjector.Packaging": "3.1.2"
     }
 }

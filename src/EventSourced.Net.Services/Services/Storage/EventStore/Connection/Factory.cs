@@ -4,7 +4,7 @@ using System.Net;
 
 namespace EventSourced.Net.Services.Storage.EventStore.Connection
 {
-  public class Factory : IConstructConnection
+  internal sealed class Factory : IConstructConnection
   {
     private readonly IConfigureConnection _connection;
 
