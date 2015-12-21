@@ -1,7 +1,7 @@
 ﻿using System;
 using EventStore.ClientAPI;
 
-namespace EventSourced.Net.Services.Storage.EventStore.Configuration
+namespace EventSourced.Net.Services.Storage.EventStore.Connection
 {
   public interface IConfigureConnection
   {

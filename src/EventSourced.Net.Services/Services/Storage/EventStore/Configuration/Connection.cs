@@ -1,4 +1,5 @@
 ﻿using System;
+using EventSourced.Net.Services.Storage.EventStore.Connection;
 using EventStore.ClientAPI;
 using JetBrains.Annotations;
 

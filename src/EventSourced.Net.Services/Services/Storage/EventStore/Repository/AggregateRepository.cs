@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonDomain.Persistence;
+using EventSourced.Net.Services.Storage.EventStore.Connection;
 using EventStore.ClientAPI;
 
 namespace EventSourced.Net.Services.Storage.EventStore.Repository
