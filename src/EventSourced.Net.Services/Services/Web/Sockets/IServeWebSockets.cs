@@ -6,5 +6,6 @@ namespace EventSourced.Net.Services.Web.Sockets
   public interface IServeWebSockets : IDisposable
   {
     WebSocketServer Server { get; }
+    Uri BaseUri { get; }
   }
 }

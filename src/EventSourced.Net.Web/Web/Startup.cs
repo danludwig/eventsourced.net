@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
+using Newtonsoft.Json.Serialization;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Packaging;
@@ -26,6 +27,7 @@ namespace EventSourced.Net.Web
       IConfigurationBuilder builder = new ConfigurationBuilder()
         .SetBasePath(appEnv.ApplicationBasePath)
         .AddJsonFile("App_Data/Configurations/EventStoreConnection.json")
+        .AddJsonFile("App_Data/Configurations/WebSocketServer.json")
         .AddEnvironmentVariables();
       _configuration = builder.Build();
     }
@@ -36,7 +38,8 @@ namespace EventSourced.Net.Web
       services
         .AddSingleton(x => _container)
         .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(_container))
-        .AddMvc();
+        .AddMvc()
+          .AddJsonOptions(x => x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,7 +60,8 @@ namespace EventSourced.Net.Web
 
         new Services.Messaging.Commands.Package(),
 
-        new Services.Web.Sockets.Package(),
+        new Services.Web.Sockets.Package(
+          _configuration.GetWebSocketServerConfiguration()),
       };
       _container.RegisterPackages(packages);
       _container.Verify(VerificationOption.VerifyAndDiagnose);

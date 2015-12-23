@@ -7,17 +7,21 @@ namespace EventSourced.Net.Services.Web.Sockets
 {
   internal sealed class WebSocketSharpServer : IServeWebSockets
   {
+    private ServerSettings Settings { get; }
     public WebSocketServer Server { get; }
-    private WebSocket Heartbeat { get; }
-    private bool _isDisposing;
-    private const string HeartbeatEndpoint = "/heartbeat";
-    private const int Port = 3000;
+    public Uri BaseUri { get; }
 
-    public WebSocketSharpServer() {
-      Server = new WebSocketServer(Port);
+    private WebSocket Heartbeat { get; }
+    private const string HeartbeatEndpoint = "heartbeat";
+    private bool _isDisposing;
+
+    public WebSocketSharpServer(ServerSettings settings) {
+      Settings = settings;
+      Server = new WebSocketServer(Settings.Port);
+      BaseUri = new Uri($"ws://localhost:{Server.Port}");
       Server.Start();
-      Server.AddWebSocketService<Heartbeat>(HeartbeatEndpoint);
-      Heartbeat = new WebSocket($"ws://localhost:{Port}{HeartbeatEndpoint}");
+      Server.AddWebSocketService<Heartbeat>($"/{HeartbeatEndpoint}");
+      Heartbeat = new WebSocket($"{BaseUri}{HeartbeatEndpoint}");
       Heartbeat.Connect();
 
       Task.Factory.StartNew(() => {

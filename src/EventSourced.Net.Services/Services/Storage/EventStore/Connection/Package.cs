@@ -7,15 +7,15 @@ namespace EventSourced.Net.Services.Storage.EventStore.Connection
 {
   public class Package : IPackage
   {
-    private readonly Configuration.Connection _connection;
+    private Configuration.Connection Connection { get; }
 
     public Package(Configuration.Connection connection) {
       connection = connection ?? new Configuration.Connection();
-      _connection = connection;
+      Connection = connection;
     }
 
     public void RegisterServices(Container container) {
-      container.RegisterSingleton<IConfigureConnection>(() => _connection);
+      container.RegisterSingleton<IConfigureConnection>(() => Connection);
       container.RegisterSingleton<IConstructConnection, Factory>();
       container.RegisterSingleton<IProvideConnection, Provider>();
       container.Register<IRepository, AggregateRepository>(Lifestyle.Transient);

@@ -26,11 +26,32 @@
     TODO: replace cshtml & viewcontrollers with redux/react spa.
   *@
   <script>
-    $('#register_form').on('submit', function () {
-      return false;
-    });
     $(document).on('ready', function () {
       $('#register_form').find('[name=emailOrPhone]').focus();
+      $('#register_form').on('submit', function () {
+        var $form = $(this), data = {};
+        $form.serializeArray().map(function (x) { data[x.name] = x.value; });
+        $.ajax({
+          type: 'POST',
+          url: '/api/register',
+          data: data
+        })
+          .done(function (data, status, xhr) {
+            console.log('POST /api/register response received.');
+            var location = xhr.getResponseHeader("location");
+            var socket = new WebSocket(location);
+            socket.onopen = function (e) {
+              console.log('WebSockets: Correlation ' + e.type);
+            }
+            socket.onmessage = function (message) {
+              console.log('WebSockets: ' + message.data);
+            }
+          })
+          .fail(function () {
+            console.log('POST /api/register failed.');
+          });
+        return false;
+      });
     });
   </script>
 }

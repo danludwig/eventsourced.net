@@ -1,0 +1,7 @@
+{
+    "webSockets": {
+        "server": {
+            "port": 3000
+        }
+    }
+}
