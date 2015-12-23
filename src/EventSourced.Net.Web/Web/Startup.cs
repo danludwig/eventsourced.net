@@ -35,7 +35,7 @@ namespace EventSourced.Net.Web
     public void ConfigureServices(IServiceCollection services) {
       services
         .AddSingleton(x => _container)
-        .AddInstance<IControllerActivator>(new Services.Web.SimpleInjectorControllerActivator(_container))
+        .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(_container))
         .AddMvc();
     }
 
@@ -56,8 +56,11 @@ namespace EventSourced.Net.Web
           _configuration.GetEventStoreConnectionConfiguration()),
 
         new Services.Messaging.Commands.Package(),
+
+        new Services.Web.Sockets.Package(),
       };
       _container.RegisterPackages(packages);
+      _container.Verify(VerificationOption.VerifyAndDiagnose);
     }
 
     // Entry point for the application.

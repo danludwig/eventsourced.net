@@ -3,7 +3,7 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Controllers;
 using SimpleInjector;
 
-namespace EventSourced.Net.Services.Web
+namespace EventSourced.Net.Services.Web.Mvc
 {
   public sealed class SimpleInjectorControllerActivator : IControllerActivator
   {

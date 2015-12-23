@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>@ViewData["Title"]</title>
 
+  @* ReSharper disable Html.TagNotResolved *@
   <environment names="Development">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="~/css/site.css" />
@@ -16,6 +17,7 @@
           asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute" />
     <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
   </environment>
+  @* ReSharper restore Html.TagNotResolved *@
 
 </head>
 <body>
@@ -36,7 +38,7 @@
           <li><a href="/about">About</a></li>
           <li><a href="/contact">Contact</a></li>
         </ul>
-        @await Html.PartialAsync("~/Web/Home/_LoginPartial")
+        @await Html.PartialAsync("~/Web/Home/_LoginPartial", null, ViewData)
       </div>
     </div>
   </div>
@@ -48,6 +50,7 @@
     </footer>
   </div>
 
+  @* ReSharper disable Html.TagNotResolved *@
   <environment names="Development">
     <script src="~/lib/jquery/dist/jquery.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
@@ -62,6 +65,16 @@
             asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal">
     </script>
   </environment>
+  @* ReSharper restore Html.TagNotResolved *@
+  <script>
+    var heartbeat = new WebSocket("ws://localhost:3000/heartbeat");
+    heartbeat.onopen = function (e) {
+      console.log('WebSockets: Heartbeat ' + e.type);
+    }
+    heartbeat.onmessage = function (message) {
+      console.log('WebSockets: ' + message.data);
+    }
+  </script>
 
   @RenderSection("scripts", required: false)
 </body>
