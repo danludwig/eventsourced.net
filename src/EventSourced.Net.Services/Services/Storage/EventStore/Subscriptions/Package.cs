@@ -10,6 +10,7 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
   {
     // todo: only starting up subscriptions from web client for simplicity, should be done in console app (separate process)
     public void RegisterServices(Container container) {
+      container.RegisterSingleton<ResolvedEventPublisher>();
       container.Register<SubscriptionClient[]>(() => {
         // todo: json configuration for subscription clients
         string streamName = "$ce-user";
@@ -27,7 +28,8 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
         } catch (AggregateException ex) when (ex.InnerException.Message.Equals($"Subscription group {groupName} on stream {streamName} already exists")) {
           // subscription already exists
         }
-        var userClient = new SubscriptionClient(streamName, groupName, container.GetInstance<Connection.IProvideConnection>());
+        var userClient = new SubscriptionClient(streamName, groupName,
+          container.GetInstance<Connection.IProvideConnection>(), container.GetInstance<ResolvedEventPublisher>());
         return new[] { userClient };
       }, Lifestyle.Singleton);
     }

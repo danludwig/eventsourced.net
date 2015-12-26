@@ -45,7 +45,7 @@ namespace EventSourced.Net.Domain.Users
 
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromEmail;
-      RaiseEvent(new ContactEmailChallengePrepared(challengeId, Id, mailAddress, purpose, stamp));
+      RaiseEvent(new ContactEmailChallengePrepared(challengeId, Id, mailAddress.Address, purpose, stamp));
     }
 
     private void PrepareContactSmsChallenge(Guid challengeId, PhoneNumber phoneNumber) {
@@ -54,7 +54,7 @@ namespace EventSourced.Net.Domain.Users
 
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromPhone;
-      RaiseEvent(new ContactSmsChallengePrepared(challengeId, Id, phoneNumber, "US", purpose, stamp));
+      RaiseEvent(new ContactSmsChallengePrepared(challengeId, Id, phoneNumber.NationalNumber, "US", purpose, stamp));
     }
 
     #endregion

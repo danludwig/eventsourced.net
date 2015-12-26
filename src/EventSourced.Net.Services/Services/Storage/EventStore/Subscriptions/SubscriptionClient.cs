@@ -10,12 +10,15 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
     private string StreamName { get; }
     private string GroupName { get; }
     private Connection.IProvideConnection ConnectionProvider { get; }
+    private ResolvedEventPublisher Publisher { get; }
     private EventStorePersistentSubscriptionBase Subscription { get; set; }
 
-    public SubscriptionClient(string streamName, string groupName, Connection.IProvideConnection connectionProvider) {
+    public SubscriptionClient(string streamName, string groupName,
+      Connection.IProvideConnection connectionProvider, ResolvedEventPublisher publisher) {
       StreamName = streamName;
       GroupName = groupName;
       ConnectionProvider = connectionProvider;
+      Publisher = publisher;
       ConnectSubscription().Wait();
     }
 
@@ -29,8 +32,8 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
       await ConnectSubscription();
     }
 
-    private void EventAppeared(EventStorePersistentSubscriptionBase subscription, ResolvedEvent resolvedEvent) {
-      subscription.Acknowledge(resolvedEvent);
+    private async void EventAppeared(EventStorePersistentSubscriptionBase subscription, ResolvedEvent resolvedEvent) {
+      await Publisher.PublishAsync(subscription, resolvedEvent);
     }
 
     public void Dispose() {

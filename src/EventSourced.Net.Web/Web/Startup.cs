@@ -61,6 +61,7 @@ namespace EventSourced.Net.Web
         new Services.Storage.EventStore.Subscriptions.Package(),
 
         new Services.Messaging.Commands.Package(),
+        new Services.Messaging.Events.Package(),
 
         new Services.Web.Sockets.Package(
           _configuration.GetWebSocketServerConfiguration()),
