@@ -58,6 +58,8 @@ namespace EventSourced.Net.Web
         new Services.Storage.EventStore.Connection.Package(
           _configuration.GetEventStoreConnectionConfiguration()),
 
+        new Services.Storage.EventStore.Subscriptions.Package(),
+
         new Services.Messaging.Commands.Package(),
 
         new Services.Web.Sockets.Package(
