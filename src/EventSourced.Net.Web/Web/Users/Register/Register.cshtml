@@ -46,6 +46,7 @@
             socket.onmessage = function (message) {
               console.log('WebSockets: ' + message.data);
             }
+            $form.find('[name=emailOrPhone]').val('');
           })
           .fail(function () {
             console.log('POST /api/register failed.');

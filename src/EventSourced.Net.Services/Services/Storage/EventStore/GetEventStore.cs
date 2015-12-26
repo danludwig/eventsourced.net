@@ -120,6 +120,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
           "--db ./db",
           "--log ./logs",
           "--run-projections=system",
+          "--start-standard-projections",
         };
       var isWindows = IsWindows();
       if (!isWindows) args.Insert(0, $"./{MacExecutableFileName}");
