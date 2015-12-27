@@ -14,13 +14,13 @@ namespace EventSourced.Net.Services.Storage.EventStore.Repository
     private const string CommitIdHeader = "CommitId";
     private const int WritePageSize = 500;
     private const int ReadPageSize = 500;
-    private readonly Func<Type, Guid, string> _aggregateIdToStreamName =
-      (type, guid) => $"{char.ToLower(type.Name[0]) + type.Name.Substring(1)}-{guid.ToString("N")}";
+    private Func<Type, Guid, string> AggregateIdToStreamName { get; }
 
-    private readonly IProvideConnection _eventStoreConnectionProvider;
+    private IProvideConnection ConnectionProvider { get; }
 
-    public AggregateRepository(IProvideConnection eventStoreConnectionProvider) {
-      _eventStoreConnectionProvider = eventStoreConnectionProvider;
+    public AggregateRepository(IProvideConnection connectionProvider) {
+      ConnectionProvider = connectionProvider;
+      AggregateIdToStreamName = (type, guid) => $"{char.ToLower(type.Name[0]) + type.Name.Substring(1)}-{guid.ToString("N")}";
     }
 
     public Task<TAggregate> GetByIdAsync<TAggregate>(Guid id) where TAggregate : class, CommonDomain.IAggregate {
@@ -31,12 +31,12 @@ namespace EventSourced.Net.Services.Storage.EventStore.Repository
       if (version <= 0)
         throw new InvalidOperationException("Cannot get version <= 0");
 
-      string streamName = _aggregateIdToStreamName(typeof(TAggregate), id);
+      string streamName = AggregateIdToStreamName(typeof(TAggregate), id);
       TAggregate aggregate = (TAggregate)Activator.CreateInstance(typeof(TAggregate), true);
 
       int sliceStart = 0;
       StreamEventsSlice currentSlice;
-      IEventStoreConnection eventStoreConnection = await _eventStoreConnectionProvider.GetConnectionAsync();
+      IEventStoreConnection eventStoreConnection = await ConnectionProvider.GetConnectionAsync();
       do {
         int sliceCount = sliceStart + ReadPageSize <= version
                             ? ReadPageSize
@@ -70,13 +70,13 @@ namespace EventSourced.Net.Services.Storage.EventStore.Repository
       };
       updateMetadata?.Invoke(commitMetadata);
 
-      var streamName = _aggregateIdToStreamName(aggregate.GetType(), aggregate.Id);
+      var streamName = AggregateIdToStreamName(aggregate.GetType(), aggregate.Id);
       var newEvents = aggregate.GetUncommittedEvents().Cast<object>().ToList();
       var originalVersion = aggregate.Version - newEvents.Count;
       var expectedVersion = originalVersion == 0 ? ExpectedVersion.NoStream : originalVersion - 1;
       var eventsToSave = newEvents.Select(e => e.ToEventData(commitMetadata)).ToList();
 
-      IEventStoreConnection eventStoreConnection = await _eventStoreConnectionProvider.GetConnectionAsync();
+      IEventStoreConnection eventStoreConnection = await ConnectionProvider.GetConnectionAsync();
       if (eventsToSave.Count < WritePageSize) {
         await eventStoreConnection.AppendToStreamAsync(streamName, expectedVersion, eventsToSave);
       } else {

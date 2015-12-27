@@ -14,6 +14,7 @@
     },
     "dependencies": {
         "EventSourced.Net.Domain": "1.0.0-*",
+        "EventSourced.Net.ReadModel": "1.0.0-*",
         "EventStore.Client": "3.4.0",
         "Microsoft.AspNet.Mvc": "6.0.0-rc1-final",
         "Newtonsoft.Json": "7.0.1",

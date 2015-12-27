@@ -6,23 +6,23 @@ namespace EventSourced.Net.Services.Storage.EventStore.Connection
 {
   internal sealed class Factory : IConstructConnection
   {
-    private readonly IConfigureConnection _connection;
+    private IConfigureConnection Connection { get; }
 
     public Factory(IConfigureConnection connection) {
-      _connection = connection;
+      Connection = connection;
     }
 
     public IEventStoreConnection ConstructConnection() {
-      ConnectionSettings settings = _connection.GetConnectionSettings() ?? ConnectionSettings.Default;
-      Uri uri = _connection.GetUri();
-      IPEndPoint tcpEndpoint = _connection.GetTcpEndpoint() ?? new IPEndPoint(IPAddress.Loopback, 1113);
-      ClusterSettings clusterSettings = _connection.GetClusterSettings();
+      ConnectionSettings settings = Connection.GetConnectionSettings() ?? ConnectionSettings.Default;
+      Uri uri = Connection.GetUri();
+      IPEndPoint tcpEndpoint = Connection.GetTcpEndpoint() ?? new IPEndPoint(IPAddress.Loopback, 1113);
+      ClusterSettings clusterSettings = Connection.GetClusterSettings();
       if (uri != null)
-        return EventStoreConnection.Create(settings, uri, _connection.Name);
+        return EventStoreConnection.Create(settings, uri, Connection.Name);
 
       return clusterSettings != null
-        ? EventStoreConnection.Create(settings, clusterSettings, _connection.Name)
-        : EventStoreConnection.Create(settings, tcpEndpoint, _connection.Name);
+        ? EventStoreConnection.Create(settings, clusterSettings, Connection.Name)
+        : EventStoreConnection.Create(settings, tcpEndpoint, Connection.Name);
     }
   }
 }

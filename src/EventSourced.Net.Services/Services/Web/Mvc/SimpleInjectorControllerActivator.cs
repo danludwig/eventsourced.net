@@ -7,14 +7,14 @@ namespace EventSourced.Net.Services.Web.Mvc
 {
   public sealed class SimpleInjectorControllerActivator : IControllerActivator
   {
-    private readonly Container _container;
+    private Container Container { get; }
 
     public SimpleInjectorControllerActivator(Container container) {
-      _container = container;
+      Container = container;
     }
 
     public object Create(ActionContext context, Type controllerType) {
-      return _container.GetInstance(controllerType);
+      return Container.GetInstance(controllerType);
     }
   }
 }

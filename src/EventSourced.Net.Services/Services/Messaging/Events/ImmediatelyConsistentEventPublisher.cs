@@ -8,15 +8,15 @@ namespace EventSourced.Net.Services.Messaging.Events
 {
   public class ImmediatelyConsistentEventPublisher : IPublishEvent
   {
-    private readonly Container _container;
+    private Container Container { get; }
 
     public ImmediatelyConsistentEventPublisher(Container container) {
-      _container = container;
+      Container = container;
     }
 
     public async Task PublishAsync<TEvent>(TEvent e) where TEvent : IEvent {
       Type handlerType = typeof(IHandleEvent<>).MakeGenericType(e.GetType());
-      IEnumerable<IHandleEvent<TEvent>> handlers = _container.GetAllInstances(handlerType)
+      IEnumerable<IHandleEvent<TEvent>> handlers = Container.GetAllInstances(handlerType)
         .Cast<IHandleEvent<TEvent>>();
       Task handlerTasks = Task.WhenAll(handlers.Select(x => x.HandleAsync(e)));
       await handlerTasks;

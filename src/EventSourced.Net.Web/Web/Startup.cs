@@ -16,11 +16,11 @@ namespace EventSourced.Net.Web
 {
   public class Startup
   {
-    private readonly Container _container;
-    private readonly IConfigurationRoot _configuration;
+    private Container Container { get; }
+    private IConfigurationRoot Configuration { get; }
 
     public Startup(IHostingEnvironment hostEnv, IApplicationEnvironment appEnv) {
-      _container = new Container();
+      Container = new Container();
 
       if (hostEnv.IsDevelopment()) {
         Services.Storage.EventStore.GetEventStore.EnsureRunning(appEnv.ApplicationBasePath);
@@ -31,15 +31,15 @@ namespace EventSourced.Net.Web
         .AddJsonFile("App_Data/Configurations/EventStoreConnection.json")
         .AddJsonFile("App_Data/Configurations/WebSocketServer.json")
         .AddEnvironmentVariables();
-      _configuration = builder.Build();
+      Configuration = builder.Build();
     }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     // For more information on how to configure your application, visit http://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services) {
       services
-        .AddSingleton(x => _container)
-        .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(_container))
+        .AddSingleton(x => Container)
+        .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(Container))
         .AddMvc()
           .AddJsonOptions(x => x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
     }
@@ -54,7 +54,7 @@ namespace EventSourced.Net.Web
     }
 
     private void ComposeRoot() {
-      _container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
+      Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
       Assembly[] eventHandlerAssemblies = new[]
       {
         typeof(IHandleEvent<>).Assembly,
@@ -64,18 +64,21 @@ namespace EventSourced.Net.Web
       var packages = new IPackage[] {
 
         new Services.Storage.EventStore.Connection.Package(
-          _configuration.GetEventStoreConnectionConfiguration()),
+          Configuration.GetEventStoreConnectionConfiguration()),
 
         new Services.Storage.EventStore.Subscriptions.Package(),
 
+        new Services.Storage.ArangoDb.Package(),
+
         new Services.Messaging.Commands.Package(),
         new Services.Messaging.Events.Package(eventHandlerAssemblies),
+        new Services.Messaging.Queries.Package(),
 
         new Services.Web.Sockets.Package(
-          _configuration.GetWebSocketServerConfiguration()),
+          Configuration.GetWebSocketServerConfiguration()),
       };
-      _container.RegisterPackages(packages);
-      _container.Verify(VerificationOption.VerifyAndDiagnose);
+      Container.RegisterPackages(packages);
+      Container.Verify(VerificationOption.VerifyAndDiagnose);
     }
 
     // Entry point for the application.

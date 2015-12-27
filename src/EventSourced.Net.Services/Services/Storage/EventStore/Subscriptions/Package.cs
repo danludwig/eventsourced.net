@@ -32,7 +32,7 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
           // subscription already exists
         }
         var userClients = new List<SubscriptionClient>();
-        Parallel.ForEach(Enumerable.Range(0, 1), x => {
+        Parallel.ForEach(Enumerable.Range(0, 9), x => {
           userClients.Add(new SubscriptionClient(streamName, groupName,
           container.GetInstance<Connection.IProvideConnection>(), container.GetInstance<ResolvedEventPublisher>()));
         });

@@ -5,15 +5,15 @@ namespace EventSourced.Net.Services.Messaging.Commands
 {
   public class ImmediatelyConsistentCommandSender : ISendCommand
   {
-    private readonly Container _container;
+    private Container Container { get; }
 
     public ImmediatelyConsistentCommandSender(Container container) {
-      _container = container;
+      Container = container;
     }
 
     public async Task SendAsync<TCommand>(TCommand command) where TCommand : ICommand {
       var handlerType = typeof(IHandleCommand<>).MakeGenericType(command.GetType());
-      dynamic handler = _container.GetInstance(handlerType);
+      dynamic handler = Container.GetInstance(handlerType);
       await handler.HandleAsync((dynamic)command).ConfigureAwait(false);
     }
   }

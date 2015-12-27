@@ -1,57 +1,40 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ArangoDB.Client;
 using EventSourced.Net.Domain.Users;
 
 namespace EventSourced.Net.ReadModel.Users
 {
-  public class HandleContactChallengePrepared : IHandleEvent<ContactSmsChallengePrepared>, IHandleEvent<ContactEmailChallengePrepared>
+  public class HandleContactChallengePrepared :
+    IHandleEvent<ContactSmsChallengePrepared>,
+    IHandleEvent<ContactEmailChallengePrepared>
   {
+    private IProcessQuery Query { get; }
+    private IArangoDatabase Db { get; }
     private IPublishEvent EventPublisher { get; }
-    private DatabaseSharedSetting DbSettings { get; }
 
-    public HandleContactChallengePrepared(IPublishEvent eventPublisher) {
+    public HandleContactChallengePrepared(IProcessQuery query, IArangoDatabase db, IPublishEvent eventPublisher) {
+      Query = query;
+      Db = db;
       EventPublisher = eventPublisher;
-      DbSettings = new DatabaseSharedSetting {
-        CreateCollectionOnTheFly = true,
-        Database = "EventSourced",
-        WaitForSync = true,
-        Url = "http://localhost:8529",
-      };
     }
 
     public async Task HandleAsync(ContactSmsChallengePrepared message) {
-      var challengeItem = new UserContactSmsChallenge {
-        Id = message.ChallengeId,
-        Purpose = message.Purpose,
-        PhoneNumber = message.PhoneNumber,
-        RegionCode = message.RegionCode,
-      };
-      await HandleAsync(message, challengeItem);
+      await HandleAsync(message, new UserContactSmsChallenge(message));
     }
 
     public async Task HandleAsync(ContactEmailChallengePrepared message) {
-      var challengeItem = new UserContactEmailChallenge {
-        Id = message.ChallengeId,
-        Purpose = message.Purpose,
-        EmailAddress = message.EmailAddress,
-      };
-      await HandleAsync(message, challengeItem);
+      await HandleAsync(message, new UserContactEmailChallenge(message));
     }
 
     private async Task HandleAsync(ContactChallengePrepared message, UserContactChallenge challengeItem) {
-      using (IArangoDatabase db = new ArangoDatabase(DbSettings)) {
-        var user = db.Query<UserDocument>().SingleOrDefault(x => x.Id == message.UserId);
-        if (user == null) {
-          user = new UserDocument {
-            Id = message.UserId,
-          };
-          await db.InsertAsync<UserDocument>(user);
-        }
-        if (user.ContactChallengeById(message.ChallengeId) == null) {
-          user.AddContactChallenge(challengeItem);
-          await db.UpdateAsync<UserDocument>(user);
-        }
+      UserDocument user = await Query.Execute(new UserDocumentById(message.UserId));
+      if (user == null) {
+        user = new UserDocument { Id = message.UserId, };
+        await Db.InsertAsync<UserDocument>(user);
+      }
+      if (user.ContactChallengeById(message.ChallengeId) == null) {
+        user.AddContactChallenge(challengeItem);
+        await Db.UpdateAsync<UserDocument>(user);
       }
       await EventPublisher.PublishAsync(new UserContactChallengeViewPrepared(message));
     }

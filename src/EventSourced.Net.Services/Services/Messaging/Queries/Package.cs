@@ -4,7 +4,7 @@ using System.Reflection;
 using SimpleInjector;
 using SimpleInjector.Packaging;
 
-namespace EventSourced.Net.Services.Messaging.Commands
+namespace EventSourced.Net.Services.Messaging.Queries
 {
   public class Package : IPackage
   {
@@ -12,14 +12,14 @@ namespace EventSourced.Net.Services.Messaging.Commands
 
     public Package(params Assembly[] handlerAssemblies) {
       if (handlerAssemblies == null || !handlerAssemblies.Any()) {
-        handlerAssemblies = new[] { typeof(IHandleCommand<>).Assembly };
+        handlerAssemblies = new[] { typeof(IHandleQuery<,>).Assembly };
       }
       HandlerAssemblies = handlerAssemblies;
     }
 
     public void RegisterServices(Container container) {
-      container.RegisterSingleton<ISendCommand, ImmediatelyConsistentCommandSender>();
-      container.Register(typeof(IHandleCommand<>), HandlerAssemblies, Lifestyle.Transient);
+      container.RegisterSingleton<IProcessQuery, QueryProcessor>();
+      container.Register(typeof(IHandleQuery<,>), HandlerAssemblies, Lifestyle.Transient);
     }
   }
 }

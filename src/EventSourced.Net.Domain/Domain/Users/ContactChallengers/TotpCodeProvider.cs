@@ -16,7 +16,7 @@ namespace EventSourced.Net.Domain.Users.ContactChallengers
 
     public static bool Validate(string totpCode, Guid userId, string contactValue, ContactChallengePurpose purpose, string stamp) {
       byte[] stampBytes = Encoding.Unicode.GetBytes(stamp);
-      int code = 0;
+      int code;
       if (!int.TryParse(totpCode, out code))
         return false;
       string modifier = $"Totp:{purpose}:{contactValue}:{userId}";

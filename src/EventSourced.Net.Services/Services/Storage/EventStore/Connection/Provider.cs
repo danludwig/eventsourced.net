@@ -6,33 +6,33 @@ namespace EventSourced.Net.Services.Storage.EventStore.Connection
 {
   internal sealed class Provider : IProvideConnection
   {
-    private readonly IConstructConnection _factory;
-    private IEventStoreConnection _connection;
-    private static readonly object LockSync = new object();
+    private IConstructConnection Factory { get; }
+    private IEventStoreConnection Connection { get; set; }
+    private static readonly object BlockAllOtherThreads = new object();
 
     public Provider(IConstructConnection factory) {
-      _factory = factory;
+      Factory = factory;
     }
 
     public async Task<IEventStoreConnection> GetConnectionAsync() {
-      if (_connection != null) return _connection;
+      if (Connection != null) return Connection;
 
-      lock (LockSync) {
-        _connection = _factory.ConstructConnection();
+      lock (BlockAllOtherThreads) {
+        Connection = Factory.ConstructConnection();
       }
-      _connection.Closed += OnClosed;
-      await _connection.ConnectAsync().ConfigureAwait(false);
+      Connection.Closed += OnClosed;
+      await Connection.ConnectAsync().ConfigureAwait(false);
 
-      return _connection;
+      return Connection;
     }
 
     private void OnClosed(object sender, ClientClosedEventArgs args) {
-      _connection = null;
+      Connection = null;
     }
 
     void IDisposable.Dispose() {
-      _connection?.Dispose();
-      _connection = null;
+      Connection?.Dispose();
+      Connection = null;
     }
   }
 }

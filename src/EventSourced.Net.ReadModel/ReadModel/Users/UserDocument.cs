@@ -46,7 +46,7 @@ namespace EventSourced.Net.ReadModel.Users
       ContactEmailChallenges.Add(challenge);
     }
 
-    private IReadOnlyCollection<UserContactChallenge> ContactChallenges =>
+    public IReadOnlyCollection<UserContactChallenge> ContactChallenges =>
       new ReadOnlyCollection<UserContactChallenge>(ContactEmailChallenges
         .Cast<UserContactChallenge>().Union(ContactSmsChallenges).ToArray());
   }

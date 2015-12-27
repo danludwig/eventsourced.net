@@ -6,10 +6,10 @@ namespace EventSourced.Net.Services.Web.Sockets
 {
   public class Correlation : WebSocketBehavior
   {
-    private readonly Guid _correlationId;
+    private Guid CorrelationId { get; }
 
     public Correlation(Guid correlationId) {
-      _correlationId = correlationId;
+      CorrelationId = correlationId;
     }
 
     protected override void OnMessage(MessageEventArgs e) {
