@@ -25,7 +25,7 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
     private async Task ConnectSubscription() {
       IEventStoreConnection connection = await ConnectionProvider.GetConnectionAsync();
       Subscription = connection.ConnectToPersistentSubscription(StreamName, GroupName,
-        EventAppeared, SubscriptionDropped, userCredentials: new UserCredentials("admin", "changeit"), bufferSize: 2, autoAck: false);
+        EventAppeared, SubscriptionDropped, userCredentials: new UserCredentials("admin", "changeit"), bufferSize: 10, autoAck: false);
     }
 
     private async void SubscriptionDropped(EventStorePersistentSubscriptionBase subscription, SubscriptionDropReason reason, Exception ex) {

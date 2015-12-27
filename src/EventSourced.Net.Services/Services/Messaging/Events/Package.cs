@@ -18,7 +18,7 @@ namespace EventSourced.Net.Services.Messaging.Events
     }
 
     public void RegisterServices(Container container) {
-      container.Register(typeof(IPublishEvent<>), typeof(ImmediatelyConsistentEventPublisher<>), Lifestyle.Singleton);
+      container.RegisterSingleton(typeof(IPublishEvent), typeof(ImmediatelyConsistentEventPublisher));
       container.RegisterCollection(typeof(IHandleEvent<>), _handlerAssemblies);
     }
   }

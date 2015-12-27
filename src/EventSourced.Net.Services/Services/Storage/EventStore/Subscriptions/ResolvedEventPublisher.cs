@@ -19,9 +19,8 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
     public async Task PublishAsync(EventStorePersistentSubscriptionBase subscription, ResolvedEvent resolvedEvent) {
       try {
         object eventObject = resolvedEvent.Event.ToEventObject();
-        Type publisherType = typeof(IPublishEvent<>).MakeGenericType(eventObject.GetType());
         using (Container.BeginExecutionContextScope()) {
-          dynamic publisher = Container.GetInstance(publisherType);
+          dynamic publisher = Container.GetInstance<IPublishEvent>();
           await publisher.PublishAsync((dynamic)eventObject).ConfigureAwait(true);
         }
         subscription.Acknowledge(resolvedEvent);

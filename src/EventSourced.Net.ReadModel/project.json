@@ -1,0 +1,21 @@
+﻿{
+    "version": "1.0.0-*",
+    "description": "EventSourced.Net.ReadModel Class Library",
+    "authors": [ "Dan" ],
+    "tags": [ "" ],
+    "projectUrl": "",
+    "licenseUrl": "",
+    "frameworks": {
+        "dnx451": {
+            "frameworkAssemblies": {
+                "System.Linq.Expressions": "4.0.0.0",
+                "System.Runtime": "4.0.10.0",
+                "System.Threading.Tasks": "4.0.0.0"
+            }
+        }
+    },
+    "dependencies": {
+        "ArangoDB.Client": "0.7.2.8",
+        "EventSourced.Net.Domain": "1.0.0-*"
+    }
+}

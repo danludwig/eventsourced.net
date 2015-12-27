@@ -2,8 +2,8 @@
 
 namespace EventSourced.Net
 {
-  public interface IPublishEvent<TEvent> where TEvent : IEvent
+  public interface IPublishEvent
   {
-    Task PublishAsync(TEvent @event);
+    Task PublishAsync<TEvent>(TEvent @event) where TEvent : IEvent;
   }
 }

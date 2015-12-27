@@ -25,6 +25,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CommonDomain", "src\CommonD
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "EventSourced.Net.Web", "src\EventSourced.Net.Web\EventSourced.Net.Web.xproj", "{6260FD20-8B7E-4F62-8FED-9476EEC08155}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "EventSourced.Net.ReadModel", "src\EventSourced.Net.ReadModel\EventSourced.Net.ReadModel.xproj", "{62ED9CA0-9D2F-4CED-90DE-ACA2DC04BFED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{6260FD20-8B7E-4F62-8FED-9476EEC08155}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6260FD20-8B7E-4F62-8FED-9476EEC08155}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6260FD20-8B7E-4F62-8FED-9476EEC08155}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62ED9CA0-9D2F-4CED-90DE-ACA2DC04BFED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62ED9CA0-9D2F-4CED-90DE-ACA2DC04BFED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62ED9CA0-9D2F-4CED-90DE-ACA2DC04BFED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62ED9CA0-9D2F-4CED-90DE-ACA2DC04BFED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -61,5 +67,6 @@ Global
 		{702724B6-DACD-4A53-B888-377EEE165AAE} = {6C96739B-F15B-411D-9F53-ED40F1318A1D}
 		{93A1DF79-037B-4D2F-9744-B95B3E3ED29D} = {6C96739B-F15B-411D-9F53-ED40F1318A1D}
 		{6260FD20-8B7E-4F62-8FED-9476EEC08155} = {6C96739B-F15B-411D-9F53-ED40F1318A1D}
+		{62ED9CA0-9D2F-4CED-90DE-ACA2DC04BFED} = {6C96739B-F15B-411D-9F53-ED40F1318A1D}
 	EndGlobalSection
 EndGlobal

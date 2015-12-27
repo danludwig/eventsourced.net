@@ -6,7 +6,7 @@ using SimpleInjector;
 
 namespace EventSourced.Net.Services.Messaging.Events
 {
-  public class ImmediatelyConsistentEventPublisher<TEvent> : IPublishEvent<TEvent> where TEvent : IEvent
+  public class ImmediatelyConsistentEventPublisher : IPublishEvent
   {
     private readonly Container _container;
 
@@ -14,7 +14,7 @@ namespace EventSourced.Net.Services.Messaging.Events
       _container = container;
     }
 
-    public async Task PublishAsync(TEvent e) {
+    public async Task PublishAsync<TEvent>(TEvent e) where TEvent : IEvent {
       Type handlerType = typeof(IHandleEvent<>).MakeGenericType(e.GetType());
       IEnumerable<IHandleEvent<TEvent>> handlers = _container.GetAllInstances(handlerType)
         .Cast<IHandleEvent<TEvent>>();

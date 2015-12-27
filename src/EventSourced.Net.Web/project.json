@@ -5,6 +5,7 @@
     },
 
     "dependencies": {
+        "EventSourced.Net.ReadModel": "1.0.0-*",
         "EventSourced.Net.Services": "1.0.0-*",
         "Microsoft.AspNet.Identity": "3.0.0-rc1-final",
         "Microsoft.AspNet.IISPlatformHandler": "1.0.0-rc1-final",

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using EventStore.ClientAPI;
 using EventStore.ClientAPI.SystemData;
 using SimpleInjector;
@@ -28,9 +31,12 @@ namespace EventSourced.Net.Services.Storage.EventStore.Subscriptions
         } catch (AggregateException ex) when (ex.InnerException.Message.Equals($"Subscription group {groupName} on stream {streamName} already exists")) {
           // subscription already exists
         }
-        var userClient = new SubscriptionClient(streamName, groupName,
-          container.GetInstance<Connection.IProvideConnection>(), container.GetInstance<ResolvedEventPublisher>());
-        return new[] { userClient };
+        var userClients = new List<SubscriptionClient>();
+        Parallel.ForEach(Enumerable.Range(0, 1), x => {
+          userClients.Add(new SubscriptionClient(streamName, groupName,
+          container.GetInstance<Connection.IProvideConnection>(), container.GetInstance<ResolvedEventPublisher>()));
+        });
+        return userClients.ToArray();
       }, Lifestyle.Singleton);
     }
   }

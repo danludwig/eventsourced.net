@@ -33,7 +33,7 @@
         $form.serializeArray().map(function (x) { data[x.name] = x.value; });
         $.ajax({
           type: 'POST',
-          url: '/api/register',
+          url: $form.attr('action'),
           data: data
         })
           .done(function (data, status, xhr) {
@@ -45,6 +45,19 @@
             }
             socket.onmessage = function (message) {
               console.log('WebSockets: ' + message.data);
+              var data = { type: 'unknown' };
+              try {
+                data = $.parseJSON(message.data);
+              } catch (ex) {
+                console.log('Message was expected to be json.');
+              }
+              switch (data.type) {
+                case 'UserContactChallengeViewPrepared':
+                  console.log('success! let\'s now redirect...');
+                  break;
+                default:
+                  console.log('Encountered unexpected data type "' + data.type + '"');
+              }
             }
             $form.find('[name=emailOrPhone]').val('');
           })

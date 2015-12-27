@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNet.Builder;
+﻿using System.Reflection;
+using EventSourced.Net.ReadModel.Users;
+using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
@@ -53,6 +55,12 @@ namespace EventSourced.Net.Web
 
     private void ComposeRoot() {
       _container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
+      Assembly[] eventHandlerAssemblies = new[]
+      {
+        typeof(IHandleEvent<>).Assembly,
+        typeof(HandleContactChallengePrepared).Assembly,
+        GetType().Assembly,
+      };
       var packages = new IPackage[] {
 
         new Services.Storage.EventStore.Connection.Package(
@@ -61,7 +69,7 @@ namespace EventSourced.Net.Web
         new Services.Storage.EventStore.Subscriptions.Package(),
 
         new Services.Messaging.Commands.Package(),
-        new Services.Messaging.Events.Package(),
+        new Services.Messaging.Events.Package(eventHandlerAssemblies),
 
         new Services.Web.Sockets.Package(
           _configuration.GetWebSocketServerConfiguration()),

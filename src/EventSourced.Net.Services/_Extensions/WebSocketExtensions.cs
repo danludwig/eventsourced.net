@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Linq;
 using EventSourced.Net.Services.Web.Sockets;
 using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using WebSocketSharp;
 
 namespace EventSourced.Net
@@ -17,8 +20,18 @@ namespace EventSourced.Net
         () => new Correlation(correlationId));
     }
 
+    public static void RemoveCorrelationService(this IServeWebSockets service, Guid correlationId) {
+      service.Server.RemoveWebSocketService(correlationId.GetCorrelationEndpoint(leadingForwardSlash: true));
+    }
+
     public static Uri GetCorrelationUri(this IServeWebSockets service, Guid correlationId) {
       return new Uri(service.GetCorrelationUrl(correlationId));
+    }
+
+    public static bool IsCorrelationService(this IServeWebSockets service, Guid correlationId) {
+      var endpoint = correlationId.GetCorrelationEndpoint(leadingForwardSlash: true);
+      var isService = service.Server.WebSocketServices.Paths.Any(x => string.Equals(x, endpoint, StringComparison.OrdinalIgnoreCase));
+      return isService;
     }
 
     public static WebSocket CreateCorrelationClient(this IServeWebSockets service, Guid correlationId, bool connect = true) {
@@ -33,6 +46,15 @@ namespace EventSourced.Net
 
     private static string GetCorrelationUrl(this IServeWebSockets service, Guid correlationId) {
       return $"{service.BaseUri}{correlationId.GetCorrelationEndpoint()}";
+    }
+
+    private static readonly JsonSerializerSettings JsonSerializerSettings = new JsonSerializerSettings {
+      ContractResolver = new CamelCasePropertyNamesContractResolver(),
+    };
+
+    public static void Send(this WebSocket webSocket, object message) {
+      var messageJson = JsonConvert.SerializeObject(message, JsonSerializerSettings);
+      webSocket.Send(messageJson);
     }
   }
 }

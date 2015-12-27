@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using WebSocketSharp;
 using WebSocketSharp.Server;
 
 namespace EventSourced.Net.Services.Web.Sockets
 {
+  [UsedImplicitly]
   internal sealed class WebSocketSharpServer : IServeWebSockets
   {
     private ServerSettings Settings { get; }
