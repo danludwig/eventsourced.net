@@ -2,11 +2,11 @@ using EventSourced.Net.Domain.Users;
 
 namespace EventSourced.Net.ReadModel.Users
 {
-  public class UserContactEmailChallenge : UserContactChallenge
+  public class UserContactEmailChallengeView : UserContactChallengeView
   {
-    public UserContactEmailChallenge() { }
+    public UserContactEmailChallengeView() { }
 
-    public UserContactEmailChallenge(ContactEmailChallengePrepared message)
+    public UserContactEmailChallengeView(ContactEmailChallengePrepared message)
       : base(message) {
       EmailAddress = message.EmailAddress;
     }

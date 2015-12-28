@@ -31,15 +31,17 @@
       $('#register_form').on('submit', function () {
         var $form = $(this), data = {};
         $form.serializeArray().map(function (x) { data[x.name] = x.value; });
+        $form.find('input, button').attr('disabled', 'disabled');
         $.ajax({
           type: 'POST',
           url: $form.attr('action'),
           data: data
         })
           .done(function (data, status, xhr) {
-            console.log('POST /api/register response received.');
-            var location = xhr.getResponseHeader("location");
-            var socket = new WebSocket(location);
+            console.log('POST ' + $form.attr('action') + ' response received.');
+            var location = xhr.getResponseHeader('location');
+            var correlationUrl = xhr.getResponseHeader("x-correlation-socket");
+            var socket = new WebSocket(correlationUrl);
             socket.onopen = function (e) {
               console.log('WebSockets: Correlation ' + e.type);
             }
@@ -52,17 +54,18 @@
                 console.log('Message was expected to be json.');
               }
               switch (data.type) {
-                case 'UserContactChallengeViewPrepared':
-                  console.log('success! let\'s now redirect...');
+                case 'ContactEmailChallengePrepared':
+                case 'ContactSmsChallengePrepared':
+                  window.location = location;
                   break;
                 default:
                   console.log('Encountered unexpected data type "' + data.type + '"');
               }
             }
-            $form.find('[name=emailOrPhone]').val('');
           })
           .fail(function () {
-            console.log('POST /api/register failed.');
+            $form.find('input, button').removeAttr('disabled');
+            console.log('POST ' + $form.attr('action') + ' failed.');
           });
         return false;
       });

@@ -1,0 +1,51 @@
+﻿@model EventSourced.Net.Web.Users.Register.VerifyViewModel
+@{
+  ViewData["Title"] = "Verify";
+}
+
+<h2>@ViewData["Title"].</h2>
+
+<form id="verify_form" action="/api/register/@Model.CorrelationId" method="post" class="form-horizontal" role="form">
+  <h4>Confirm your contact information.</h4>
+  <hr />
+  <div class="form-group">
+    <div class="col-md-10">
+      <label class="control-label sr-only">Secret code</label>
+      <input type="text" name="code" class="form-control" placeholder="Secret code" />
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-md-10">
+      <button type="submit" class="btn btn-default">Verify</button>
+    </div>
+  </div>
+</form>
+
+@section Scripts {
+  @*
+    NOTE: this is a terrible way to do client script.
+    TODO: replace cshtml & viewcontrollers with redux/react spa.
+  *@
+  <script>
+    $(document).on('ready', function () {
+      $('#verify_form').find('[name=code]').focus();
+      $('#verify_form').on('submit', function () {
+        var $form = $(this), data = {};
+        $form.serializeArray().map(function (x) { data[x.name] = x.value; });
+        $.ajax({
+          type: 'POST',
+          url: $form.attr('action'),
+          data: data
+        })
+          .done(function (data, status, xhr) {
+            console.log('POST ' + $form.attr('action') + ' response received.');
+            $form.find('[name=code]').val('');
+          })
+          .fail(function () {
+            console.log('POST ' + $form.attr('action') + ' failed.');
+          });
+        return false;
+      });
+    });
+  </script>
+}

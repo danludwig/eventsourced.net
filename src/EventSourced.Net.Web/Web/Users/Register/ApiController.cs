@@ -16,16 +16,18 @@ namespace EventSourced.Net.Web.Users.Register
     }
 
     [HttpPost, Route("api/register")]
-    public async Task<IActionResult> Post(string emailOrPhone) {
+    public async Task<IActionResult> PostChallenge(string emailOrPhone) {
       Guid correlationId = Guid.NewGuid();
       WebSockets.AddCorrelationService(correlationId);
 
       await Command.SendAsync(new PrepareUserContactChallenge(correlationId, emailOrPhone))
         .ConfigureAwait(false);
 
-      return new CreatedResult(WebSockets.GetCorrelationUri(correlationId), new {
-        CorrelationId = correlationId,
-      });
+      Response.Headers.Add("X-Correlation-Socket", WebSockets.GetCorrelationUri(correlationId).ToString());
+      return new CreatedResult(Url.RouteUrl("RegisterVerifyRoute", new { correlationId }),
+        new {
+          CorrelationId = correlationId,
+        });
     }
   }
 }

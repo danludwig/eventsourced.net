@@ -50,6 +50,8 @@ namespace EventSourced.Net.Web
       ComposeRoot();
       app.UseIISPlatformHandler();
       app.UseStaticFiles();
+      app.UseExecutionContextScope();
+      app.UseStatusCodePagesWithReExecute("/errors/{0}");
       app.UseMvc();
     }
 
@@ -58,7 +60,7 @@ namespace EventSourced.Net.Web
       Assembly[] eventHandlerAssemblies = new[]
       {
         typeof(IHandleEvent<>).Assembly,
-        typeof(HandleContactChallengePrepared).Assembly,
+        typeof(UserView).Assembly,
         GetType().Assembly,
       };
       var packages = new IPackage[] {

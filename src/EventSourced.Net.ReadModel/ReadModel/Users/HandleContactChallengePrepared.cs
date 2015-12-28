@@ -10,33 +10,31 @@ namespace EventSourced.Net.ReadModel.Users
   {
     private IProcessQuery Query { get; }
     private IArangoDatabase Db { get; }
-    private IPublishEvent EventPublisher { get; }
 
-    public HandleContactChallengePrepared(IProcessQuery query, IArangoDatabase db, IPublishEvent eventPublisher) {
+    public HandleContactChallengePrepared(IProcessQuery query, IArangoDatabase db) {
       Query = query;
       Db = db;
-      EventPublisher = eventPublisher;
-    }
-
-    public async Task HandleAsync(ContactSmsChallengePrepared message) {
-      await HandleAsync(message, new UserContactSmsChallenge(message));
     }
 
     public async Task HandleAsync(ContactEmailChallengePrepared message) {
-      await HandleAsync(message, new UserContactEmailChallenge(message));
+      await HandleAsync(message, new UserContactEmailChallengeView(message));
     }
 
-    private async Task HandleAsync(ContactChallengePrepared message, UserContactChallenge challengeItem) {
-      UserDocument user = await Query.Execute(new UserDocumentById(message.UserId));
+    public async Task HandleAsync(ContactSmsChallengePrepared message) {
+      await HandleAsync(message, new UserContactSmsChallengeView(message));
+    }
+
+    private async Task HandleAsync(ContactChallengePrepared message, UserContactChallengeView challengeItem) {
+      UserView user = await Query.Execute(new UserById(message.UserId));
       if (user == null) {
-        user = new UserDocument { Id = message.UserId, };
-        await Db.InsertAsync<UserDocument>(user);
+        user = new UserView { Id = message.UserId, };
+        await Db.InsertAsync<UserView>(user);
       }
       if (user.ContactChallengeById(message.ChallengeId) == null) {
         user.AddContactChallenge(challengeItem);
-        await Db.UpdateAsync<UserDocument>(user);
+        await Db.UpdateAsync<UserView>(user);
+        Db.Insert<UserContactChallengeView>(challengeItem);
       }
-      await EventPublisher.PublishAsync(new UserContactChallengeViewPrepared(message));
     }
   }
 }
