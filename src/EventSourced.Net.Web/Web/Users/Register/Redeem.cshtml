@@ -1,6 +1,6 @@
 ﻿@model EventSourced.Net.Web.Users.Register.RedeemViewModel
 @{
-  ViewData["Title"] = "Create a Password";
+  ViewData["Title"] = "Create a password";
 }
 
 <h2>@ViewData["Title"].</h2>
@@ -46,8 +46,8 @@
         })
           .done(function (data, status, xhr) {
             console.log('POST ' + $form.attr('action') + ' response received.');
-            //var location = xhr.getResponseHeader('location');
-            //window.location = location;
+            var location = xhr.getResponseHeader('location');
+            window.location = location;
           })
           .fail(function () {
             console.log('POST ' + $form.attr('action') + ' failed.');

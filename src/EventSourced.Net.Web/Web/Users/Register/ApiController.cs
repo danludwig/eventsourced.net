@@ -51,7 +51,7 @@ namespace EventSourced.Net.Web.Users.Register
       await Command.SendAsync(new CreateUserPassword(data.UserId, correlationId, token, password, passwordConfirmation))
         .ConfigureAwait(false);
 
-      return new CreatedResult(Url.RouteUrl("RegisterRedeemRoute"),
+      return new CreatedResult(Url.RouteUrl("LoginRoute"),
         new { CorrelationId = correlationId, });
     }
   }

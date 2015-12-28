@@ -11,6 +11,7 @@ namespace EventSourced.Net.ReadModel.Users
     public UserView() {
       ContactSmsChallenges = new List<UserContactSmsChallengeView>();
       ContactEmailChallenges = new List<UserContactEmailChallengeView>();
+      ConfirmedLogins = new List<string>();
     }
 
     [DocumentProperty(Identifier = IdentifierType.Key)]
@@ -49,5 +50,14 @@ namespace EventSourced.Net.ReadModel.Users
     public IReadOnlyCollection<UserContactChallengeView> ContactChallenges =>
       new ReadOnlyCollection<UserContactChallengeView>(ContactEmailChallenges
         .Cast<UserContactChallengeView>().Union(ContactSmsChallenges).ToArray());
+
+    public IList<string> ConfirmedLogins { get; }
+
+    public void AddConfirmedLogin(Guid correlationId) {
+      UserContactChallengeView challenge = ContactChallengeByCorrelationId(correlationId);
+      if (challenge == null) throw new InvalidOperationException(
+        $"There is no {typeof(UserContactChallengeView).Name} with correlation id '{correlationId}'.");
+      ConfirmedLogins.Add(challenge.ContactValue);
+    }
   }
 }
