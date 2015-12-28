@@ -25,14 +25,7 @@ namespace EventSourced.Net.ReadModel.Users
 
     public Task<Guid?> Handle(UserIdByLogin query) {
       Guid? userId = null;
-      string normalizedLogin = query.Login?.Trim().ToLower();
-      PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.GetInstance();
-      try {
-        PhoneNumber phoneNumber = phoneNumberUtil.Parse(normalizedLogin, "US");
-        if (phoneNumberUtil.IsValidNumber(phoneNumber)) {
-          normalizedLogin = phoneNumber.NationalNumber.ToString().ToLower();
-        }
-      } catch (NumberParseException) { }
+      string normalizedLogin = ContactIdParser.Normalize(query.Login);
       // ReSharper disable ConvertClosureToMethodGroup
       UserView user = Db.Query<UserView>()
         .SingleOrDefault(x => AQL.In(normalizedLogin, x.ConfirmedLogins.Select(y => AQL.Lower(y))));

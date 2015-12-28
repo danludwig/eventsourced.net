@@ -29,22 +29,20 @@ namespace EventSourced.Net.Domain.Users
     #region Behavior Methods
 
     public void PrepareContactIdChallenge(Guid correlationId, string emailOrPhone) {
-      try {
-        var mailAddress = new MailAddress(emailOrPhone);
+      MailAddress mailAddress = ContactIdParser.AsMailAddress(emailOrPhone);
+      if (mailAddress != null) {
         PrepareContactEmailChallenge(correlationId, mailAddress);
-      } catch (FormatException) {
-        PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.GetInstance();
-        try {
-          PhoneNumber phoneNumber = phoneNumberUtil.Parse(emailOrPhone, "US");
-          bool isValid = phoneNumberUtil.IsValidNumber(phoneNumber);
-          if (!isValid) {
-            throw new InvalidOperationException($"'{emailOrPhone}' does not appear to be a valid email address or US phone number.");
-          }
-          PrepareContactSmsChallenge(correlationId, phoneNumber);
-        } catch (NumberParseException ex) {
-          throw new InvalidOperationException($"'{emailOrPhone}' does not appear to be a valid email address or US phone number.", ex);
-        }
+        return;
       }
+
+      PhoneNumber phoneNumber = ContactIdParser.AsPhoneNumber(emailOrPhone);
+      if (phoneNumber != null) {
+        PrepareContactSmsChallenge(correlationId, phoneNumber);
+        return;
+      }
+
+      throw new InvalidOperationException(
+        $"'{emailOrPhone}' does not appear to be a valid email address or US phone number.");
     }
 
     private void PrepareContactEmailChallenge(Guid correlationId, MailAddress mailAddress) {
@@ -76,8 +74,8 @@ namespace EventSourced.Net.Domain.Users
       var assembly = Assembly.GetExecutingAssembly();
       string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt"))
         .Replace("{Code}", code);
-      RaiseEvent(new ContactSmsChallengePrepared(correlationId, Id, phoneNumber.NationalNumber, "US",
-        purpose, stamp, token, message));
+      RaiseEvent(new ContactSmsChallengePrepared(correlationId, Id, phoneNumber.NationalNumber,
+        ContactIdParser.DefaultRegionCode, purpose, stamp, token, message));
     }
 
     public void VerifyContactChallengeResponse(Guid correlationId, string code) {
@@ -165,7 +163,7 @@ namespace EventSourced.Net.Domain.Users
     private class ContactSmsChallenge : ContactChallenge
     {
       internal ContactSmsChallenge(ContactSmsChallengePrepared e) : base(e) {
-        PhoneNumber = PhoneNumberUtil.GetInstance().Parse(e.PhoneNumber.ToString(), e.RegionCode);
+        PhoneNumber = ContactIdParser.AsPhoneNumber(e.PhoneNumber, e.RegionCode);
       }
 
       internal PhoneNumber PhoneNumber { get; }
