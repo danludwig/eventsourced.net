@@ -46,7 +46,14 @@ namespace EventSourced.Net.Domain.Users
       Guid challengeId = GuidComb.NewGuid();
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromEmail;
-      RaiseEvent(new ContactEmailChallengePrepared(correlationId, challengeId, Id, mailAddress.Address, purpose, stamp));
+      string code = ContactChallengers.TotpCodeProvider.Generate(Id, mailAddress, purpose, stamp);
+      string token = ContactChallengers.DataProtectionTokenProvider.Instance.Generate(Id, purpose, stamp);
+      var assembly = Assembly.GetExecutingAssembly();
+      string body = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Body.txt"))
+        .Replace("{Code}", code);
+      string subject = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Subject.txt"));
+      RaiseEvent(new ContactEmailChallengePrepared(correlationId, challengeId, Id, mailAddress.Address,
+        purpose, stamp, code, token, subject, body));
     }
 
     private void PrepareContactSmsChallenge(Guid correlationId, PhoneNumber phoneNumber) {
@@ -56,7 +63,13 @@ namespace EventSourced.Net.Domain.Users
       Guid challengeId = GuidComb.NewGuid();
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromPhone;
-      RaiseEvent(new ContactSmsChallengePrepared(correlationId, challengeId, Id, phoneNumber.NationalNumber, "US", purpose, stamp));
+      string code = ContactChallengers.TotpCodeProvider.Generate(Id, phoneNumber, purpose, stamp);
+      string token = ContactChallengers.DataProtectionTokenProvider.Instance.Generate(Id, purpose, stamp);
+      var assembly = Assembly.GetExecutingAssembly();
+      string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt"))
+        .Replace("{Code}", code);
+      RaiseEvent(new ContactSmsChallengePrepared(correlationId, challengeId, Id, phoneNumber.NationalNumber, "US",
+        purpose, stamp, code, token, message));
     }
 
     #endregion
@@ -92,7 +105,7 @@ namespace EventSourced.Net.Domain.Users
 
     private class ContactEmailChallenge : ContactChallenge
     {
-      public ContactEmailChallenge(string emailAddress, string stamp, ContactChallengePurpose purpose)
+      internal ContactEmailChallenge(string emailAddress, string stamp, ContactChallengePurpose purpose)
         : base(stamp, purpose) {
         MailAddress = new MailAddress(emailAddress);
       }
@@ -102,7 +115,7 @@ namespace EventSourced.Net.Domain.Users
 
     private class ContactSmsChallenge : ContactChallenge
     {
-      public ContactSmsChallenge(ulong phoneNumber, string regionCode, string stamp, ContactChallengePurpose purpose)
+      internal ContactSmsChallenge(ulong phoneNumber, string regionCode, string stamp, ContactChallengePurpose purpose)
         : base(stamp, purpose) {
         PhoneNumber = PhoneNumberUtil.GetInstance().Parse(phoneNumber.ToString(), regionCode);
       }

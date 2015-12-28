@@ -12,6 +12,7 @@ namespace EventSourced.Net.ReadModel.Users
       Id = message.ChallengeId;
       UserId = message.UserId;
       CorrelationId = message.CorrelationId;
+      Token = message.Token;
       PurposeEnum = message.Purpose;
     }
 
@@ -20,6 +21,7 @@ namespace EventSourced.Net.ReadModel.Users
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
     public Guid CorrelationId { get; set; }
+    public string Token { get; set; }
     public ContactChallengePurpose PurposeEnum { get; set; }
     public string PurposeText => PurposeEnum.ToString();
   }

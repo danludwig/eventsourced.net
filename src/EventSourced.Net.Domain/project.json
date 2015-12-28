@@ -1,10 +1,11 @@
-﻿{
+{
     "version": "1.0.0-*",
     "description": "EventSourced.Net.Domain Class Library",
     "authors": [ "Dan" ],
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
+    "resource": [ "Domain/Users/MailMessages/**/*.*" ],
     "frameworks": {
         "dnx451": { }
     },

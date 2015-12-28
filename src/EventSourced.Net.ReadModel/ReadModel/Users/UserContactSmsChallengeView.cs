@@ -10,9 +10,11 @@ namespace EventSourced.Net.ReadModel.Users
       : base(message) {
       PhoneNumber = message.PhoneNumber;
       RegionCode = message.RegionCode;
+      Message = message.Message;
     }
 
     public ulong PhoneNumber { get; set; }
     public string RegionCode { get; set; }
+    public string Message { get; set; }
   }
 }
