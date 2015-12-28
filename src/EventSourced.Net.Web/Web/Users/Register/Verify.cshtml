@@ -32,6 +32,7 @@
       $('#verify_form').on('submit', function () {
         var $form = $(this), data = {};
         $form.serializeArray().map(function (x) { data[x.name] = x.value; });
+        $form.find('input, button').attr('disabled', 'disabled');
         $.ajax({
           type: 'POST',
           url: $form.attr('action'),
@@ -39,9 +40,11 @@
         })
           .done(function (data, status, xhr) {
             console.log('POST ' + $form.attr('action') + ' response received.');
-            //$form.find('[name=code]').val('');
+            var location = xhr.getResponseHeader('location');
+            window.location = location;
           })
           .fail(function () {
+            $form.find('input, button').removeAttr('disabled');
             console.log('POST ' + $form.attr('action') + ' failed.');
           });
         return false;

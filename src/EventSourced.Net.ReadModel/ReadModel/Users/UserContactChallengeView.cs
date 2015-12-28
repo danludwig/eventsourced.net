@@ -23,5 +23,6 @@ namespace EventSourced.Net.ReadModel.Users
     public string Token { get; set; }
     public ContactChallengePurpose PurposeEnum { get; set; }
     public string PurposeText => PurposeEnum.ToString();
+    public abstract string ContactValue { get; }
   }
 }

@@ -16,5 +16,6 @@ namespace EventSourced.Net.ReadModel.Users
     public ulong PhoneNumber { get; set; }
     public string RegionCode { get; set; }
     public string Message { get; set; }
+    public override string ContactValue => PhoneNumber.ToString();
   }
 }

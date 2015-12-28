@@ -39,7 +39,7 @@ namespace EventSourced.Net.Web.Users.Register
       await Command.SendAsync(new VerifyUserContactChallengeResponse(data.UserId, correlationId, code))
         .ConfigureAwait(false);
 
-      return new CreatedResult(Url.RouteUrl("RegisterVerifyRoute", new { correlationId }),
+      return new CreatedResult(Url.RouteUrl("RegisterRedeemRoute", new { token = data.Token, }),
         new { CorrelationId = correlationId, });
     }
   }

@@ -16,5 +16,6 @@ namespace EventSourced.Net.ReadModel.Users
     public string EmailAddress { get; set; }
     public string MessageSubject { get; set; }
     public string MessageBody { get; set; }
+    public override string ContactValue => EmailAddress;
   }
 }
