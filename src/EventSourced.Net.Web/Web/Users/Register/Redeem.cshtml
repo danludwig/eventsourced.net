@@ -6,13 +6,8 @@
 <h2>@ViewData["Title"].</h2>
 
 <form id="redeem_form" action="/api/register/@Model.CorrelationId/redeem" method="post" class="form-horizontal" role="form">
-  <h4>And don't make it your social security number.</h4>
+  <h4><strong>@Model.ContactValue</strong> will be your login</h4>
   <hr />
-  <div class="form-group">
-    <div class="col-md-10">
-      <strong>@Model.ContactValue</strong>, your username, will be.
-    </div>
-  </div>
   <div class="form-group">
     <div class="col-md-10">
       <label class="control-label sr-only">Password</label>
@@ -22,7 +17,7 @@
   <div class="form-group">
     <div class="col-md-10">
       <label class="control-label sr-only">Confirm Password</label>
-      <input type="password" name="passwordConfirmed" class="form-control" placeholder="Enter same password as above" />
+      <input type="password" name="passwordConfirmation" class="form-control" placeholder="Enter same password as above" />
     </div>
   </div>
   <div class="form-group">

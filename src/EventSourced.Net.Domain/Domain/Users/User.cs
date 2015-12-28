@@ -85,27 +85,30 @@ namespace EventSourced.Net.Domain.Users
         throw new InvalidOperationException("nope");
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (challenge.IsVerified) throw new InvalidOperationException("nope..?");
-      bool isValid;
-      switch (challenge.Purpose) {
-        case ContactChallengePurpose.CreateUserFromEmail:
-          ContactEmailChallenge emailChallenge = (ContactEmailChallenge)challenge;
-          isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, emailChallenge.MailAddress, challenge.Purpose, challenge.Stamp);
-          break;
-        case ContactChallengePurpose.CreateUserFromPhone:
-          ContactSmsChallenge smsChallenge = (ContactSmsChallenge)challenge;
-          isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, smsChallenge.PhoneNumber, challenge.Purpose, challenge.Stamp);
-          break;
-        default:
-          throw new InvalidOperationException("oops");
-      }
+      bool isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, challenge.ContactValue, challenge.Purpose, challenge.Stamp);
       if (!isValid) throw new InvalidOperationException("nope");
       RaiseEvent(new ContactChallengeVerified(correlationId, Id));
+    }
+
+    public void CreatePassword(Guid correlationId, string token, string password, string passwordConfirmation) {
+      if (string.IsNullOrWhiteSpace(password)) throw new InvalidOperationException("nope");
+      if (password != passwordConfirmation) throw new InvalidOperationException("also nope");
+      if (!ContactChallenges.ContainsKey(correlationId) || ContactChallenges[correlationId] == null)
+        throw new InvalidOperationException("nope");
+      ContactChallenge challenge = ContactChallenges[correlationId];
+      if (challenge.IsRedeemed || PasswordHash != null) throw new InvalidOperationException("nope");
+      bool isValid = ContactChallengers.DataProtectionTokenProvider.Instance.Validate(token, Id, challenge.Purpose, challenge.Stamp);
+      if (!isValid) throw new InvalidOperationException("nope");
+
+      string hashedPassword = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
+      RaiseEvent(new PasswordCreated(correlationId, Id, hashedPassword));
     }
 
     #endregion
     #region Internal State
 
     private IDictionary<Guid, ContactChallenge> ContactChallenges { get; }
+    private string PasswordHash { get; set; }
 
     [UsedImplicitly]
     private void Apply(ContactEmailChallengePrepared e) {
@@ -125,21 +128,28 @@ namespace EventSourced.Net.Domain.Users
       challenge.IsVerified = true;
     }
 
+    [UsedImplicitly]
+    private void Apply(PasswordCreated e) {
+      var challenge = ContactChallenges[e.CorrelationId];
+      challenge.IsRedeemed = true;
+      PasswordHash = e.EncryptedPassword;
+    }
+
     #endregion
     #region Private Classes
 
     private abstract class ContactChallenge
     {
       protected ContactChallenge(ContactChallengePrepared e) {
-        CorrelationId = e.CorrelationId;
         Stamp = e.Stamp;
         Purpose = e.Purpose;
       }
 
-      internal Guid CorrelationId { get; }
       internal string Stamp { get; }
       internal ContactChallengePurpose Purpose { get; }
       internal bool IsVerified { get; set; }
+      internal bool IsRedeemed { get; set; }
+      internal abstract string ContactValue { get; }
     }
 
     private class ContactEmailChallenge : ContactChallenge
@@ -148,7 +158,8 @@ namespace EventSourced.Net.Domain.Users
         MailAddress = new MailAddress(e.EmailAddress);
       }
 
-      internal MailAddress MailAddress { get; set; }
+      internal MailAddress MailAddress { get; }
+      internal override string ContactValue => MailAddress.Address;
     }
 
     private class ContactSmsChallenge : ContactChallenge
@@ -157,7 +168,8 @@ namespace EventSourced.Net.Domain.Users
         PhoneNumber = PhoneNumberUtil.GetInstance().Parse(e.PhoneNumber.ToString(), e.RegionCode);
       }
 
-      internal PhoneNumber PhoneNumber { get; set; }
+      internal PhoneNumber PhoneNumber { get; }
+      internal override string ContactValue => PhoneNumber.NationalNumber.ToString();
     }
 
     #endregion

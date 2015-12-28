@@ -24,15 +24,7 @@ namespace EventSourced.Net.Domain.Users.ContactChallengers
       return totpCode;
     }
 
-    public static bool Validate(string totpCode, Guid userId, MailAddress mailAddress, ContactChallengePurpose purpose, string stamp) {
-      return Validate(totpCode, userId, mailAddress.Address, purpose, stamp);
-    }
-
-    public static bool Validate(string totpCode, Guid userId, PhoneNumber phoneNumber, ContactChallengePurpose purpose, string stamp) {
-      return Validate(totpCode, userId, phoneNumber.NationalNumber.ToString(), purpose, stamp);
-    }
-
-    private static bool Validate(string totpCode, Guid userId, string contactValue, ContactChallengePurpose purpose, string stamp) {
+    public static bool Validate(string totpCode, Guid userId, string contactValue, ContactChallengePurpose purpose, string stamp) {
       byte[] stampBytes = Encoding.Unicode.GetBytes(stamp);
       int code;
       if (!int.TryParse(totpCode, out code))

@@ -12,6 +12,7 @@
     "dependencies": {
         "CommonDomain": "1.0.0-*",
         "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+        "Microsoft.AspNet.Cryptography.KeyDerivation":  "1.0.0-rc1-final",
         "libphonenumber-csharp": "7.0.11"
     }
 }
