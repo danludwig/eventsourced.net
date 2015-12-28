@@ -20,8 +20,8 @@ namespace EventSourced.Net.ReadModel.Users
     public IList<UserContactSmsChallengeView> ContactSmsChallenges { get; }
     public IList<UserContactEmailChallengeView> ContactEmailChallenges { get; }
 
-    public UserContactChallengeView ContactChallengeById(Guid challengeId) {
-      return ContactChallenges.SingleOrDefault(x => x.Id == challengeId);
+    public UserContactChallengeView ContactChallengeByCorrelationId(Guid correlationId) {
+      return ContactChallenges.SingleOrDefault(x => x.CorrelationId == correlationId);
     }
 
     public void AddContactChallenge(UserContactChallengeView challenge) {

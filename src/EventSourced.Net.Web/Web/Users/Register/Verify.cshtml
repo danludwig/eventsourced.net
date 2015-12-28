@@ -39,7 +39,7 @@
         })
           .done(function (data, status, xhr) {
             console.log('POST ' + $form.attr('action') + ' response received.');
-            $form.find('[name=code]').val('');
+            //$form.find('[name=code]').val('');
           })
           .fail(function () {
             console.log('POST ' + $form.attr('action') + ' failed.');

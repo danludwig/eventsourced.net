@@ -30,7 +30,7 @@ namespace EventSourced.Net.ReadModel.Users
         user = new UserView { Id = message.UserId, };
         await Db.InsertAsync<UserView>(user);
       }
-      if (user.ContactChallengeById(message.ChallengeId) == null) {
+      if (user.ContactChallengeByCorrelationId(message.CorrelationId) == null) {
         user.AddContactChallenge(challengeItem);
         await Db.UpdateAsync<UserView>(user);
         Db.Insert<UserContactChallengeView>(challengeItem);

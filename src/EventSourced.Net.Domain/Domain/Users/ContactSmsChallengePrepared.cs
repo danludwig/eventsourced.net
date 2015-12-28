@@ -4,15 +4,15 @@ namespace EventSourced.Net.Domain.Users
 {
   public class ContactSmsChallengePrepared : ContactChallengePrepared
   {
-    public ContactSmsChallengePrepared(Guid correlationId, Guid challengeId, Guid userId,
+    public ContactSmsChallengePrepared(Guid correlationId, Guid userId,
       ulong phoneNumber, string regionCode, ContactChallengePurpose purpose,
-      string stamp, string code, string token, string message)
-      : base(correlationId, challengeId, userId, purpose, stamp, phoneNumber.ToString(), code, token) {
+      string stamp, string token, string message)
+      : base(correlationId, userId, purpose, stamp, token) {
 
       PhoneNumber = phoneNumber;
       RegionCode = regionCode;
       Message = message;
-      }
+    }
 
     public ulong PhoneNumber { get; }
     public string RegionCode { get; }

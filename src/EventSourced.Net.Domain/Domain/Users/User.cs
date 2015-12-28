@@ -11,9 +11,17 @@ namespace EventSourced.Net.Domain.Users
   {
     #region Construction
 
-    public User() {
-      Id = GuidComb.NewGuid();
+    private User() {
       ContactChallenges = new Dictionary<Guid, ContactChallenge>();
+    }
+
+    public User(Guid id) : this() {
+      RaiseEvent(new UserCreated(id));
+    }
+
+    [UsedImplicitly]
+    private void Apply(UserCreated e) {
+      Id = e.Id;
     }
 
     #endregion
@@ -40,10 +48,10 @@ namespace EventSourced.Net.Domain.Users
     }
 
     private void PrepareContactEmailChallenge(Guid correlationId, MailAddress mailAddress) {
-      if (ContactChallenges.ContainsKey(correlationId)) throw new InvalidOperationException(
-        $"Contact challenge  with correlationId '{correlationId}' has already been prepared.");
+      if (ContactChallenges.ContainsKey(correlationId) && ContactChallenges[correlationId] != null)
+        throw new InvalidOperationException(
+          $"Contact challenge  for correlationId '{correlationId}' has already been prepared.");
 
-      Guid challengeId = GuidComb.NewGuid();
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromEmail;
       string code = ContactChallengers.TotpCodeProvider.Generate(Id, mailAddress, purpose, stamp);
@@ -52,15 +60,15 @@ namespace EventSourced.Net.Domain.Users
       string body = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Body.txt"))
         .Replace("{Code}", code);
       string subject = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Subject.txt"));
-      RaiseEvent(new ContactEmailChallengePrepared(correlationId, challengeId, Id, mailAddress.Address,
-        purpose, stamp, code, token, subject, body));
+      RaiseEvent(new ContactEmailChallengePrepared(correlationId, Id, mailAddress.Address,
+        purpose, stamp, token, subject, body));
     }
 
     private void PrepareContactSmsChallenge(Guid correlationId, PhoneNumber phoneNumber) {
-      if (ContactChallenges.ContainsKey(correlationId)) throw new InvalidOperationException(
-        $"Contact challenge with correlationId '{correlationId}' has already been prepared.");
+      if (ContactChallenges.ContainsKey(correlationId) && ContactChallenges[correlationId] != null)
+        throw new InvalidOperationException(
+          $"Contact challenge  for correlationId '{correlationId}' has already been prepared.");
 
-      Guid challengeId = GuidComb.NewGuid();
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromPhone;
       string code = ContactChallengers.TotpCodeProvider.Generate(Id, phoneNumber, purpose, stamp);
@@ -68,8 +76,30 @@ namespace EventSourced.Net.Domain.Users
       var assembly = Assembly.GetExecutingAssembly();
       string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt"))
         .Replace("{Code}", code);
-      RaiseEvent(new ContactSmsChallengePrepared(correlationId, challengeId, Id, phoneNumber.NationalNumber, "US",
-        purpose, stamp, code, token, message));
+      RaiseEvent(new ContactSmsChallengePrepared(correlationId, Id, phoneNumber.NationalNumber, "US",
+        purpose, stamp, token, message));
+    }
+
+    public void VerifyContactChallengeResponse(Guid correlationId, string code) {
+      if (!ContactChallenges.ContainsKey(correlationId) || ContactChallenges[correlationId] == null)
+        throw new InvalidOperationException("nope");
+      ContactChallenge challenge = ContactChallenges[correlationId];
+      if (challenge.IsVerified) throw new InvalidOperationException("nope..?");
+      bool isValid;
+      switch (challenge.Purpose) {
+        case ContactChallengePurpose.CreateUserFromEmail:
+          ContactEmailChallenge emailChallenge = (ContactEmailChallenge)challenge;
+          isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, emailChallenge.MailAddress, challenge.Purpose, challenge.Stamp);
+          break;
+        case ContactChallengePurpose.CreateUserFromPhone:
+          ContactSmsChallenge smsChallenge = (ContactSmsChallenge)challenge;
+          isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, smsChallenge.PhoneNumber, challenge.Purpose, challenge.Stamp);
+          break;
+        default:
+          throw new InvalidOperationException("oops");
+      }
+      if (!isValid) throw new InvalidOperationException("nope");
+      RaiseEvent(new ContactChallengeVerified(correlationId, Id));
     }
 
     #endregion
@@ -79,14 +109,20 @@ namespace EventSourced.Net.Domain.Users
 
     [UsedImplicitly]
     private void Apply(ContactEmailChallengePrepared e) {
-      var challenge = new ContactEmailChallenge(e.EmailAddress, e.Stamp, e.Purpose);
+      var challenge = new ContactEmailChallenge(e);
       ContactChallenges[e.CorrelationId] = challenge;
     }
 
     [UsedImplicitly]
     private void Apply(ContactSmsChallengePrepared e) {
-      var challenge = new ContactSmsChallenge(e.PhoneNumber, e.RegionCode, e.Stamp, e.Purpose);
+      var challenge = new ContactSmsChallenge(e);
       ContactChallenges[e.CorrelationId] = challenge;
+    }
+
+    [UsedImplicitly]
+    private void Apply(ContactChallengeVerified e) {
+      var challenge = ContactChallenges[e.CorrelationId];
+      challenge.IsVerified = true;
     }
 
     #endregion
@@ -94,20 +130,22 @@ namespace EventSourced.Net.Domain.Users
 
     private abstract class ContactChallenge
     {
-      protected ContactChallenge(string stamp, ContactChallengePurpose purpose) {
-        Stamp = stamp;
-        Purpose = purpose;
+      protected ContactChallenge(ContactChallengePrepared e) {
+        CorrelationId = e.CorrelationId;
+        Stamp = e.Stamp;
+        Purpose = e.Purpose;
       }
 
+      internal Guid CorrelationId { get; }
       internal string Stamp { get; }
       internal ContactChallengePurpose Purpose { get; }
+      internal bool IsVerified { get; set; }
     }
 
     private class ContactEmailChallenge : ContactChallenge
     {
-      internal ContactEmailChallenge(string emailAddress, string stamp, ContactChallengePurpose purpose)
-        : base(stamp, purpose) {
-        MailAddress = new MailAddress(emailAddress);
+      internal ContactEmailChallenge(ContactEmailChallengePrepared e) : base(e) {
+        MailAddress = new MailAddress(e.EmailAddress);
       }
 
       internal MailAddress MailAddress { get; set; }
@@ -115,9 +153,8 @@ namespace EventSourced.Net.Domain.Users
 
     private class ContactSmsChallenge : ContactChallenge
     {
-      internal ContactSmsChallenge(ulong phoneNumber, string regionCode, string stamp, ContactChallengePurpose purpose)
-        : base(stamp, purpose) {
-        PhoneNumber = PhoneNumberUtil.GetInstance().Parse(phoneNumber.ToString(), regionCode);
+      internal ContactSmsChallenge(ContactSmsChallengePrepared e) : base(e) {
+        PhoneNumber = PhoneNumberUtil.GetInstance().Parse(e.PhoneNumber.ToString(), e.RegionCode);
       }
 
       internal PhoneNumber PhoneNumber { get; set; }

@@ -9,7 +9,7 @@ namespace EventSourced.Net.ReadModel.Users
     protected UserContactChallengeView() { }
 
     protected UserContactChallengeView(ContactChallengePrepared message) {
-      Id = message.ChallengeId;
+      CorrelationId = message.CorrelationId;
       UserId = message.UserId;
       CorrelationId = message.CorrelationId;
       Token = message.Token;
@@ -17,10 +17,9 @@ namespace EventSourced.Net.ReadModel.Users
     }
 
     [DocumentProperty(Identifier = IdentifierType.Key)]
-    public string Key => Id.ToString();
-    public Guid Id { get; set; }
-    public Guid UserId { get; set; }
+    public string Key => CorrelationId.ToString();
     public Guid CorrelationId { get; set; }
+    public Guid UserId { get; set; }
     public string Token { get; set; }
     public ContactChallengePurpose PurposeEnum { get; set; }
     public string PurposeText => PurposeEnum.ToString();
