@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using EventSourced.Net.ReadModel.Users;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc.Controllers;
@@ -57,10 +56,9 @@ namespace EventSourced.Net.Web
 
     private void ComposeRoot() {
       Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
-      Assembly[] eventHandlerAssemblies = new[]
-      {
+      Assembly[] eventHandlerAssemblies = {
         typeof(IHandleEvent<>).Assembly,
-        typeof(UserView).Assembly,
+        typeof(ReadModel.Users.Internal.Handlers.CreateUserDocument).Assembly,
         GetType().Assembly,
       };
       var packages = new IPackage[] {

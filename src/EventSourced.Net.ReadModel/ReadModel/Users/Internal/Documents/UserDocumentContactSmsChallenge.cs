@@ -1,12 +1,12 @@
 using EventSourced.Net.Domain.Users;
 
-namespace EventSourced.Net.ReadModel.Users
+namespace EventSourced.Net.ReadModel.Users.Internal.Documents
 {
-  public class UserContactSmsChallengeView : UserContactChallengeView
+  public class UserDocumentContactSmsChallenge : UserDocumentContactChallenge
   {
-    public UserContactSmsChallengeView() { }
+    public UserDocumentContactSmsChallenge() { }
 
-    public UserContactSmsChallengeView(ContactSmsChallengePrepared message)
+    public UserDocumentContactSmsChallenge(ContactSmsChallengePrepared message)
       : base(message) {
       PhoneNumber = message.PhoneNumber;
       RegionCode = message.RegionCode;

@@ -29,13 +29,14 @@ namespace EventSourced.Net.Web.Users.Register
 
     [HttpGet, Route("register/{correlationId}/redeem", Name = "RegisterRedeemRoute")]
     public async Task<IActionResult> Redeem(Guid correlationId, string token) {
-      UserContactChallengeView data = await Query.Execute(new UserContactChallengeByCorrelationId(correlationId));
-      if (data == null) return HttpNotFound();
+      UserContactChallengeCreatePasswordView view = await Query
+        .Execute(new UserContactChallengeCreatePasswordQuery(correlationId, token));
+      if (view == null) return HttpNotFound();
 
       var model = new RedeemViewModel {
         CorrelationId = correlationId,
         Token = token,
-        ContactValue = data.ContactValue,
+        ContactValue = view.ContactValue,
       };
       return View("~/Web/Users/Register/Redeem.cshtml", model);
     }
