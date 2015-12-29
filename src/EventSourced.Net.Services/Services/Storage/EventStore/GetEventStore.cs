@@ -125,12 +125,17 @@ namespace EventSourced.Net.Services.Storage.EventStore
           "--start-standard-projections",
         };
       var isWindows = IsWindows();
-      if (!isWindows) args.Insert(0, $"./{MacExecutableFileName}");
+      if (!isWindows) {
+        args.Insert(0, "-a");
+        args.Insert(1, "Terminal.app");
+        args.Insert(2, MacExecutableFileName);
+        args.Insert(3, "--args");
+      }
 
       var process = new Process {
         StartInfo = new ProcessStartInfo {
+          FileName = isWindows ? WindowsExecutableFileName : "open",
           WorkingDirectory = Path.GetFullPath(Path.Combine(basePath, InstallPath)),
-          FileName = isWindows ? WindowsExecutableFileName : "bash",
           Arguments = args.Aggregate((current, next) => $"{current} {next}"),
           UseShellExecute = true,
           CreateNoWindow = false,
