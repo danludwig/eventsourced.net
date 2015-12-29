@@ -1,35 +1,43 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNet.DataProtection;
 
 namespace EventSourced.Net.Domain.Users.ContactChallengers
 {
-  internal class DataProtectionTokenProvider
+  public class DataProtectionTokenProvider
   {
-    internal static readonly DataProtectionTokenProvider Instance = new DataProtectionTokenProvider();
+    private static Func<IDataProtectionProvider> ProviderFactory { get; set; }
+    private static readonly TimeSpan TokenLifespan = TimeSpan.FromMinutes(30);
     private static readonly Encoding DefaultEncoding = new UTF8Encoding(false, true);
-    private DpapiDataProtector Protector { get; }
-    private TimeSpan TokenLifespan { get; }
 
-    private DataProtectionTokenProvider() {
-      ContactChallengePurpose[] purposes = Enum.GetValues(typeof(ContactChallengePurpose))
-        .Cast<ContactChallengePurpose>()
-        .Except(new[] { ContactChallengePurpose.Invalid })
-        .ToArray();
-      string primaryPurpose = purposes.First().ToString();
-      string[] specificPurposes = purposes.Skip(1).Select(x => x.ToString()).ToArray();
-      Protector = new DpapiDataProtector("EventSourced.Net", primaryPurpose, specificPurposes) {
-        Scope = DataProtectionScope.LocalMachine,
-      };
-      TokenLifespan = TimeSpan.FromMinutes(30);
+    public static void SetProviderFactory(Func<IDataProtectionProvider> providerFactory) {
+      if (providerFactory == null) throw new ArgumentNullException(nameof(providerFactory));
+      ProviderFactory = providerFactory;
     }
 
-    internal string Generate(Guid userId, ContactChallengePurpose purpose, string stamp) {
+    internal static string Generate(Guid userId, ContactChallengePurpose purpose, string stamp) {
+      return new DataProtectionTokenProvider().GenerateCore(userId, purpose, stamp);
+    }
+
+    internal static bool Validate(string token, Guid userId, ContactChallengePurpose purpose, string stamp) {
+      return new DataProtectionTokenProvider().ValidateCore(token, userId, purpose, stamp);
+    }
+
+    private IDataProtector Protector { get; }
+
+    private DataProtectionTokenProvider() {
+      IDataProtectionProvider provider = ProviderFactory();
+      string[] purposes = Enum.GetValues(typeof(ContactChallengePurpose))
+       .Cast<ContactChallengePurpose>()
+       .Except(new[] { ContactChallengePurpose.Invalid })
+       .Select(x => x.ToString())
+       .ToArray();
+      Protector = provider.CreateProtector(GetType().Assembly.GetName().Name, purposes);
+    }
+
+    private string GenerateCore(Guid userId, ContactChallengePurpose purpose, string stamp) {
       MemoryStream memoryStream = new MemoryStream();
       using (var writer = new BinaryWriter(memoryStream, DefaultEncoding, true)) {
         writer.Write(DateTimeOffset.UtcNow.Ticks);
@@ -43,7 +51,7 @@ namespace EventSourced.Net.Domain.Users.ContactChallengers
       return token;
     }
 
-    internal bool Validate(string token, Guid userId, ContactChallengePurpose purpose, string stamp) {
+    private bool ValidateCore(string token, Guid userId, ContactChallengePurpose purpose, string stamp) {
       try {
         byte[] unprotectedData = Protector.Unprotect(Convert.FromBase64String(token));
         var ms = new MemoryStream(unprotectedData);

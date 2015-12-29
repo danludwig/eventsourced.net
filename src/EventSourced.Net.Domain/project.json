@@ -7,15 +7,11 @@
     "licenseUrl": "",
     "resource": [ "Domain/Users/MailMessages/**/*.*" ],
     "frameworks": {
-        "dnx451": {
-            "frameworkAssemblies": {
-                "System.Security": "4.0.0.0"
-            }
-        }
+        "dnx451": {}
     },
     "dependencies": {
         "CommonDomain": "1.0.0-*",
-        "Microsoft.AspNet.DataProtection": "1.0.0-rc1-final",
+        "Microsoft.AspNet.DataProtection.Abstractions": "1.0.0-rc1-final",
         "Microsoft.AspNet.Cryptography.KeyDerivation": "1.0.0-rc1-final",
         "libphonenumber-csharp": "7.0.11"
     }

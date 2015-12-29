@@ -1,6 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.DataProtection;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
@@ -52,7 +54,9 @@ namespace EventSourced.Net.Web
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory) {
+    public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) {
+      Domain.Users.ContactChallengers.DataProtectionTokenProvider
+        .SetProviderFactory(serviceProvider.GetRequiredService<IDataProtectionProvider>);
       loggerFactory.AddDebug();
       ComposeRoot();
       app.UseIISPlatformHandler();

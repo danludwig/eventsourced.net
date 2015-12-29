@@ -53,7 +53,7 @@ namespace EventSourced.Net.Domain.Users
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromEmail;
       string code = ContactChallengers.TotpCodeProvider.Generate(Id, mailAddress, purpose, stamp);
-      string token = ContactChallengers.DataProtectionTokenProvider.Instance.Generate(Id, purpose, stamp);
+      string token = ContactChallengers.DataProtectionTokenProvider.Generate(Id, purpose, stamp);
       var assembly = Assembly.GetExecutingAssembly();
       string body = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Body.txt"))
         .Replace("{Code}", code);
@@ -70,7 +70,7 @@ namespace EventSourced.Net.Domain.Users
       string stamp = Guid.NewGuid().ToString();
       var purpose = ContactChallengePurpose.CreateUserFromPhone;
       string code = ContactChallengers.TotpCodeProvider.Generate(Id, phoneNumber, purpose, stamp);
-      string token = ContactChallengers.DataProtectionTokenProvider.Instance.Generate(Id, purpose, stamp);
+      string token = ContactChallengers.DataProtectionTokenProvider.Generate(Id, purpose, stamp);
       var assembly = Assembly.GetExecutingAssembly();
       string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt"))
         .Replace("{Code}", code);
@@ -95,7 +95,7 @@ namespace EventSourced.Net.Domain.Users
         throw new InvalidOperationException("nope");
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (challenge.IsRedeemed || PasswordHash != null) throw new InvalidOperationException("nope");
-      bool isValid = ContactChallengers.DataProtectionTokenProvider.Instance.Validate(token, Id, challenge.Purpose, challenge.Stamp);
+      bool isValid = ContactChallengers.DataProtectionTokenProvider.Validate(token, Id, challenge.Purpose, challenge.Stamp);
       if (!isValid) throw new InvalidOperationException("nope");
 
       string hashedPassword = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
