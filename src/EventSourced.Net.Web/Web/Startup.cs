@@ -24,16 +24,15 @@ namespace EventSourced.Net.Web
     public Startup(IHostingEnvironment hostEnv, IApplicationEnvironment appEnv) {
       Container = new Container();
 
-      if (hostEnv.IsDevelopment()) { // download & start databases, where possible
-        var eventStoreInstallAndRunTask = Task.Factory.StartNew(() => {
-          Services.Storage.EventStore.GetEventStore.EnsureRunning(appEnv.ApplicationBasePath);
-        });
-        var arangoDbInstallOnWindowsTask = Task.Factory.StartNew(() => {
-          Services.Storage.ArangoDb.GetArangoDb.EnsureRunningIfPlatformIsWindows(appEnv.ApplicationBasePath);
-          Services.Storage.ArangoDb.GetArangoDb.EnsureConfigured(new Services.Storage.ArangoDb.Settings());
-        });
-        Task.WaitAll(eventStoreInstallAndRunTask, arangoDbInstallOnWindowsTask);
-      }
+      // download & start databases, where possible
+      var eventStoreInstallAndRunTask = Task.Factory.StartNew(() => {
+        Services.Storage.EventStore.GetEventStore.EnsureRunning(appEnv.ApplicationBasePath);
+      });
+      var arangoDbInstallOnWindowsTask = Task.Factory.StartNew(() => {
+        Services.Storage.ArangoDb.GetArangoDb.EnsureRunningIfPlatformIsWindows(appEnv.ApplicationBasePath);
+        Services.Storage.ArangoDb.GetArangoDb.EnsureConfigured(new Services.Storage.ArangoDb.Settings());
+      });
+      Task.WaitAll(eventStoreInstallAndRunTask, arangoDbInstallOnWindowsTask);
 
       IConfigurationBuilder builder = new ConfigurationBuilder()
         .SetBasePath(appEnv.ApplicationBasePath)

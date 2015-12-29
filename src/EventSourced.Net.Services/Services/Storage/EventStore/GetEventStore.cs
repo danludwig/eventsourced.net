@@ -83,7 +83,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
 
       } else if (compressedPath.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase)) {
         var workingDirectory = Path.GetFullPath(Path.Combine(basePath,
-            InstallPath.Substring(0, InstallPath.LastIndexOf("/"))));
+            InstallPath.Substring(0, InstallPath.LastIndexOf("/", StringComparison.Ordinal))));
         var processStartInfo = new ProcessStartInfo {
           WorkingDirectory = workingDirectory,
           FileName = "gunzip",
