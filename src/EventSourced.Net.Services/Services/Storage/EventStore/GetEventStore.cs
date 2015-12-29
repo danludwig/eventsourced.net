@@ -18,7 +18,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
     private static bool? _isWindows;
     private static readonly object BlockAllOtherThreads = new object();
 
-    public static void EnsureInstalled(string basePath = null) {
+    public static void EnsureInstalled(string basePath) {
       basePath = basePath ?? Environment.CurrentDirectory;
       lock (BlockAllOtherThreads) {
         if (IsInstalled(basePath)) return;
@@ -39,7 +39,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
     private static void CleanInstallPath(string basePath) {
       string pathToClean = Path.GetFullPath(Path.Combine(basePath, InstallPath));
       if (Directory.Exists(pathToClean)) {
-        Directory.Delete(pathToClean);
+        Directory.Delete(pathToClean, true);
       }
     }
 

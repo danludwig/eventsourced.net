@@ -6,13 +6,20 @@ namespace EventSourced.Net.Services.Storage.ArangoDb
 {
   public class Package : IPackage
   {
+    private Settings Settings { get; }
+
+    public Package(Settings settings = null) {
+      Settings = settings ?? new Settings();
+    }
+
     public void RegisterServices(Container container) {
-      container.RegisterSingleton<DatabaseSharedSetting>(() => new DatabaseSharedSetting {
-        Url = "http://localhost:8529",
-        Database = "EventSourced",
-        CreateCollectionOnTheFly = true,
-        WaitForSync = true,
-      });
+      container.RegisterSingleton(() =>
+        new DatabaseSharedSetting {
+          Url = Settings.ServerUrl,
+          Database = Settings.DbName,
+          WaitForSync = true,
+        }
+      );
       container.Register<IArangoDatabase>(() =>
         new ArangoDatabase(container.GetInstance<DatabaseSharedSetting>()), Lifestyle.Scoped);
     }
