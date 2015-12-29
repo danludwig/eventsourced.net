@@ -83,7 +83,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
 
       } else if (compressedPath.EndsWith(".tar.gz", StringComparison.OrdinalIgnoreCase)) {
         var workingDirectory = Path.GetFullPath(Path.Combine(basePath,
-          compressedPath.Split('/').Reverse().Skip(1).First()));
+            InstallPath.Substring(0, InstallPath.LastIndexOf("/"))));
         var processStartInfo = new ProcessStartInfo {
           WorkingDirectory = workingDirectory,
           FileName = "gunzip",
@@ -104,7 +104,9 @@ namespace EventSourced.Net.Services.Storage.EventStore
         if (File.Exists(compressedPath)) File.Delete(compressedPath);
 
         compressedPath = compressedPath.Substring(0, compressedPath.Length - 4);
-        Directory.Move(compressedPath, Path.GetFullPath(Path.Combine(basePath, InstallPath)));
+        string installPath = Path.GetFullPath(Path.Combine(basePath, InstallPath));
+        if (Directory.Exists(installPath)) Directory.Delete(installPath);
+        Directory.Move(compressedPath, installPath);
 
       } else {
         throw new NotSupportedException($"Unable to install EventStore from compressed path '{compressedPath}'.");
