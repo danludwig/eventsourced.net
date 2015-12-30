@@ -108,7 +108,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
         string installPath = Path.GetFullPath(Path.Combine(basePath, InstallPath));
         if (Directory.Exists(installPath)) Directory.Delete(installPath);
         Directory.Move(compressedPath, installPath);
-        
+
         string runNodePath = Path.GetFullPath(Path.Combine(installPath, "run-node.sh"));
         string runDevDbNodePath = Path.GetFullPath(Path.Combine(installPath, MacExecutableFileName));
         File.Copy(runNodePath, runDevDbNodePath);
