@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 
 namespace EventSourced.Net.Services.Storage.EventStore
 {
@@ -13,7 +14,7 @@ namespace EventSourced.Net.Services.Storage.EventStore
     private const string WindowsDownloadUrl = "http://download.geteventstore.com/binaries/EventStore-OSS-Win-v3.3.1.zip";
     private const string WindowsExecutableFileName = "EventStore.ClusterNode.exe";
     private const string MacDownloadUrl = "http://download.geteventstore.com/binaries/EventStore-OSS-MacOSX-v3.3.1.tar.gz";
-    private const string MacExecutableFileName = "run-node.sh";
+    private const string MacExecutableFileName = "run-devdb-node.sh";
     private const string InstallPath = "../../devdbs/EventStore";
     private static bool? _isWindows;
     private static readonly object BlockAllOtherThreads = new object();
@@ -107,6 +108,14 @@ namespace EventSourced.Net.Services.Storage.EventStore
         string installPath = Path.GetFullPath(Path.Combine(basePath, InstallPath));
         if (Directory.Exists(installPath)) Directory.Delete(installPath);
         Directory.Move(compressedPath, installPath);
+        
+        string runNodePath = Path.GetFullPath(Path.Combine(installPath, "run-node.sh"));
+        string runDevDbNodePath = Path.GetFullPath(Path.Combine(installPath, MacExecutableFileName));
+        File.Copy(runNodePath, runDevDbNodePath);
+        Assembly assembly = Assembly.GetExecutingAssembly();
+        string runDevDbNodeContents = assembly.GetManifestResourceText(assembly.GetManifestResourceName(MacExecutableFileName))
+          .Replace("{EventStoreInstallPath}", installPath);
+        File.WriteAllText(runDevDbNodePath, runDevDbNodeContents);
 
       } else {
         throw new NotSupportedException($"Unable to install EventStore from compressed path '{compressedPath}'.");

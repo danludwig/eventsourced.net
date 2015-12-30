@@ -5,6 +5,7 @@
     "tags": [ "" ],
     "projectUrl": "",
     "licenseUrl": "",
+    "resource": "**/run-devdb-node.sh",
     "frameworks": {
         "dnx451": {
             "frameworkAssemblies": {
