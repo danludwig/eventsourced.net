@@ -130,7 +130,7 @@ namespace EventSourced.Net.Domain.Users
     private void Apply(PasswordCreated e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsRedeemed = true;
-      PasswordHash = e.EncryptedPassword;
+      PasswordHash = e.PasswordHash;
     }
 
     #endregion
