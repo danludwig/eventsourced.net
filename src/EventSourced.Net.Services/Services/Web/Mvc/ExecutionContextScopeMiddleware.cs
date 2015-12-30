@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Http;
@@ -20,7 +21,12 @@ namespace EventSourced.Net.Services.Web.Mvc
 
     public async Task Invoke(HttpContext context) {
       using (_container.BeginExecutionContextScope()) {
-        await _next.Invoke(context).ConfigureAwait(false);
+        try {
+          await _next.Invoke(context).ConfigureAwait(false);
+        } catch (Exception ex) {
+          Console.WriteLine(ex.ToString());
+          throw;
+        }
       }
     }
   }
