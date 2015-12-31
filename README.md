@@ -47,7 +47,7 @@ dnvm use 1.0.0-rc1-final -persistent
   git clone https://github.com/danludwig/eventsourced.net.git
 
 # Restore nuget dependencies (if necessary) & start up the web server.
-# In either command prompt or powershell:
+# In command prompt:
 cd /path/to/local/working/copy/parent/eventsourced.net # where ever that may be
 dnu restore
 cd src/EventSourced.Net.Web
@@ -61,6 +61,8 @@ dnx web
 The very first time you run `dnx web`, the app will automatically download a couple of zip files (containing the database servers), extract them to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded. If you would like to monitor the progress of this, navigate to the `devdbs` folder which will be created in the root of your working copy of the repository. It should create 2 subfolders under `devdbs`, one for `EventStore` and another for `ArangoDB`. If you delete these folders, the app will recreate them the next time its web server is started.
 
 If you encounter any errors, try running `dnx web` at least one more time before [posting an issue here in GitHub](https://github.com/danludwig/eventsourced.net/issues). There can be race conditions during the very first startup while the databases are set up. Once they are set up, starting the app should be as simple as running `dnx web` from the `src/EventSourced.Net.Web` repository directory.
+
+To stop the app, type CTRL+C in each of the 3 command prompts until their processes are stopped.
 
 ### On Windows with Visual Studio
 
