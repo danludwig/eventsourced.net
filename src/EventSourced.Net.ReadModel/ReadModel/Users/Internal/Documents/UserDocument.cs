@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using ArangoDB.Client;
+using ArangoDB.Client.Common.Newtonsoft.Json;
 
 namespace EventSourced.Net.ReadModel.Users.Internal.Documents
 {
@@ -47,6 +48,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
       ContactEmailChallenges.Add(challenge);
     }
 
+    [JsonIgnore]
     public IReadOnlyCollection<UserDocumentContactChallenge> ContactChallenges =>
       new ReadOnlyCollection<UserDocumentContactChallenge>(ContactEmailChallenges
         .Cast<UserDocumentContactChallenge>().Union(ContactSmsChallenges).ToArray());

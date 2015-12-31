@@ -1,4 +1,6 @@
 using System;
+using ArangoDB.Client.Common.Newtonsoft.Json;
+using ArangoDB.Client.Common.Newtonsoft.Json.Converters;
 using EventSourced.Net.Domain.Users;
 
 namespace EventSourced.Net.ReadModel.Users.Internal.Documents
@@ -10,13 +12,14 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
     protected UserDocumentContactChallenge(ContactChallengePrepared message) {
       CorrelationId = message.CorrelationId;
       Token = message.Token;
-      PurposeEnum = message.Purpose;
+      Purpose = message.Purpose;
     }
 
     public Guid CorrelationId { get; set; }
     public string Token { get; set; }
-    public ContactChallengePurpose PurposeEnum { get; set; }
-    public string PurposeText => PurposeEnum.ToString();
+    [JsonConverter(typeof(StringEnumConverter))]
+    public ContactChallengePurpose Purpose { get; set; }
+    [ArangoDB.Client.Common.Newtonsoft.Json.JsonIgnore]
     public abstract string ContactValue { get; }
   }
 }
