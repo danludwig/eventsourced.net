@@ -1,9 +1,15 @@
 # EventSourced.Net
 Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & Domain-Driven Design, *not* Entity Framework.
 
-
-
 ## Up and running
+
+```
+# Clone the repository if you haven't already.
+# In git bash:
+  cd /path/to/local/working/copy/parent # where ever that may be
+  git clone https://github.com/danludwig/eventsourced.net.git
+```
+
 This is an ASP.NET 5 vNext project, currently based on runtime version 1.0.0-rc1-final. Although you won't need to do very much to get it up and running, you will need the [DotNetVersionManager (`dnvm`)](https://github.com/aspnet/Home/blob/dev/README.md#what-you-need) with [runtime 1.0.0-rc1-final installed](https://github.com/aspnet/Home/wiki/Version-Manager#using-the-version-manager) and available in the path. Until all of this project's dependent libraries have clr core50-compatible releases, it can only target the `dnx451` framework. This means if you are running it on a Mac, [you will need mono](http://www.mono-project.com/download/) in addition to the dnvm & 1.0.0-rc1-final runtime.
 
 Note the very first time you start up the app (using either `dnx web`, OmniSharp, or Visual Studio), the app will automatically download a (couple of) compressed file(s) containing the database server(s). On windows both databases will be downloaded, but for MacOS, only one is currently automated. Next, the app will install each database by extracting its compressed file to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your platform, network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded.
@@ -25,11 +31,27 @@ Whether you want to run the app with or without Visual Studio, you probably don'
     netsh http delete urlacl url=http://localhost:2113/
 ```
 
-
-
 #### With Visual Studio
 
-Parts about running in Visual Studio.
+To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Visual Studio Update 1 should automatically install the DotNetVersionManager (`dnvm`) for you, but may not install runtime version `1.0.0-rc1-final`. Use the following to make sure you have the correct runtime installed and available in your user path.
+
+```
+# Install & set up runtime version 1.0.0-rc1-final if necessary.
+# In either command prompt or powershell:
+dnvm install 1.0.0-rc1-final
+dnvm use 1.0.0-rc1-final -persistent
+```
+
+Open the [EventSourced.Net.sln](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln) file in Visual Studio, wait for the projects to load, then select `Build > Rebuild Solution` from the menu bar. You should see some output while Visual Studio uses the `dnu restore` utility in the background to download any missing nuget packages. If for any reason this fails, run `dnu restore` manually to kick Visual Studio back into shape.
+
+```
+# Restore nuget dependencies (if necessary).
+# In command prompt:
+cd /path/to/local/working/copy/parent/eventsourced.net # where ever that may be
+dnu restore
+```
+
+Finally, hit F5 or select `Debug > Start Without Debugging` from the menu bar to start up the app.
 
 #### Without Visual Studio
 
@@ -58,12 +80,7 @@ Parts about running in Visual Studio.
 dnvm install 1.0.0-rc1-final
 dnvm use 1.0.0-rc1-final -persistent
 
-# Clone the repository if you haven't already.
-# In git bash:
-  cd /path/to/local/working/copy/parent # where ever that may be
-  git clone https://github.com/danludwig/eventsourced.net.git
-
-# Restore nuget dependencies (if necessary) & start up the web server.
+# Restore nuget dependencies (if necessary) & start up the app
 # In command prompt:
 cd /path/to/local/working/copy/parent/eventsourced.net # where ever that may be
 dnu restore
