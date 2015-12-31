@@ -4,11 +4,18 @@ Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & 
 
 
 ## Up and running
-This is an ASP.NET 5 vNext project, currently based on runtime version 1.0.0-rc1-final. Although you won't need to do very much to get it up and running, you will need the [DotNetVersionManager (`dnvm`)](https://github.com/aspnet/Home/blob/dev/README.md#what-you-need) with [runtime 1.0.0-rc1-final installed](https://github.com/aspnet/Home/wiki/Version-Manager#using-the-version-manager) and available in the path.
+This is an ASP.NET 5 vNext project, currently based on runtime version 1.0.0-rc1-final. Although you won't need to do very much to get it up and running, you will need the [DotNetVersionManager (`dnvm`)](https://github.com/aspnet/Home/blob/dev/README.md#what-you-need) with [runtime 1.0.0-rc1-final installed](https://github.com/aspnet/Home/wiki/Version-Manager#using-the-version-manager) and available in the path. Until all of this project's dependent libraries have clr core50-compatible releases, it can only target the `dnx451` framework. This means if you are running it on a Mac, [you will need mono](http://www.mono-project.com/download/) in addition to the dnvm & 1.0.0-rc1-final runtime.
 
-Until all of this project's dependent libraries have clr core50-compatible releases, it can only target the `dnx451` framework. This means if you are running it on a Mac, [you will need mono](http://www.mono-project.com/download/) in addition to the dnvm & 1.0.0-rc1-final runtime.
+Note the very first time you start up the app (using either `dnx web`, OmniSharp, or Visual Studio), the app will automatically download a (couple of) compressed file(s) containing the database server(s). On windows both databases will be downloaded, but for MacOS, only one is currently automated. Next, the app will install each database by extracting its compressed file to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your platform, network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded.
 
-### On Windows without Visual Studio
+If you would like to monitor the progress of this, navigate to the `devdbs` folder which will be created in the root of your working copy of the repository. On both platforms it should create a subfolder under `devdbs` for `EventStore`, whereas on windows it will also create a subfolder for `ArangoDB`. If you delete these folders, the app will recreate them the next time its web server is started.
+
+If you encounter any errors, try running the app at least one more time before [posting an issue here in GitHub](https://github.com/danludwig/eventsourced.net/issues). There can be race conditions during the very first run while the databases are set up. Once they are set up, starting the app should be as simple as running `dnx web` from the `src/EventSourced.Net.Web` repository directory, or F5 from Visual Studio.
+
+### On Windows
+
+Whether you want to run the app with or without Visual Studio, you probably don't want to have to start things up as administrator all of the time. This app uses a database called [EventStore](https://geteventstore.com/), which when not run under an administrator security context, can encounter an error when trying to start its HTTP server at http://localhost:2113. To work around this, you should add a Access Control List (ACL) for this url.
+
 ```
 # Allow EventStore to run without administrative privileges if you haven't already.
 # In either command prompt or powershell **as administrator**:
@@ -16,7 +23,17 @@ Until all of this project's dependent libraries have clr core50-compatible relea
   netsh http add urlacl url=http://localhost:2113/ user=everyone
   # If you ever want to reverse this, run the following (also as administrator):
     netsh http delete urlacl url=http://localhost:2113/
+```
 
+
+
+#### With Visual Studio
+
+Parts about running in Visual Studio.
+
+#### Without Visual Studio
+
+```
 # Install the DotNetVersionManager if necessary.
 # In either command prompt or powershell:
   dnvm
@@ -58,12 +75,8 @@ dnx web
 # Finally, navigate to http://localhost:5000 in your favorite browser.
 ```
 
-The very first time you run `dnx web`, the app will automatically download a couple of zip files (containing the database servers), extract them to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded. If you would like to monitor the progress of this, navigate to the `devdbs` folder which will be created in the root of your working copy of the repository. It should create 2 subfolders under `devdbs`, one for `EventStore` and another for `ArangoDB`. If you delete these folders, the app will recreate them the next time its web server is started.
 
-If you encounter any errors, try running `dnx web` at least one more time before [posting an issue here in GitHub](https://github.com/danludwig/eventsourced.net/issues). There can be race conditions during the very first startup while the databases are set up. Once they are set up, starting the app should be as simple as running `dnx web` from the `src/EventSourced.Net.Web` repository directory.
 
 To stop the app, type CTRL+C in each of the 3 command prompts until their processes are stopped.
-
-### On Windows with Visual Studio
 
 ### On MacOS
