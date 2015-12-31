@@ -25,7 +25,9 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Queries
 
     public Task<UserDocument> Handle(UserDocumentByContactChallengeCorrelationId query) {
       UserDocument user = Db.Query<UserDocument>()
-        .SingleOrDefault(x => AQL.In(query.CorrelationId, x.ContactChallenges.Select(y => y.CorrelationId)));
+        .SingleOrDefault(x =>
+          AQL.In(query.CorrelationId, x.ContactEmailChallenges.Select(y => y.CorrelationId)) ||
+          AQL.In(query.CorrelationId, x.ContactSmsChallenges.Select(y => y.CorrelationId)));
       return Task.FromResult(user);
     }
   }
