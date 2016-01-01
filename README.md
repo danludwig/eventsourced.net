@@ -28,15 +28,21 @@ If you ever want to undo the above command, run this (also once as administrator
 
 #### With Visual Studio
 
-To run in Visual Studio, you will need at least version 2015 with Update 1 installed.
+To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Don't try to open any of the solution or project files unless you're sure you have ASP.NET 5 RC installed.
 
-##### .NET Version Manager
+##### ASP.NET 5 RC
 
-Although a default installation of Visual Studio 2015 Update 1 will install the .NET Version Manager, it will install an older version of it (beta5). If you haven't already, you should [download & install ASP.NET 5 RC from get.asp.net](https://get.asp.net/).
-
-When the ASP.NET 5 RC installation is complete, run `dnvm` in a new command prompt or powershell window. If you receive a "Getting started" prompt and you aren't sure what to do, just answer `Y` for yes.
+- Start Visual Studio.
+- Type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> to create a new project.
+- Select `Templates/Visual C#/Web -> ASP.NET Web Application` and click `OK`.
+- If you see 3 items under the `ASP.NET 5 Templates` section, cancel out of all dialogs and proceed to the next step.
+- If instead you see a single `Get ASP.NET 5 RC` item under the `ASP.NET 5 Templates` section, select it and click OK. This will automatically download an additional exe file that you will need to run in order to install some things. Note you will have to close all instances of Visual Studio for the installer to complete. When finished, repeat the above steps to confirm you can create a new project using one of the 3 `ASP.NET 5 Templates`.
 
 ##### Runtime 1.0.0-rc1-final
+
+The first time you open [this app's solution file](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln) you may be prompted to install a DNX SDK verion ending in `1.0.0-rc1-final`. **Be sure to click Yes to this prompt.**
+
+    dnvm list
 
 #### Without Visual Studio
 ##### .NET Version Manager
@@ -54,21 +60,21 @@ After installing you should close the installer window, open a new command promp
 
 ### On MacOS
 
-#### .NET Version Manager
+##### .NET Version Manager
 The first thing you will need to run this app on a mac is the .NET Version Manager (`dnvm`). To find out if you have it installed already, run the following in a terminal window:
 
     dnvm
 
 If the reponse tells you that the dnvm command was not found, [download & install the ASP.NET 5 pkg from get.asp.net](https://get.asp.net). After the installation has finished, close the terminal window, open a new one, and run the above command again to confirm that it is installed and available on your environment path.
 
-#### Mono
+##### Mono
 You will also need Mono, since this app currently does not target the .NET core50 framework. To find out if you have mono installed, run the following in a terminal window:
 
     mono -V
 
 If the response tells you that the mono command was not found, or reports back a version less than 4.2, [download & install a Mono pkg for version 4.2 or higher](http://www.mono-project.com/download/). After the installation has finished, close the terminal window, open a new one, and run the above command again to confirm that it is installed and available on your environment path.
 
-#### Runtime 1.0.0-rc1-final
+##### Runtime 1.0.0-rc1-final
 The .NET Version Manager installer will install the latest runtime and make it the default. This app currently targets runtime `1.0.0-rc1-final`, which you will need to have installed and available on your environment path. To find out which runtime is the default, run the following in a terminal window:
 
     dnvm list
