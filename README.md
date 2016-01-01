@@ -38,10 +38,10 @@ To run in Visual Studio, you will need at least version 2015 with Update 1 insta
 - If instead you see a single `Get ASP.NET 5 RC` item under the `ASP.NET 5 Templates` section, select it and click OK. This will automatically download an additional exe file that you will need to run in order to install some things. Note you will have to close all instances of Visual Studio for the installer to complete. When finished, repeat the above steps to confirm you can create a new project using one of the 3 `ASP.NET 5 Templates`.
 
 ##### Open the solution
-The first time you open [this app's solution file](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln), you may be prompted to install a DNX SDK verion ending in `1.0.0-rc1-final`. **Be sure to click Yes to this prompt.** If for some reason the install fails, close the solution, open a command prompt or powershell window, run `dnvm install 1.0.0-rc1-final` and re-open the solution.
+The first time you open [this app's solution file](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln), you may be prompted to install a DNX SDK verion ending in `1.0.0-rc1-final`. Be sure to click `Yes` at this prompt. If for some reason the install fails, close the solution, open a command prompt or powershell window, run `dnvm install 1.0.0-rc1-final` and re-open the solution.
 
 ##### Build the solution
-Keep an eye on the Solution Explorer and wait for it to finish `Restoring packages`. After it has finished, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build the solution.
+Keep an eye on the Solution Explorer and wait for it to finish `Restoring packages`. After it has finished, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build the solution. If for some reason the build fails, open a command prompt or powershell window, navigate to the root of your working copy clone, run `dnu restore` and rebuild the solution.
 
 ##### Start the EventSourced.Net.Web project
 - In Solution Explorer right-click `Solution 'EventSourced.Net' (6 projects)` and select `Properties`.
