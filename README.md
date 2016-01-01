@@ -26,7 +26,7 @@ If you ever want to undo the above command, run this (also once as administrator
 
 #### Without Visual Studio
 ##### .NET Version Manager
-Run the following in either a command prompt or powershell window to find out if you have the .NET Version Manager installed:
+Run the following in either command prompt or powershell to check if the .NET Version Manager is installed:
 
     dnvm
 
