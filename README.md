@@ -139,9 +139,12 @@ Before you can run the app, you will need to start an ArangoDB instance at [http
 - Sign in with your Apple ID and wait for the installation to complete.
 - When the app is finished installing, click `OPEN`.
 - Read the prompt, and then click the `New Instance` button.
-- If you aren't sure what to name the instance, choose `EventSourced.Net`. However, **make sure you change the port from `8000` to `8529`**. If you do not, you will have to change a small bit of code so that the app knows where to find the database.
+- If you aren't sure what to name the instance, name it `EventSourced.Net`. 
+- **Make sure you change the port from `8000` to `8529`**. If you do not, you will have to change a small bit of code so that the app knows where to find the database.
 
-Whenever the ArangoDB app is running on your mac, you can access it using the avacado icon in your menu bar. After installing and creating the first ArangoDB instance, you will still have to start it.
+Whenever the ArangoDB app is running on your mac, you can access it using the avacado icon in your menu bar. If you don't see the icon in your menu bar, start the app by launching it from your `Applications` folder or by using `Launchpad`.
+
+After setting up a default ArangoDB instance, you will still have to start it:
 
 - Click the avacado icon in your mac's menu bar.
 - Select the name of the instance you created (for example, `EventSourced.Net`).
