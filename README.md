@@ -41,7 +41,7 @@ To run in Visual Studio, you will need at least version 2015 with Update 1 insta
 The first time you open [this app's solution file](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln), you may be prompted to install a DNX SDK verion ending in `1.0.0-rc1-final`. Be sure to click `Yes` at this prompt. If for some reason the install fails, close the solution, open a command prompt or powershell window, run `dnvm install 1.0.0-rc1-final` and re-open the solution.
 
 ##### Build the solution
-Keep an eye on the Solution Explorer and wait for it to finish `Restoring packages`. After it has finished, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build the solution. If for some reason the build fails, open a command prompt or powershell window, navigate to the root of your working copy clone, run `dnu restore` and rebuild the solution.
+Keep an eye on the Solution Explorer and wait for it to finish `Restoring packages` if necessary. Once idle, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build the solution. If for some reason the build fails, open a command prompt or powershell window, navigate to the root of your working copy clone, run `dnu restore` and rebuild the solution.
 
 ##### Start the EventSourced.Net.Web project for the first time
 - In Solution Explorer right-click `Solution 'EventSourced.Net' (6 projects)` and select `Properties`.
