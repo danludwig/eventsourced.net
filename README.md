@@ -43,7 +43,7 @@ The first time you open [this app's solution file](https://github.com/danludwig/
 ##### Build the solution
 Keep an eye on the Solution Explorer and wait for it to finish `Restoring packages`. After it has finished, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build the solution. If for some reason the build fails, open a command prompt or powershell window, navigate to the root of your working copy clone, run `dnu restore` and rebuild the solution.
 
-##### Start the EventSourced.Net.Web project
+##### Start the EventSourced.Net.Web project for the first time
 - In Solution Explorer right-click `Solution 'EventSourced.Net' (6 projects)` and select `Properties`.
 - Make sure the `Single startup project` radio button is selected, the `EventSourced.Net.Web` item is selected in the drop down, and then click `OK`.
 - Type <kbd>F5</kbd> to start the app.
