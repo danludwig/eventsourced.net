@@ -132,7 +132,7 @@ Unless otherwise specified, any other documentation about the `dnu` or `dnx` com
 
 ##### ArangoDB
 
-Before you can run the app, you will need to start an ArangoDB instance at [http://localhost:8529](http://localhost:8529). *For a better development experience, it is recommended that you at least clone the repository to a local working copy before doing this (see Advanced Options below)*. Follow these instructions to install the free ArangoDB app when you're ready:
+Before you can run the app, you will need to start an ArangoDB instance at [http://localhost:8529](http://localhost:8529). *For a better development experience, it is recommended that you at least [clone this repository](#up-and-running) to a local working copy before installing the ArangoDB app (read Advanced Options below)*. Follow these instructions to install the free ArangoDB app when you're ready:
 
 - Start the App Store app, type `ArangoDB` into the search box and hit <kbd>return</kbd>.
 - The search should return 1 result for `ArangoDB Developer Tools`. Click `GET`, then click `INSTAL APP`.
