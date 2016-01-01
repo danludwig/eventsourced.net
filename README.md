@@ -5,7 +5,7 @@ Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & 
 
 ```
 # Clone the repository if you haven't already.
-# In git bash:
+# In git bash or mac terminal:
   cd /path/to/local/working/copy/parent # where ever that may be
   git clone https://github.com/danludwig/eventsourced.net.git
 ```
@@ -96,3 +96,14 @@ To stop the app, type CTRL+C in each of the 3 command prompts until their proces
 
 ### On MacOS
 
+The first thing you will need to run this app on a mac is the DotNetVersionManager (`dnvm`). To find out if you have it installed already, run the following in a Terminal window:
+```
+dnvm
+```
+If the reponse tells you that the dnvm command was not found, [download & install the ASP.NET 5 pkg from get.asp.net](http://get.asp.net).
+
+You will also need Mono, since this app currently does not target the ASP.NET core50 framework. To find out if you have mono installed, run the following in a Terminal window:
+```
+mono -V
+```
+If the response tells you that the mono command was not found, or reports back a version less than 4.2, [download & install a mono pkg for version 4.2 or higher](http://www.mono-project.com/download/).
