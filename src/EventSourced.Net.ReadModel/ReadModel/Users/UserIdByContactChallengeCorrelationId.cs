@@ -16,9 +16,9 @@ namespace EventSourced.Net.ReadModel.Users
 
   public class HandleUserIdByContactChallengeCorrelationId : IHandleQuery<UserIdByContactChallengeCorrelationId, Task<Guid?>>
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
 
-    public HandleUserIdByContactChallengeCorrelationId(IProcessQuery query) {
+    public HandleUserIdByContactChallengeCorrelationId(IExecuteQuery query) {
       Query = query;
     }
 

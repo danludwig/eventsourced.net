@@ -10,10 +10,10 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
     IHandleEvent<ContactSmsChallengePrepared>,
     IHandleEvent<ContactEmailChallengePrepared>
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
     private IArangoDatabase Db { get; }
 
-    public AddContactChallengeToUserDocument(IProcessQuery query, IArangoDatabase db) {
+    public AddContactChallengeToUserDocument(IExecuteQuery query, IArangoDatabase db) {
       Query = query;
       Db = db;
     }

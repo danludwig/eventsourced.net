@@ -9,10 +9,10 @@ namespace EventSourced.Net.Web.Users.Register
   public class ApiController : Controller
   {
     private ISendCommand Command { get; }
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
     private IServeWebSockets WebSockets { get; }
 
-    public ApiController(ISendCommand command, IProcessQuery query, IServeWebSockets webSockets) {
+    public ApiController(ISendCommand command, IExecuteQuery query, IServeWebSockets webSockets) {
       Command = command;
       Query = query;
       WebSockets = webSockets;

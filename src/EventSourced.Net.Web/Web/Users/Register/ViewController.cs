@@ -8,9 +8,9 @@ namespace EventSourced.Net.Web.Users.Register
 
   public class ViewController : Controller
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
 
-    public ViewController(IProcessQuery query) {
+    public ViewController(IExecuteQuery query) {
       Query = query;
     }
 

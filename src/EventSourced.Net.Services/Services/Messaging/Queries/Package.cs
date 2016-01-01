@@ -18,7 +18,7 @@ namespace EventSourced.Net.Services.Messaging.Queries
     }
 
     public void RegisterServices(Container container) {
-      container.RegisterSingleton<IProcessQuery, QueryProcessor>();
+      container.RegisterSingleton<IExecuteQuery, QueryExecutor>();
       container.Register(typeof(IHandleQuery<,>), HandlerAssemblies, Lifestyle.Transient);
     }
   }

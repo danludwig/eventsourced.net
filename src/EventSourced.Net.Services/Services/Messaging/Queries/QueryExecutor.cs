@@ -5,11 +5,11 @@ using SimpleInjector;
 namespace EventSourced.Net.Services.Messaging.Queries
 {
   [UsedImplicitly]
-  internal sealed class QueryProcessor : IProcessQuery
+  internal sealed class QueryExecutor : IExecuteQuery
   {
     private Container Container { get; }
 
-    public QueryProcessor(Container container) {
+    public QueryExecutor(Container container) {
       Container = container;
     }
 

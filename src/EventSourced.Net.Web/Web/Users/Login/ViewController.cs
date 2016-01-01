@@ -7,9 +7,9 @@ namespace EventSourced.Net.Web.Users.Login
 {
   public class ViewController : Controller
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
 
-    public ViewController(IProcessQuery query) {
+    public ViewController(IExecuteQuery query) {
       Query = query;
     }
 

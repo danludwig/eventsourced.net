@@ -8,10 +8,10 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
 {
   public class AddConfirmedLoginToUserDocument : IHandleEvent<PasswordCreated>
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
     private IArangoDatabase Db { get; }
 
-    public AddConfirmedLoginToUserDocument(IProcessQuery query, IArangoDatabase db) {
+    public AddConfirmedLoginToUserDocument(IExecuteQuery query, IArangoDatabase db) {
       Query = query;
       Db = db;
     }

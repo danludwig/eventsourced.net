@@ -28,9 +28,9 @@ namespace EventSourced.Net.ReadModel.Users
   public class HandleUserContactChallengeTokenQuery
     : IHandleQuery<UserContactChallengeTokenQuery, Task<UserContactChallengeTokenView>>
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
 
-    public HandleUserContactChallengeTokenQuery(IProcessQuery query) {
+    public HandleUserContactChallengeTokenQuery(IExecuteQuery query) {
       Query = query;
     }
 

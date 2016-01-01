@@ -8,10 +8,10 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
 {
   public class CreateUserDocument : IHandleEvent<UserCreated>
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
     private IArangoDatabase Db { get; }
 
-    public CreateUserDocument(IProcessQuery query, IArangoDatabase db) {
+    public CreateUserDocument(IExecuteQuery query, IArangoDatabase db) {
       Query = query;
       Db = db;
     }

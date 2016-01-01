@@ -1,6 +1,6 @@
 ﻿namespace EventSourced.Net
 {
-  public interface IProcessQuery
+  public interface IExecuteQuery
   {
     TResult Execute<TResult>(IQuery<TResult> query);
   }

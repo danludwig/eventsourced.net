@@ -30,9 +30,9 @@ namespace EventSourced.Net.ReadModel.Users
   public class HandleUserContactChallengeCreatePasswordView
     : IHandleQuery<UserContactChallengeCreatePasswordQuery, Task<UserContactChallengeCreatePasswordView>>
   {
-    private IProcessQuery Query { get; }
+    private IExecuteQuery Query { get; }
 
-    public HandleUserContactChallengeCreatePasswordView(IProcessQuery query) {
+    public HandleUserContactChallengeCreatePasswordView(IExecuteQuery query) {
       Query = query;
     }
 
