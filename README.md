@@ -47,6 +47,7 @@ Keep an eye on the Solution Explorer and wait for it to finish `Restoring packag
 - In Solution Explorer right-click `Solution 'EventSourced.Net' (6 projects)` and select `Properties`.
 - Make sure the `Single startup project` radio button is selected, the `EventSourced.Net.Web` item is selected in the drop down, and then click `OK`.
 - Type <kbd>F5</kbd> to start the app.
+- Be patient. There is a lot that happens during the first app run. It will start up much faster next time.
 - When prompted about allowing `Network Command Shell` to make changes to your PC, click `Yes`.
 - When prompted by the Windows Firewall about allowing dnx.exe to communicate on private networks, click `Allow access`.
 
@@ -85,6 +86,18 @@ The first time you clone the repository, and each time a nuget package dependenc
     dnu restore
 
 Note that restoring packages may take a couple of minutes when run for the first time.
+
+##### Launch the app
+
+Run the following in commmand prompt or powershell from the `src/EventSourced.Net.Web` project directory to start the app in a web server:
+
+    cd src/EventSourced.Net.Web
+    dnx web
+
+- Be patient. There is a lot that happens during the first app run. It will start up much faster next time.
+- When prompted about allowing `Network Command Shell` to make changes to your PC, click `Yes`.
+- When prompted by the Windows Firewall about allowing dnx.exe to communicate on private networks, click `Allow access`.
+- Finally, navigate to [http://localhost:5000](http://localhost:5000) in your favorite web browser.
 
 ### On MacOS
 
