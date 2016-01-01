@@ -28,7 +28,7 @@ If you ever want to undo the above command, run this (also once as administrator
 
 #### With Visual Studio
 
-To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Don't try to open any of the solution or project files unless you're sure you also have ASP.NET 5 RC installed, as described below.
+To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Don't try to open the solution or any of the project files unless you're sure you also have ASP.NET 5 RC installed, as described below.
 
 ##### Download & install ASP.NET 5 RC if necessary
 - Start Visual Studio.
