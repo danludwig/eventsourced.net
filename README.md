@@ -3,33 +3,22 @@ Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & 
 
 ## Up and running
 
-```
-# Clone the repository if you haven't already.
-# In git bash or mac terminal:
-  cd /path/to/local/working/copy/parent # where ever that may be
-  git clone https://github.com/danludwig/eventsourced.net.git
-```
+When you're ready to clone the repository:
 
-This is a .NET 5 vNext project, currently based on runtime version 1.0.0-rc1-final. Although you won't need to do very much to get it up and running, you will need the [.NET Version Manager (`dnvm`)](https://github.com/aspnet/Home/blob/dev/README.md#what-you-need) with [runtime 1.0.0-rc1-final installed](https://github.com/aspnet/Home/wiki/Version-Manager#using-the-version-manager) and available in the path. Until all of this project's dependent libraries have clr core50-compatible releases, it can only target the `dnx451` framework. This means if you are running it on a Mac, [you will need mono](http://www.mono-project.com/download/) in addition to the dnvm & 1.0.0-rc1-final runtime.
-
-Note the very first time you start up the app (using either `dnx web`, OmniSharp, or Visual Studio), the app will automatically download a (couple of) compressed file(s) containing the database server(s). On windows both databases will be downloaded, but for MacOS, only one is currently automated. Next, the app will install each database by extracting its compressed file to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your platform, network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded.
-
-If you would like to monitor the progress of this, navigate to the `devdbs` folder which will be created in the root of your working copy of the repository. On both platforms it should create a subfolder under `devdbs` for `EventStore`, whereas on windows it will also create a subfolder for `ArangoDB`. If you delete these folders, the app will recreate them the next time its web server is started.
-
-If you encounter any errors, try running the app at least one more time before [posting an issue here in GitHub](https://github.com/danludwig/eventsourced.net/issues). There can be race conditions during the very first run while the databases are set up. Once they are set up, starting the app should be as simple as running `dnx web` from the `src/EventSourced.Net.Web` repository directory, or F5 from Visual Studio.
+    cd /path/to/local/working/copy/parent # where ever that may be
+    git clone https://github.com/danludwig/eventsourced.net.git
+    cd eventsourced.net
 
 ### On Windows
 
-Whether you want to run the app with or without Visual Studio, you probably don't want to have to start things up as administrator all of the time. This app uses a database called [EventStore](https://geteventstore.com/), which when not run under an administrator security context, can encounter an error when trying to start its HTTP server at http://localhost:2113. To work around this, you should add an ACL for this url.
+This app uses the  [EventStore database](https://geteventstore.com/), which when not run as an administrator (or started up from another program running as administrator) will likely encounter an error when trying to start its HTTP server at  [http://localhost:2113](http://localhost:2113). After running the following command once as administrator, you should no longer experience this error when EventStore is started without administrative privileges:
 
-```
-# Allow EventStore to run without administrative privileges if you haven't already.
-# In either command prompt or powershell **as administrator**:
-  # Feel free to replace the user if you want to and you know what you're doing.
-  netsh http add urlacl url=http://localhost:2113/ user=everyone
-  # If you ever want to reverse this, run the following (also as administrator):
+    # Feel free to replace the user if you want to and you know what you're doing.
+    netsh http add urlacl url=http://localhost:2113/ user=everyone
+
+If you ever want to undo the above command, run this (also once as administrator):
+
     netsh http delete urlacl url=http://localhost:2113/
-```
 
 #### With Visual Studio
 
