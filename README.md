@@ -129,3 +129,22 @@ After the installation has finished, run `dnvm list` again in a *new* teriminal 
     dnvm use 1.0.0-rc1-final -persistent
 
 Unless otherwise specified, any other documentation about the `dnu` or `dnx` commands in this readme will assume that version `1.0.0-rc1-final` is the currently Active version in the environment path, according to `dnvm list`.
+
+##### ArangoDB
+
+Before you can run the app, you will need to start an ArangoDB instance at [http://localhost:8529](http://localhost:8529). Follow these instructions to install the free ArangoDB app if you haven't already:
+
+- Start the App Store app, type `ArangoDB` into the search box and hit <kbd>return</kbd>.
+- The search should return 1 result for `ArangoDB Developer Tools`. Click `GET`, then click `INSTAL APP`.
+- Sign in with your Apple ID and wait for the installation to complete.
+- When the app is finished installing, click `OPEN`.
+- Read the prompt, and then click the `New Instance` button.
+- If you aren't sure what to name the instance, choose `EventSourced.Net`. However, **make sure you change the port from `8000` to `8529`**. If you do not, you will have to change a small bit of code so that the app knows where to find the database.
+
+Whenever the ArangoDB app is running on your mac, you can access it using the avacado icon in your menu bar. After installing and creating the first ArangoDB instance, you will still have to start it.
+
+- Click the avacado icon in your mac's menu bar.
+- Select the name of the instance you created (for example, `EventSourced.Net`).
+- Click `Start`.
+
+When the ArangoDB instance is up and running, you should be able to access its Admin Interface at [http://localhost:8529](http://localhost:8529).
