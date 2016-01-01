@@ -132,7 +132,7 @@ Unless otherwise specified, any other documentation about the `dnu` or `dnx` com
 
 ##### ArangoDB
 
-Before you can run the app, you will need to start an ArangoDB instance at [http://localhost:8529](http://localhost:8529). Follow these instructions to install the free ArangoDB app if you haven't already:
+Before you can run the app, you will need to start an ArangoDB instance at [http://localhost:8529](http://localhost:8529). *For a better development experience, it is recommended that you at least clone the repository to a local working copy before doing this (see Advanced Options below)*. Follow these instructions to install the free ArangoDB app when you're ready:
 
 - Start the App Store app, type `ArangoDB` into the search box and hit <kbd>return</kbd>.
 - The search should return 1 result for `ArangoDB Developer Tools`. Click `GET`, then click `INSTAL APP`.
@@ -140,7 +140,21 @@ Before you can run the app, you will need to start an ArangoDB instance at [http
 - When the app is finished installing, click `OPEN`.
 - Read the prompt, and then click the `New Instance` button.
 - If you aren't sure what to name the instance, name it `EventSourced.Net`. 
-- **Make sure you change the port from `8000` to `8529`**. If you do not, you will have to change a small bit of code so that the app knows where to find the database.
+- **Make sure you change the port from `8000` to `8529`**. If you do not, you will have to change a [small bit of code](https://github.com/danludwig/eventsourced.net/blob/7a6fc13990d45b84fb70758281a0cae722302195/src/EventSourced.Net.Services/Services/Storage/ArangoDb/Settings.cs#L8) so that the app knows where to find the database.
+- Advanced Options: Although you can leave these blank, you will have a better development experience if you specify the Database Directory and Log File. To keep these consistent with the EventStore database, create 2 new folders at `devdbs/ArangoDB/db` and `devdbs/ArangoDB/log` relative to the root of your local working copy of the app repository. You can run the following commands in terminal to create the folders before selecting them in the Advanced Options section of the ArangoDB new instance dialog:
+
+```
+cd /path/to/local/working/copy/of/eventsourced.net # where ever that may be
+mkdir devdbs
+cd devdbs
+mkdir ArangoDB
+cd ArangoDB
+mkdir db
+mkdir log
+```
+
+- You can also change the `Log Level` and uncheck the `Run on Startup` box if you prefer.
+- Finally, click the `Create` button to create the default instance.
 
 Whenever the ArangoDB app is running on your mac, you can access it using the avacado icon in your menu bar. If you don't see the icon in your menu bar, start the app by launching it from your `Applications` folder or by using `Launchpad`.
 
