@@ -1,6 +1,12 @@
 # EventSourced.Net
 Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & Domain-Driven Design, *not* Entity Framework.
 
+- [Up and running](#up-and-running)
+  - [On Windows](#on-windows)
+    - [With Visual Studio](#with-visual-studio)
+    - [Without Visual Studio](#without-visual-studio)
+  - [On MacOS](#on-macos)
+
 ## Up and running
 
 When you're ready to clone the repository:
@@ -22,7 +28,13 @@ If you ever want to undo the above command, run this (also once as administrator
 
 #### With Visual Studio
 
+To run in Visual Studio, you will need at least version 2015 with Update 1 installed.
 
+##### .NET Version Manager
+
+Although a default installation of Visual Studio 2015 Update 1 will install the .NET Version Manager, it will install an older version of it (beta5). If you haven't already, you should [download & install ASP.NET 5 RC from get.asp.net](https://get.asp.net/).
+
+##### Runtime 1.0.0-rc1-final
 
 #### Without Visual Studio
 ##### .NET Version Manager
@@ -45,7 +57,7 @@ The first thing you will need to run this app on a mac is the .NET Version Manag
 
     dnvm
 
-If the reponse tells you that the dnvm command was not found, [download & install the ASP.NET 5 pkg from get.asp.net](http://get.asp.net). After the installation has finished, close the terminal window, open a new one, and run the above command again to confirm that it is installed and available on your environment path.
+If the reponse tells you that the dnvm command was not found, [download & install the ASP.NET 5 pkg from get.asp.net](https://get.asp.net). After the installation has finished, close the terminal window, open a new one, and run the above command again to confirm that it is installed and available on your environment path.
 
 #### Mono
 You will also need Mono, since this app currently does not target the .NET core50 framework. To find out if you have mono installed, run the following in a terminal window:
