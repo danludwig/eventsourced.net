@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Mail;
 using System.Reflection;
 using JetBrains.Annotations;
@@ -13,6 +14,7 @@ namespace EventSourced.Net.Domain.Users
 
     private User() {
       ContactChallenges = new Dictionary<Guid, ContactChallenge>();
+      ConfirmedLogins = new List<string>();
     }
 
     public User(Guid id) : this() {
@@ -25,8 +27,13 @@ namespace EventSourced.Net.Domain.Users
     }
 
     #endregion
-    #region Challenge Contact Info
-    #region Behavior Methods
+    #region Registration
+
+    private IDictionary<Guid, ContactChallenge> ContactChallenges { get; }
+    private IList<string> ConfirmedLogins { get; }
+    private string PasswordHash { get; set; }
+
+    #region Prepare Challenge
 
     public void PrepareContactIdChallenge(Guid correlationId, string emailOrPhone) {
       MailAddress mailAddress = ContactIdParser.AsMailAddress(emailOrPhone);
@@ -78,6 +85,21 @@ namespace EventSourced.Net.Domain.Users
         ContactIdParser.DefaultRegionCode, purpose, stamp, token, message));
     }
 
+    [UsedImplicitly]
+    private void Apply(ContactEmailChallengePrepared e) {
+      var challenge = new ContactEmailChallenge(e);
+      ContactChallenges[e.CorrelationId] = challenge;
+    }
+
+    [UsedImplicitly]
+    private void Apply(ContactSmsChallengePrepared e) {
+      var challenge = new ContactSmsChallenge(e);
+      ContactChallenges[e.CorrelationId] = challenge;
+    }
+
+    #endregion
+    #region Verify Code
+
     public void VerifyContactChallengeResponse(Guid correlationId, string code) {
       if (!ContactChallenges.ContainsKey(correlationId) || ContactChallenges[correlationId] == null)
         throw new InvalidOperationException("nope");
@@ -87,6 +109,15 @@ namespace EventSourced.Net.Domain.Users
       if (!isValid) throw new InvalidOperationException("nope");
       RaiseEvent(new ContactChallengeVerified(correlationId, Id));
     }
+
+    [UsedImplicitly]
+    private void Apply(ContactChallengeVerified e) {
+      var challenge = ContactChallenges[e.CorrelationId];
+      challenge.IsVerified = true;
+    }
+
+    #endregion
+    #region Redeem to Create Password
 
     public void CreatePassword(Guid correlationId, string token, string password, string passwordConfirmation) {
       if (string.IsNullOrWhiteSpace(password)) throw new InvalidOperationException("nope");
@@ -102,34 +133,11 @@ namespace EventSourced.Net.Domain.Users
       RaiseEvent(new PasswordCreated(correlationId, Id, hashedPassword));
     }
 
-    #endregion
-    #region Internal State
-
-    private IDictionary<Guid, ContactChallenge> ContactChallenges { get; }
-    private string PasswordHash { get; set; }
-
-    [UsedImplicitly]
-    private void Apply(ContactEmailChallengePrepared e) {
-      var challenge = new ContactEmailChallenge(e);
-      ContactChallenges[e.CorrelationId] = challenge;
-    }
-
-    [UsedImplicitly]
-    private void Apply(ContactSmsChallengePrepared e) {
-      var challenge = new ContactSmsChallenge(e);
-      ContactChallenges[e.CorrelationId] = challenge;
-    }
-
-    [UsedImplicitly]
-    private void Apply(ContactChallengeVerified e) {
-      var challenge = ContactChallenges[e.CorrelationId];
-      challenge.IsVerified = true;
-    }
-
     [UsedImplicitly]
     private void Apply(PasswordCreated e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsRedeemed = true;
+      ConfirmedLogins.Add(challenge.ContactValue);
       PasswordHash = e.PasswordHash;
     }
 
@@ -171,6 +179,43 @@ namespace EventSourced.Net.Domain.Users
     }
 
     #endregion
+
+    #endregion
+    #region Login
+
+    public void VerifyLogin(string login, string password, out Exception exceptionToThrowAfterSave) {
+      if (string.IsNullOrWhiteSpace(login)) throw new InvalidOperationException("nope");
+      if (!ConfirmedLogins.Any(x => string.Equals(x, ContactIdParser.Normalize(login)))) throw new InvalidOperationException("nope");
+      exceptionToThrowAfterSave = null;
+      bool isRehashRequired; // = false;
+      bool isVerified = ContactChallengers.PasswordHasher.Instance.VerifyHashedPassword(PasswordHash, password, out isRehashRequired);
+
+      DateTime happenedOn = DateTime.UtcNow;
+      if (isVerified) {
+        string passwordRehash = null;
+        if (isRehashRequired) {
+          passwordRehash = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
+        }
+        RaiseEvent(new UserLoginVerified(login, happenedOn, passwordRehash));
+      } else {
+        exceptionToThrowAfterSave = new Exception("nope");
+        RaiseEvent(new UserAttemptedLoginWithUnverifiedPassword(login, happenedOn));
+      }
+    }
+
+
+    [UsedImplicitly]
+    private void Apply(UserLoginVerified e) {
+      if (e.PasswordRehash != null) {
+        PasswordHash = e.PasswordRehash;
+      }
+    }
+
+    [UsedImplicitly]
+    private void Apply(UserAttemptedLoginWithUnverifiedPassword e) {
+      // todo: lock out user after 3 bad password attempts
+    }
+
     #endregion
   }
 }
