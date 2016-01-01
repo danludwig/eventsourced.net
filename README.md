@@ -141,7 +141,7 @@ Before you can run the app, you will need to start an ArangoDB instance at [http
 - Read the prompt, and then click the `New Instance` button.
 - If you aren't sure what to name the instance, name it `EventSourced.Net`. 
 - **Make sure you change the port from `8000` to `8529`**. If you do not, you will have to change a [small bit of code](https://github.com/danludwig/eventsourced.net/blob/7a6fc13990d45b84fb70758281a0cae722302195/src/EventSourced.Net.Services/Services/Storage/ArangoDb/Settings.cs#L8) so that the app knows where to find the database.
-- Advanced Options: Although you can leave these blank, you will have a better development experience if you specify the Database Directory and Log File. To keep these consistent with the EventStore database, create 2 new folders at `devdbs/ArangoDB/db` and `devdbs/ArangoDB/log` relative to the root of your local working copy of the app repository. You can run the following commands in terminal to create the folders before selecting them in the Advanced Options section of the ArangoDB new instance dialog:
+- Advanced Options: Although you can leave these blank, you will have a better development experience if you specify the `Database Directory` and `Log File`. To keep these consistent with the EventStore database, create 2 new folders at `devdbs/ArangoDB/db` and `devdbs/ArangoDB/log` relative to the root of your local working copy of the app repository. You can run the following commands in a terminal window to create the folders before selecting them in the Advanced Options section of the ArangoDB new instance dialog:
 
 ```
 cd /path/to/local/working/copy/of/eventsourced.net # where ever that may be
