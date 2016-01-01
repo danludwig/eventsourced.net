@@ -10,7 +10,7 @@ Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & 
   git clone https://github.com/danludwig/eventsourced.net.git
 ```
 
-This is an ASP.NET 5 vNext project, currently based on runtime version 1.0.0-rc1-final. Although you won't need to do very much to get it up and running, you will need the [DotNetVersionManager (`dnvm`)](https://github.com/aspnet/Home/blob/dev/README.md#what-you-need) with [runtime 1.0.0-rc1-final installed](https://github.com/aspnet/Home/wiki/Version-Manager#using-the-version-manager) and available in the path. Until all of this project's dependent libraries have clr core50-compatible releases, it can only target the `dnx451` framework. This means if you are running it on a Mac, [you will need mono](http://www.mono-project.com/download/) in addition to the dnvm & 1.0.0-rc1-final runtime.
+This is a .NET 5 vNext project, currently based on runtime version 1.0.0-rc1-final. Although you won't need to do very much to get it up and running, you will need the [.NET Version Manager (`dnvm`)](https://github.com/aspnet/Home/blob/dev/README.md#what-you-need) with [runtime 1.0.0-rc1-final installed](https://github.com/aspnet/Home/wiki/Version-Manager#using-the-version-manager) and available in the path. Until all of this project's dependent libraries have clr core50-compatible releases, it can only target the `dnx451` framework. This means if you are running it on a Mac, [you will need mono](http://www.mono-project.com/download/) in addition to the dnvm & 1.0.0-rc1-final runtime.
 
 Note the very first time you start up the app (using either `dnx web`, OmniSharp, or Visual Studio), the app will automatically download a (couple of) compressed file(s) containing the database server(s). On windows both databases will be downloaded, but for MacOS, only one is currently automated. Next, the app will install each database by extracting its compressed file to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your platform, network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded.
 
@@ -33,7 +33,7 @@ Whether you want to run the app with or without Visual Studio, you probably don'
 
 #### With Visual Studio
 
-To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Visual Studio Update 1 should automatically install the DotNetVersionManager (`dnvm`) for you, but may not install runtime version `1.0.0-rc1-final`. Use the following to make sure you have the correct runtime installed and available in your user path.
+To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Visual Studio Update 1 should automatically install the .NET Version Manager (`dnvm`) for you, but may not install runtime version `1.0.0-rc1-final`. Use the following to make sure you have the correct runtime installed and available in your user path.
 
 ```
 # Install & set up runtime version 1.0.0-rc1-final if necessary.
@@ -56,7 +56,7 @@ Finally, hit F5 or select `Debug > Start Without Debugging` from the menu bar to
 #### Without Visual Studio
 
 ```
-# Install the DotNetVersionManager if necessary.
+# Install the .NET Version Manager if necessary.
 # In either command prompt or powershell:
   dnvm
   # If the prompt tells you dnvm is not recognized, you will need to install it.
@@ -96,14 +96,31 @@ To stop the app, type CTRL+C in each of the 3 command prompts until their proces
 
 ### On MacOS
 
-The first thing you will need to run this app on a mac is the DotNetVersionManager (`dnvm`). To find out if you have it installed already, run the following in a Terminal window:
-```
-dnvm
-```
-If the reponse tells you that the dnvm command was not found, [download & install the ASP.NET 5 pkg from get.asp.net](http://get.asp.net).
+#### .NET Version Manager
+The first thing you will need to run this app on a mac is the .NET Version Manager (`dnvm`). To find out if you have it installed already, run the following in a terminal window:
 
-You will also need Mono, since this app currently does not target the ASP.NET core50 framework. To find out if you have mono installed, run the following in a Terminal window:
-```
-mono -V
-```
-If the response tells you that the mono command was not found, or reports back a version less than 4.2, [download & install a mono pkg for version 4.2 or higher](http://www.mono-project.com/download/).
+    dnvm
+
+If the reponse tells you that the dnvm command was not found, [download & install the ASP.NET 5 pkg from get.asp.net](http://get.asp.net). After the installation has finished, close the terminal window, open a new one, and run the above command again to confirm that it is installed and available on your environment path.
+
+#### Mono
+You will also need Mono, since this app currently does not target the .NET core50 framework. To find out if you have mono installed, run the following in a terminal window:
+
+    mono -V
+
+If the response tells you that the mono command was not found, or reports back a version less than 4.2, [download & install a Mono pkg for version 4.2 or higher](http://www.mono-project.com/download/). After the installation has finished, close the terminal window, open a new one, and run the above command again to confirm that it is installed and available on your environment path.
+
+#### Runtime 1.0.0-rc1-final
+The .NET Version Manager installer will install the latest runtime and make it the default. This app currently targets runtime `1.0.0-rc1-final`, which you will need to have installed and available on your environment path. To find out which runtime is the default, run the following in a terminal window:
+
+    dnvm list
+
+If you do not see an entry with Version `1.0.0-rc1-final` & Runtime `mono` in the listing, run the following to install it:
+
+    dnvm install 1.0.0-rc1-final
+
+After the installation has finished, run `dnvm list` again in a *new* teriminal window. If you see that Version `1.0.0-rc1-final` is no longer the Active version, run the following:
+
+    dnvm use 1.0.0-rc1-final -persistent
+
+Unless otherwise specified, any other documentation about the `dnu` or `dnx` commands in this readme will assume that version `1.0.0-rc1-final` is the currently Active version in the environment path, according to `dnvm list`.
