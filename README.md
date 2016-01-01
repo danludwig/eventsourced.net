@@ -6,6 +6,7 @@ Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & 
     - [With Visual Studio](#with-visual-studio)
     - [Without Visual Studio](#without-visual-studio)
   - [On MacOS](#on-macos)
+  - [Troubleshooting (all platforms)](#troubleshooting)
 
 ## Up and running
 When you're ready to clone the repository:
@@ -179,3 +180,10 @@ Run the following in a terminal window from the `src/EventSourced.Net.Web` proje
 
 - Be patient. There is a lot that happens during the first app run. It will start up much faster next time.
 - Finally, navigate to [http://localhost:5000](http://localhost:5000) in your favorite web browser.
+
+### Troubleshooting
+The very first time you start up the app (using either `dnx web`, OmniSharp, or Visual Studio), it will automatically try to download a (couple of) compressed file(s) containing the database server(s). On windows both databases will be downloaded, but for MacOS, only one is currently automated. Next, the app will install each database by extracting its compressed file to the `devdbs` folder in your working copy of the repository, then start up each server. How long this takes will depend on your platform, network bandwidth and machine performance, but shouldn't take longer than a minute or two once the zip files are downloaded.
+
+If you would like to monitor the progress of this, navigate to the `devdbs` folder which will be created in the root of your working copy of the repository. On both platforms it should create a subfolder under `devdbs` for `EventStore`, whereas on windows it will also create a subfolder for `ArangoDB`. If you delete these folders, the app will recreate them the next time its web server is started.
+
+If you encounter any errors, try running the app at least one more time before [posting an issue here in GitHub](https://github.com/danludwig/eventsourced.net/issues). There can be race conditions during the very first run while the databases are set up. Once they are set up, starting the app should be as simple as running `dnx web` from the `src/EventSourced.Net.Web` repository directory, or F5 from Visual Studio.
