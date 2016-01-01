@@ -17,7 +17,7 @@ When you're ready to clone the repository:
 
 ### On Windows
 
-This app uses the  [EventStore database](https://geteventstore.com/), which when not run as an administrator (or started up from another program running as administrator) will likely encounter an error while trying to start its HTTP server at  [http://localhost:2113](http://localhost:2113). After running the following command once as administrator, you should be able to start EventStore normally without experiencing this error:
+This app uses the  [EventStore database](https://geteventstore.com/), which when not run as an administrator (or started up from another program running as administrator) will likely encounter an error while trying to start its HTTP server at  [http://localhost:2113](http://localhost:2113). After running the following command once as administrator, starting EventStore normally should not cause this error:
 
     # Feel free to change the user if you want to and you know what you're doing.
     netsh http add urlacl url=http://localhost:2113/ user=everyone
