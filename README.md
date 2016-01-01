@@ -20,7 +20,7 @@ If you encounter any errors, try running the app at least one more time before [
 
 ### On Windows
 
-Whether you want to run the app with or without Visual Studio, you probably don't want to have to start things up as administrator all of the time. This app uses a database called [EventStore](https://geteventstore.com/), which when not run under an administrator security context, can encounter an error when trying to start its HTTP server at http://localhost:2113. To work around this, you should add a Access Control List (ACL) for this url.
+Whether you want to run the app with or without Visual Studio, you probably don't want to have to start things up as administrator all of the time. This app uses a database called [EventStore](https://geteventstore.com/), which when not run under an administrator security context, can encounter an error when trying to start its HTTP server at http://localhost:2113. To work around this, you should add an ACL for this url.
 
 ```
 # Allow EventStore to run without administrative privileges if you haven't already.
@@ -92,8 +92,7 @@ dnx web
 # Finally, navigate to http://localhost:5000 in your favorite browser.
 ```
 
-
-
 To stop the app, type CTRL+C in each of the 3 command prompts until their processes are stopped.
 
 ### On MacOS
+
