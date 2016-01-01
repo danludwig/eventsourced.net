@@ -132,7 +132,10 @@ namespace EventSourced.Net.Services.Storage.ArangoDb
       while (!IsRunning()) {
         System.Threading.Thread.Sleep(1000);
         if (stopwatch.Elapsed >= waitForStartup)
-          throw new ApplicationException($"Waited too long (over {waitForStartupSeconds} seconds) for ArangoDb to start up.");
+          throw new ApplicationException($"Waited too long (over {waitForStartupSeconds} seconds) for ArangoDb to start up. " +
+            "If you are on a Mac, make sure to install the ArangoDB app from the App Store and startup a local instance " +
+            $"at port {settings.ServerUri.Port}. " +
+            "See the readme for more information https://github.com/danludwig/eventsourced.net");
       }
       while (true) {
         try {
@@ -160,7 +163,7 @@ namespace EventSourced.Net.Services.Storage.ArangoDb
           if (stopwatch.Elapsed > waitForStartup) {
             var throwEx = new ApplicationException($"Could not connect to ArangoDB database at {settings.ServerUrl}. " +
               "Start ArangoDB if it is not running, otherwise check the port. " +
-              "If you are on a Mac, the Arango app likes its default instance at port 8000 instead of 8529. " +
+              "If you are on a Mac, the Arango app likes to create instances at port 8000 instead of 8529. " +
               "See the readme for more information https://github.com/danludwig/eventsourced.net", ex);
             throw throwEx;
           }
