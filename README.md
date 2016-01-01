@@ -34,6 +34,8 @@ To run in Visual Studio, you will need at least version 2015 with Update 1 insta
 
 Although a default installation of Visual Studio 2015 Update 1 will install the .NET Version Manager, it will install an older version of it (beta5). If you haven't already, you should [download & install ASP.NET 5 RC from get.asp.net](https://get.asp.net/).
 
+When the ASP.NET 5 RC installation is complete, run `dnvm` in a new command prompt or powershell window. If you receive a "Getting started" prompt and you aren't sure what to do, just answer `Y` for yes.
+
 ##### Runtime 1.0.0-rc1-final
 
 #### Without Visual Studio
