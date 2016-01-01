@@ -77,6 +77,15 @@ After the installation has finished, run `dnvm list` again in a new command prom
 
 Unless otherwise specified, any other documentation about the `dnu` or `dnx` commands in this readme will assume that version `1.0.0-rc1-final` is the currently Active version in the environment path, according to `dnvm list`.
 
+##### Restore nuget package dependencies
+
+The first time you clone the repository, and each time a nuget package dependency is added, removed, or changed, you will need to run the following at the repository root folder in either command prompt or powershell:
+
+    cd /path/to/local/working/copy/parent # where ever that may be
+    dnu restore
+
+Note that restoring packages may take a couple of minutes when run for the first time.
+
 ### On MacOS
 
 ##### .NET Version Manager
