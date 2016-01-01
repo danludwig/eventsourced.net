@@ -19,7 +19,7 @@ When you're ready to clone the repository:
 
 This app uses the  [EventStore database](https://geteventstore.com/), which when not run as an administrator (or started up from another program running as administrator) will likely encounter an error while trying to start its HTTP server at  [http://localhost:2113](http://localhost:2113). After running the following command once as administrator, you should be able to start EventStore normally without experiencing this error:
 
-    # Feel free to replace the user if you want to and you know what you're doing.
+    # Feel free to change the user if you want to and you know what you're doing.
     netsh http add urlacl url=http://localhost:2113/ user=everyone
 
 If you ever want to undo the above command, run this (also once as administrator):
@@ -30,19 +30,25 @@ If you ever want to undo the above command, run this (also once as administrator
 
 To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Don't try to open any of the solution or project files unless you're sure you have ASP.NET 5 RC installed.
 
-##### ASP.NET 5 RC
-
+##### Download & install ASP.NET 5 RC if necessary
 - Start Visual Studio.
 - Type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>N</kbd> to create a new project.
 - Select `Templates/Visual C#/Web -> ASP.NET Web Application` and click `OK`.
 - If you see 3 items under the `ASP.NET 5 Templates` section, cancel out of all dialogs and proceed to the next step.
 - If instead you see a single `Get ASP.NET 5 RC` item under the `ASP.NET 5 Templates` section, select it and click OK. This will automatically download an additional exe file that you will need to run in order to install some things. Note you will have to close all instances of Visual Studio for the installer to complete. When finished, repeat the above steps to confirm you can create a new project using one of the 3 `ASP.NET 5 Templates`.
 
-##### Runtime 1.0.0-rc1-final
+##### Open the solution
+The first time you open [this app's solution file](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln), you may be prompted to install a DNX SDK verion ending in `1.0.0-rc1-final`. **Be sure to click Yes to this prompt.** If for some reason the install fails, close the solution, open a command prompt or powershell window, run `dnvm install 1.0.0-rc1-final` and re-open the solution.
 
-The first time you open [this app's solution file](https://github.com/danludwig/eventsourced.net/blob/master/EventSourced.Net.sln) you may be prompted to install a DNX SDK verion ending in `1.0.0-rc1-final`. **Be sure to click Yes to this prompt.**
+##### Build the solution
+Keep an eye on the Solution Explorer and wait for it to finish `Restoring packages`. After it has finished, type <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> to build the solution.
 
-    dnvm list
+##### Start the EventSourced.Net.Web project
+- In Solution Explorer right-click `Solution 'EventSourced.Net' (6 projects)` and select `Properties`.
+- Make sure the `Single startup project` radio button is selected, the `EventSourced.Net.Web` item is selected in the drop down, and then click `OK`.
+- Type <kbd>F5</kbd> to start the app.
+- When prompted about allowing `Network Command Shell` to make changes to your PC, click `Yes`.
+- When prompted by the Windows Firewall about allowing dnx.exe to communicate on private networks, click `Allow access`.
 
 #### Without Visual Studio
 ##### .NET Version Manager
