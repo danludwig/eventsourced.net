@@ -63,6 +63,19 @@ If you encounter an error while running the install command, check `Get-Executio
 After installing you should close the installer window, open a new command prompt or powershell window, and run the `dnvm` command again to confirm that it has been installed.
 
 ##### Runtime 1.0.0-rc1-final
+The .NET Version Manager installer will install the latest runtime and make it the default. This app currently targets runtime `1.0.0-rc1-final`, which you will need to have installed and available on your environment path. To find out which runtime is the default, run the following in command prompt or powershell:
+
+    dnvm list
+
+If you do not see an entry with Version `1.0.0-rc1-final` in the listing, run the following to install it:
+
+    dnvm install 1.0.0-rc1-final
+
+After the installation has finished, run `dnvm list` again in a new command prompt or powershell window. If you see that Version `1.0.0-rc1-final` is no longer the Active version, run the following:
+
+    dnvm use 1.0.0-rc1-final -persistent
+
+Unless otherwise specified, any other documentation about the `dnu` or `dnx` commands in this readme will assume that version `1.0.0-rc1-final` is the currently Active version in the environment path, according to `dnvm list`.
 
 ### On MacOS
 
