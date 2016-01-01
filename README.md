@@ -8,7 +8,6 @@ Getting Started with ASP.NET MVC6, Event Sourcing, CQRS, Eventual Consistency & 
   - [On MacOS](#on-macos)
 
 ## Up and running
-
 When you're ready to clone the repository:
 
     cd /path/to/local/working/copy/parent # where ever that may be
@@ -16,7 +15,6 @@ When you're ready to clone the repository:
     cd eventsourced.net
 
 ### On Windows
-
 This app uses the  [EventStore database](https://geteventstore.com/), which when not run as an administrator (or started up from another program running as administrator) will likely encounter an error while trying to start its HTTP server at  [http://localhost:2113](http://localhost:2113). After running the following command once as administrator, starting EventStore normally should not cause this error:
 
     # Feel free to change the user if you want to and you know what you're doing.
@@ -27,7 +25,6 @@ If you ever want to undo the above command, run this (also once as administrator
     netsh http delete urlacl url=http://localhost:2113/
 
 #### With Visual Studio
-
 To run in Visual Studio, you will need at least version 2015 with Update 1 installed. Don't try to open the solution or any of the project files unless you're sure you also have ASP.NET 5 RC installed, as described below.
 
 ##### Download & install ASP.NET 5 RC if necessary
@@ -79,16 +76,13 @@ After the installation has finished, run `dnvm list` again in a new command prom
 Unless otherwise specified, any other documentation about the `dnu` or `dnx` commands in this readme will assume that version `1.0.0-rc1-final` is the currently Active version in the environment path, according to `dnvm list`.
 
 ##### Restore nuget package dependencies
-
 The first time you clone the repository, and each time a nuget package dependency is added, removed, or changed, you will need to run the following at the repository root folder in either command prompt or powershell:
 
-    cd /path/to/local/working/copy/parent # where ever that may be
-    dnu restore
+    cd /path/to/local/working/copy/of/eventsourced.net # where ever that may be
 
 Note that restoring packages may take a couple of minutes when run for the first time.
 
 ##### Launch the app
-
 Run the following in commmand prompt or powershell from the `src/EventSourced.Net.Web` project directory to start the app in a web server:
 
     cd src/EventSourced.Net.Web
@@ -100,7 +94,6 @@ Run the following in commmand prompt or powershell from the `src/EventSourced.Ne
 - Finally, navigate to [http://localhost:5000](http://localhost:5000) in your favorite web browser.
 
 ### On MacOS
-
 ##### .NET Version Manager
 The first thing you will need to run this app on a mac is the .NET Version Manager (`dnvm`). To find out if you have it installed already, run the following in a terminal window:
 
@@ -131,7 +124,6 @@ After the installation has finished, run `dnvm list` again in a *new* teriminal 
 Unless otherwise specified, any other documentation about the `dnu` or `dnx` commands in this readme will assume that version `1.0.0-rc1-final` is the currently Active version in the environment path, according to `dnvm list`.
 
 ##### ArangoDB
-
 Before you can run the app, you will need to start an ArangoDB instance at [http://localhost:8529](http://localhost:8529). *For a better development experience, it is recommended that you at least [clone this repository](#up-and-running) to a local working copy before installing the ArangoDB app (read Advanced Options below)*. Follow these instructions to install the free ArangoDB app when you're ready:
 
 - Start the App Store app, type `ArangoDB` into the search box and hit <kbd>return</kbd>.
@@ -165,3 +157,25 @@ After setting up a default ArangoDB instance, you will still have to start it:
 - Click `Start`.
 
 When the ArangoDB instance is up and running, you should be able to access its Admin Interface at [http://localhost:8529](http://localhost:8529).
+
+##### Restore nuget package dependencies
+The first time you clone the repository, and each time a nuget package dependency is added, removed, or changed, you will need to run the following at the repository root folder in a terminal window:
+
+    cd /path/to/local/working/copy/of/eventsourced.net # where ever that may be
+    dnu restore
+
+Note that restoring packages may take a couple of minutes when run for the first time.
+
+##### Work around a known `FileSystemWatcher` issue
+There is just one last thing you need to do before you can run the app. There is a pretty well known issue about the MVC file watcher that may snag you. To avoid it, run the following:
+
+    export MONO_MANAGED_WATCHER=false
+
+##### Launch the app
+Run the following in a terminal window from the `src/EventSourced.Net.Web` project directory to start the app in a web server:
+
+    cd src/EventSourced.Net.Web
+    dnx web
+
+- Be patient. There is a lot that happens during the first app run. It will start up much faster next time.
+- Finally, navigate to [http://localhost:5000](http://localhost:5000) in your favorite web browser.
