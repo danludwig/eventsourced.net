@@ -22,19 +22,31 @@ namespace EventSourced.Net.Web.Users.Login
 
     [HttpPost, Route("login")]
     public async Task<IActionResult> Login(string login, string password) {
-      Guid? data = await Query.Execute(new UserIdByLogin(login));
-      LoginViewModel model = new LoginViewModel { Login = login };
-      if (data == null) {
-        ModelState.AddModelError("", "Invalid username or password.");
-      } else {
-        try {
-          await Command.SendAsync(new VerifyUserLogin(data.Value, login, password));
-          return Redirect("~/");
-        } catch {
-          ModelState.AddModelError("", "Invalid username or password.");
-        }
+      Guid? userId = await Query.Execute(new UserIdByLogin(login));
+      if (!userId.HasValue) {
+        return LoginErrorView(login);
       }
-      return View("~/Web/Users/Login/Login.cshtml", model);
+      try {
+        await Command.SendAsync(new VerifyUserLogin(userId.Value, login, password));
+      } catch {
+        return LoginErrorView(login);
+      }
+
+      await Command.SendAsync(new LogUserIn(userId.Value, login, HttpContext.Authentication));
+      return Redirect("~/");
+    }
+
+    private ViewResult LoginErrorView(string login) {
+      LoginViewModel model = new LoginViewModel { Login = login };
+      const string view = "~/Web/Users/Login/Login.cshtml";
+      ModelState.AddModelError("", "Invalid username or password.");
+      return View(view, model);
+    }
+
+    [HttpPost, Route("logoff")]
+    public async Task<IActionResult> Logoff() {
+      await Command.SendAsync(new LogUserOff(HttpContext.Authentication));
+      return Redirect("~/");
     }
   }
 }

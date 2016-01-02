@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.DataProtection;
 using Microsoft.AspNet.Hosting;
 using Microsoft.AspNet.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +20,7 @@ namespace EventSourced.Net.Web
     private Container Container { get; }
     private IConfigurationRoot Configuration { get; }
 
-    public Startup(IHostingEnvironment hostEnv, IApplicationEnvironment appEnv) {
+    public Startup(IApplicationEnvironment appEnv) {
       Container = new Container();
 
       // download & start databases, where possible
@@ -48,31 +47,46 @@ namespace EventSourced.Net.Web
       services
         .AddSingleton(x => Container)
         .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(Container))
+        .AddExternalCookieAuthentication()
         .AddMvc()
           .AddJsonOptions(x => x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IServiceProvider serviceProvider) {
-      Domain.Users.ContactChallengers.DataProtectionTokenProvider
-        .SetProviderFactory(serviceProvider.GetRequiredService<IDataProtectionProvider>);
+    public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory) {
       loggerFactory.AddDebug();
-      ComposeRoot();
-      app.UseIISPlatformHandler();
-      app.UseStaticFiles();
-      app.UseExecutionContextScope();
-      app.UseStatusCodePagesWithReExecute("/errors/{0}");
-      app.UseMvc();
+      ComposeRoot(app.ApplicationServices);
+      app
+        .UseIISPlatformHandler()
+        .UseStaticFiles()
+        .UseAuthentication()
+        .UseExecutionContextScope()
+        .UseStatusCodePagesWithReExecute("/errors/{0}")
+        .UseMvc()
+      ;
     }
 
-    private void ComposeRoot() {
+    private void ComposeRoot(IServiceProvider applicationServices) {
       Container.Options.DefaultScopedLifestyle = new ExecutionContextScopeLifestyle();
       Assembly[] eventHandlerAssemblies = {
         typeof(IHandleEvent<>).Assembly,
         typeof(ReadModel.Users.Internal.Handlers.CreateUserDocument).Assembly,
         GetType().Assembly,
       };
+      Assembly[] commandHandlerAssemblies = {
+        typeof(IHandleCommand<>).Assembly,
+        GetType().Assembly,
+      };
+      Assembly[] queryHandlerAssemblies = {
+        typeof(IHandleQuery<,>).Assembly,
+        GetType().Assembly,
+      };
+
       var packages = new IPackage[] {
+
+        new Services.Web.Mvc.IdentityOptionsPackage(applicationServices),
+
+        new Services.DataProtection.Package(applicationServices),
 
         new Services.Storage.EventStore.Connection.Package(
           Configuration.GetEventStoreConnectionConfiguration()),
@@ -81,9 +95,9 @@ namespace EventSourced.Net.Web
 
         new Services.Storage.ArangoDb.Package(),
 
-        new Services.Messaging.Commands.Package(),
+        new Services.Messaging.Commands.Package(commandHandlerAssemblies),
         new Services.Messaging.Events.Package(eventHandlerAssemblies),
-        new Services.Messaging.Queries.Package(),
+        new Services.Messaging.Queries.Package(queryHandlerAssemblies),
 
         new Services.Web.Sockets.Package(
           Configuration.GetWebSocketServerConfiguration()),

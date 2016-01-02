@@ -11,18 +11,18 @@ namespace EventSourced.Net.Services.Web.Mvc
   [UsedImplicitly]
   public class ExecutionContextScopeMiddleware
   {
-    private readonly RequestDelegate _next;
-    private readonly Container _container;
+    private RequestDelegate Next { get; }
+    private Container Container { get; }
 
     public ExecutionContextScopeMiddleware(RequestDelegate next, Container container) {
-      _next = next;
-      _container = container;
+      Next = next;
+      Container = container;
     }
 
     public async Task Invoke(HttpContext context) {
-      using (_container.BeginExecutionContextScope()) {
+      using (Container.BeginExecutionContextScope()) {
         try {
-          await _next.Invoke(context).ConfigureAwait(false);
+          await Next.Invoke(context).ConfigureAwait(false);
         } catch (Exception ex) {
           Console.WriteLine(ex.ToString());
           throw;
