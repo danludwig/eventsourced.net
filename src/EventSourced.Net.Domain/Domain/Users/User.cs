@@ -35,7 +35,7 @@ namespace EventSourced.Net.Domain.Users
 
     #region Prepare Challenge
 
-    public void PrepareContactIdChallenge(Guid correlationId, string emailOrPhone) {
+    public void PrepareContactChallenge(Guid correlationId, string emailOrPhone) {
       MailAddress mailAddress = ContactIdParser.AsMailAddress(emailOrPhone);
       if (mailAddress != null) {
         PrepareContactEmailChallenge(correlationId, mailAddress);

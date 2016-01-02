@@ -14,7 +14,7 @@ namespace EventSourced.Net.Domain.Users
 
     public async Task HandleAsync(PrepareUserContactChallenge message) {
       var user = new User(GuidComb.NewGuid());
-      user.PrepareContactIdChallenge(message.CorrelationId, message.EmailOrPhone);
+      user.PrepareContactChallenge(message.CorrelationId, message.EmailOrPhone);
 
       var commitId = Guid.NewGuid();
       await Repository.SaveAsync(user, commitId);
