@@ -18,15 +18,5 @@ namespace EventSourced.Net.Web.Home
     public IActionResult Contact() {
       return View("~/Web/Home/Contact.cshtml");
     }
-
-    [HttpGet, Route("errors/404")]
-    public IActionResult Error404() {
-      return View("~/Web/Home/404.cshtml");
-    }
-
-    [HttpGet, Route("errors/400")]
-    public IActionResult Error400() {
-      return View("~/Web/Home/400.cshtml");
-    }
   }
 }
