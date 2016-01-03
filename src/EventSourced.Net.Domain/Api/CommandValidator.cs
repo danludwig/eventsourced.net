@@ -24,6 +24,14 @@ namespace EventSourced.Net
       if (string.IsNullOrWhiteSpace(value)) AddError(key, value, CommandRejectionReason.Empty);
     }
 
+    public void AreEqual(string value, string key, string otherValue) {
+      if (value != otherValue) AddError(key, value, CommandRejectionReason.NotEqual);
+    }
+
+    public bool HasError(string key, CommandRejectionReason reason) {
+      return Errors.ContainsKey(key) && Errors[key].Any(x => x.Reason == reason);
+    }
+
     private void AddError(string key, object value, CommandRejectionReason reason) {
       key = key?.Trim() ?? "";
       string errorsKey = Errors.Select(x => x.Key).SingleOrDefault(x => x.Equals(key, StringComparison.InvariantCultureIgnoreCase));

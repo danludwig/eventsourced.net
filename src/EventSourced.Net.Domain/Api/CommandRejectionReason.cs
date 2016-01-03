@@ -5,8 +5,9 @@
     Null,
     Empty,
     InvalidFormat,
-    StateConflict,
+    NotEqual,
     Unverified,
     MaxAttempts,
+    StateConflict,
   }
 }

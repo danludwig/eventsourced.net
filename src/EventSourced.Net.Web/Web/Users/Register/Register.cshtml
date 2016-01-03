@@ -30,27 +30,27 @@
   *@
   @* ReSharper disable FunctionsUsedBeforeDeclared *@
   <script>
-    $(document).on('ready', function() {
+    $(document).on('ready', function () {
       $('#register_form').find('[name=emailOrPhone]').focus();
-      $('#register_form').on('submit', function() {
+      $('#register_form').on('submit', function () {
         var $form = $(this), data = {};
-        $form.serializeArray().map(function(x) { data[x.name] = x.value; });
+        $form.serializeArray().map(function (x) { data[x.name] = x.value; });
         $form.find('input, button').attr('disabled', 'disabled');
         clearValidationErrors();
         $.ajax({
-            type: 'POST',
-            url: $form.attr('action'),
-            data: data
-          })
-          .done(function(data, status, xhr) {
+          type: 'POST',
+          url: $form.attr('action'),
+          data: data
+        })
+          .done(function (data, status, xhr) {
             console.log('POST ' + $form.attr('action') + ' response received.');
             var location = xhr.getResponseHeader('location');
             var correlationUrl = xhr.getResponseHeader("x-correlation-socket");
             var socket = new WebSocket(correlationUrl);
-            socket.onopen = function(e) {
+            socket.onopen = function (e) {
               console.log('WebSockets: Correlation ' + e.type);
             }
-            socket.onmessage = function(message) {
+            socket.onmessage = function (message) {
               console.log('WebSockets: ' + message.data);
               var data = { type: 'unknown' };
               try {
@@ -59,16 +59,16 @@
                 console.log('Message was expected to be json.');
               }
               switch (data.type) {
-              case 'ContactEmailChallengePrepared':
-              case 'ContactSmsChallengePrepared':
-                window.location = location;
-                break;
-              default:
-                console.log('Encountered unexpected data type "' + data.type + '"');
+                case 'ContactEmailChallengePrepared':
+                case 'ContactSmsChallengePrepared':
+                  window.location = location;
+                  break;
+                default:
+                  console.log('Encountered unexpected data type "' + data.type + '"');
               }
             }
           })
-          .fail(function(xhr) {
+          .fail(function (xhr) {
             $form.find('input, button').removeAttr('disabled');
             console.log('POST ' + $form.attr('action') + ' failed.');
             if (xhr.status === 400 && xhr.responseJSON) {

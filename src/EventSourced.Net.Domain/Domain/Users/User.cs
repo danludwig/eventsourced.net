@@ -31,7 +31,7 @@ namespace EventSourced.Net.Domain.Users
 
     private IDictionary<Guid, ContactChallenge> ContactChallenges { get; }
     private IList<string> ConfirmedLogins { get; }
-    private string PasswordHash { get; set; }
+    private string CurrentPasswordHash { get; set; }
 
     #region Prepare Challenge
 
@@ -119,11 +119,7 @@ namespace EventSourced.Net.Domain.Users
         RaiseEvent(new ContactChallengeResponseInvalidCodeAttempted(correlationId, Id, code, challenge.NextCodeAttemptNumber, happenedOn));
         if (challenge.CodeAttemptsRemainingCount <= 0) {
           RaiseEvent(new ContactChallengeResponseMaxInvalidCodesAttempted(correlationId, Id, happenedOn));
-          try {
-            VerifyContactChallengeResponse(correlationId, code, out exceptionToThrowAfterSave);
-          } catch (CommandRejectedException ex) {
-            exceptionToThrowAfterSave = ex;
-          }
+          exceptionToThrowAfterSave = new CommandRejectedException(nameof(code), code, CommandRejectionReason.MaxAttempts);
           return;
         }
         exceptionToThrowAfterSave = new CommandRejectedException(nameof(code), code, CommandRejectionReason.Unverified,
@@ -152,15 +148,24 @@ namespace EventSourced.Net.Domain.Users
     #endregion
     #region Redeem to Create Password
 
-    public void CreatePassword(Guid correlationId, string token, string password, string passwordConfirmation) {
-      if (string.IsNullOrWhiteSpace(password)) throw new InvalidOperationException("nope");
-      if (password != passwordConfirmation) throw new InvalidOperationException("also nope");
-      if (!ContactChallenges.ContainsKey(correlationId) || ContactChallenges[correlationId] == null)
-        throw new InvalidOperationException("nope");
+    public void CreatePassword(Guid correlationId, string token, string password) {
+      if (!ContactChallenges.ContainsKey(correlationId))
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
+          $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
+
       ContactChallenge challenge = ContactChallenges[correlationId];
-      if (challenge.IsTokenRedeemed || PasswordHash != null) throw new InvalidOperationException("nope");
+      if (challenge.IsTokenRedeemed)
+        throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.StateConflict);
+
+      // todo: create a better password policy
+      const int minCharacters = 8;
+      if (password.Length < minCharacters)
+        throw new CommandRejectedException(nameof(password), password, CommandRejectionReason.InvalidFormat, new {
+          MinCharacters = minCharacters,
+        });
+
       bool isValid = ContactChallengers.DataProtectionTokenProvider.Validate(token, Id, challenge.Purpose, challenge.Stamp);
-      if (!isValid) throw new InvalidOperationException("nope");
+      if (!isValid) throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.Unverified);
 
       string hashedPassword = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
       RaiseEvent(new PasswordCreated(correlationId, Id, hashedPassword));
@@ -171,7 +176,7 @@ namespace EventSourced.Net.Domain.Users
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = true;
       ConfirmedLogins.Add(challenge.ContactValue);
-      PasswordHash = e.PasswordHash;
+      CurrentPasswordHash = e.PasswordHash;
     }
 
     #endregion
@@ -227,7 +232,7 @@ namespace EventSourced.Net.Domain.Users
       if (!ConfirmedLogins.Any(x => string.Equals(x, ContactIdParser.Normalize(login)))) throw new InvalidOperationException("nope");
       exceptionToThrowAfterSave = null;
       bool isRehashRequired; // = false;
-      bool isVerified = ContactChallengers.PasswordHasher.Instance.VerifyHashedPassword(PasswordHash, password, out isRehashRequired);
+      bool isVerified = ContactChallengers.PasswordHasher.Instance.VerifyHashedPassword(CurrentPasswordHash, password, out isRehashRequired);
 
       DateTime happenedOn = DateTime.UtcNow;
       if (isVerified) {
@@ -246,7 +251,7 @@ namespace EventSourced.Net.Domain.Users
     [UsedImplicitly]
     private void Apply(LoginVerified e) {
       if (e.PasswordRehash != null) {
-        PasswordHash = e.PasswordRehash;
+        CurrentPasswordHash = e.PasswordRehash;
       }
     }
 

@@ -13,8 +13,11 @@ namespace EventSourced.Net.Domain.Users
     private IRepository Repository { get; }
 
     public async Task HandleAsync(CreateUserPassword message) {
-      var user = await Repository.GetByIdAsync<User>(message.UserId);
-      user.CreatePassword(message.CorrelationId, message.Token, message.Password, message.PasswordConfirmation);
+      RepositoryGetResult<User> result = await Repository.TryGetByIdAsync<User>(message.UserId);
+      User user = result.Aggregate;
+      result.RejectIfNull(nameof(user), message.UserId);
+
+      user.CreatePassword(message.CorrelationId, message.Token, message.Password);
 
       var commitId = Guid.NewGuid();
       await Repository.SaveAsync(user, commitId);
