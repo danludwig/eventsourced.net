@@ -31,85 +31,41 @@
   @* ReSharper disable FunctionsUsedBeforeDeclared *@
   <script>
     $(document).on('ready', function () {
-      $('#register_form').find('[name=emailOrPhone]').focus();
-      $('#register_form').on('submit', function () {
-        var $form = $(this), data = {};
-        $form.serializeArray().map(function (x) { data[x.name] = x.value; });
-        $form.find('input, button').attr('disabled', 'disabled');
-        clearValidationErrors();
+      var formId = 'register_form', emailOrPhone = 'emailOrPhone';
+      setFocus(formId, emailOrPhone);
+      $('#' + formId).on('submit', function () {
+        var $form = $(this), data = serializeFormData($form);
+        clearValidationErrors($form);
+        disableForm($form);
         $.ajax({
           type: 'POST',
           url: $form.attr('action'),
           data: data
         })
-          .done(function (data, status, xhr) {
-            console.log('POST ' + $form.attr('action') + ' response received.');
-            var location = xhr.getResponseHeader('location');
-            var correlationUrl = xhr.getResponseHeader("x-correlation-socket");
-            var socket = new WebSocket(correlationUrl);
+          .done(function (response, status, xhr) {
+            var socket = getCorrelationSocket(xhr);
             socket.onopen = function (e) {
               console.log('WebSockets: Correlation ' + e.type);
             }
             socket.onmessage = function (message) {
               console.log('WebSockets: ' + message.data);
-              var data = { type: 'unknown' };
-              try {
-                data = $.parseJSON(message.data);
-              } catch (ex) {
-                console.log('Message was expected to be json.');
-              }
-              switch (data.type) {
+              var messageData = parseMessageData(message);
+              switch (messageData.type) {
                 case 'ContactEmailChallengePrepared':
                 case 'ContactSmsChallengePrepared':
-                  window.location = location;
+                  setLocation(xhr);
                   break;
                 default:
-                  console.log('Encountered unexpected data type "' + data.type + '"');
+                  console.log('Encountered unexpected data type "' + messageData.type + '"');
               }
             }
           })
           .fail(function (xhr) {
-            $form.find('input, button').removeAttr('disabled');
-            console.log('POST ' + $form.attr('action') + ' failed.');
-            if (xhr.status === 400 && xhr.responseJSON) {
-              var modelState = xhr.responseJSON;
-              for (var fieldName in modelState) {
-                if (!modelState.hasOwnProperty(fieldName)) continue;
-                var fieldErrors = modelState[fieldName];
-                if (!fieldErrors.length) continue;
-                for (var i = 0; i < fieldErrors.length; i++) {
-                  var message = getValidationMessage(fieldErrors[i]);
-                  addValidationError(message);
-                }
-              }
-            }
+            enableForm($form);
+            handleValidationErrors(xhr, $form);
           });
         return false;
       });
-
-      function camelizeHack(text) {
-        return text.substr(0, 1).toLowerCase() + text.substr(1);
-      }
-
-      function getValidationMessage(item) {
-        var messages = window["validationMessages"];
-        if (messages[item.key] && messages[item.key][camelizeHack(item.reason)]) {
-          var message = messages[item.key][camelizeHack(item.reason)] || item.message;
-          message = message.replace('{attemptedValue}', item.value);
-          return message;
-        }
-        return item.message || 'An unexpected error occurred.';
-      }
-
-      function addValidationError(message) {
-        var $ul = $('#register_form .form-errors ul');
-        $ul.append($('<li></li>').text(message));
-      }
-
-      function clearValidationErrors() {
-        var $ul = $('#register_form .form-errors ul');
-        $ul.empty();
-      }
 
       window['validationMessages'] = {
         emailOrPhone: {
