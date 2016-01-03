@@ -19,6 +19,9 @@
       <button type="submit" class="btn btn-default">Verify</button>
     </div>
   </div>
+  <div class="text-danger form-errors">
+    <ul></ul>
+  </div>
 </form>
 
 @section Scripts {
@@ -26,6 +29,7 @@
     NOTE: this is a terrible way to do client script.
     TODO: replace cshtml & viewcontrollers with redux/react spa.
   *@
+  @* ReSharper disable FunctionsUsedBeforeDeclared *@
   <script>
     $(document).on('ready', function () {
       $('#verify_form').find('[name=code]').focus();
@@ -33,6 +37,7 @@
         var $form = $(this), data = {};
         $form.serializeArray().map(function (x) { data[x.name] = x.value; });
         $form.find('input, button').attr('disabled', 'disabled');
+        clearValidationErrors();
         $.ajax({
           type: 'POST',
           url: $form.attr('action'),
@@ -43,12 +48,67 @@
             var location = xhr.getResponseHeader('location');
             window.location = location;
           })
-          .fail(function () {
+          .fail(function (xhr) {
             $form.find('input, button').removeAttr('disabled');
             console.log('POST ' + $form.attr('action') + ' failed.');
+            if (xhr.status === 400 && xhr.responseJSON) {
+              var modelState = xhr.responseJSON;
+              for (var fieldName in modelState) {
+                if (!modelState.hasOwnProperty(fieldName)) continue;
+                var fieldErrors = modelState[fieldName];
+                if (!fieldErrors.length) continue;
+                for (var i = 0; i < fieldErrors.length; i++) {
+                  var message = getValidationMessage(fieldErrors[i]);
+                  addValidationError(message);
+                }
+              }
+            }
           });
         return false;
       });
+
+      function camelizeHack(text) {
+        return text.substr(0, 1).toLowerCase() + text.substr(1);
+      }
+
+      function getValidationMessage(item) {
+        var messages = window["validationMessages"];
+        if (messages[item.key] && messages[item.key][camelizeHack(item.reason)]) {
+          var message = messages[item.key][camelizeHack(item.reason)] || item.message;
+          message = message.replace('{attemptedValue}', item.value);
+          if (item.data) {
+            for (var fieldName in item.data) {
+              if (!item.data.hasOwnProperty(fieldName)) continue;
+              message = message.replace('{' + fieldName + '}', item.data[fieldName]);
+            }
+          }
+          return message;
+        }
+        return item.message || 'An unexpected error occurred.';
+      }
+
+      function addValidationError(message) {
+        var $ul = $('#verify_form .form-errors ul');
+        $ul.append($('<li></li>').text(message));
+      }
+
+      function clearValidationErrors() {
+        var $ul = $('#verify_form .form-errors ul');
+        $ul.empty();
+      }
+
+      window['validationMessages'] = {
+        code: {
+          empty: 'Secret code is required.',
+          unverified: 'Invalid code. You can try {codeAttemptsRemainingCount} more time(s).',
+          maxAttempts: 'You have exceeded the maximum allowable secret code attempts.',
+          stateConflict: 'Your code has already been validated. Please use the forward button on your browser and do not navigate back to this page.'
+    },
+        correlationId: {
+          stateConflict: 'There is no secret code for this URL. Please restart the registration process.'
+        }
+      }
     });
   </script>
+  @* ReSharper restore FunctionsUsedBeforeDeclared *@
 }

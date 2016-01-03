@@ -6,5 +6,7 @@
     Empty,
     InvalidFormat,
     StateConflict,
+    Unverified,
+    MaxAttempts,
   }
 }

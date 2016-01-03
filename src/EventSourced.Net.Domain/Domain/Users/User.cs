@@ -96,22 +96,57 @@ namespace EventSourced.Net.Domain.Users
     #endregion
     #region Verify Code
 
-    public void VerifyContactChallengeResponse(Guid correlationId, string code) {
+    public void VerifyContactChallengeResponse(Guid correlationId, string code, out Exception exceptionToThrowAfterSave) {
       if (!ContactChallenges.ContainsKey(correlationId))
         throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
-          $"{GetType().Namespace} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
+          $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
 
       ContactChallenge challenge = ContactChallenges[correlationId];
-      if (challenge.IsVerified) throw new InvalidOperationException("nope..?");
+      exceptionToThrowAfterSave = null;
+
+      if (challenge.IsCodeVerified)
+        throw new CommandRejectedException(nameof(code), code, CommandRejectionReason.StateConflict);
+
+      if (challenge.IsMaxCodeAttemptsExhausted)
+        throw new CommandRejectedException(nameof(code), code, CommandRejectionReason.MaxAttempts);
+
       bool isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, challenge.ContactValue, challenge.Purpose, challenge.Stamp);
-      if (!isValid) throw new InvalidOperationException("nope");
-      RaiseEvent(new ContactChallengeVerified(correlationId, Id));
+      DateTime happenedOn = DateTime.UtcNow;
+
+      if (isValid) {
+        RaiseEvent(new ContactChallengeResponseVerified(correlationId, Id, challenge.NextCodeAttemptNumber, happenedOn));
+      } else {
+        RaiseEvent(new ContactChallengeResponseInvalidCodeAttempted(correlationId, Id, code, challenge.NextCodeAttemptNumber, happenedOn));
+        if (challenge.CodeAttemptsRemainingCount <= 0) {
+          RaiseEvent(new ContactChallengeResponseMaxInvalidCodesAttempted(correlationId, Id, happenedOn));
+          try {
+            VerifyContactChallengeResponse(correlationId, code, out exceptionToThrowAfterSave);
+          } catch (CommandRejectedException ex) {
+            exceptionToThrowAfterSave = ex;
+          }
+          return;
+        }
+        exceptionToThrowAfterSave = new CommandRejectedException(nameof(code), code, CommandRejectionReason.Unverified,
+          new { challenge.CodeAttemptsRemainingCount, });
+      }
     }
 
     [UsedImplicitly]
-    private void Apply(ContactChallengeVerified e) {
+    private void Apply(ContactChallengeResponseVerified e) {
       var challenge = ContactChallenges[e.CorrelationId];
-      challenge.IsVerified = true;
+      challenge.IsCodeVerified = true;
+    }
+
+    [UsedImplicitly]
+    private void Apply(ContactChallengeResponseInvalidCodeAttempted e) {
+      var challenge = ContactChallenges[e.CorrelationId];
+      ++challenge.InvalidCodeAttemptCount;
+    }
+
+    [UsedImplicitly]
+    private void Apply(ContactChallengeResponseMaxInvalidCodesAttempted e) {
+      var challenge = ContactChallenges[e.CorrelationId];
+      challenge.IsMaxCodeAttemptsExhausted = true;
     }
 
     #endregion
@@ -123,7 +158,7 @@ namespace EventSourced.Net.Domain.Users
       if (!ContactChallenges.ContainsKey(correlationId) || ContactChallenges[correlationId] == null)
         throw new InvalidOperationException("nope");
       ContactChallenge challenge = ContactChallenges[correlationId];
-      if (challenge.IsRedeemed || PasswordHash != null) throw new InvalidOperationException("nope");
+      if (challenge.IsTokenRedeemed || PasswordHash != null) throw new InvalidOperationException("nope");
       bool isValid = ContactChallengers.DataProtectionTokenProvider.Validate(token, Id, challenge.Purpose, challenge.Stamp);
       if (!isValid) throw new InvalidOperationException("nope");
 
@@ -134,7 +169,7 @@ namespace EventSourced.Net.Domain.Users
     [UsedImplicitly]
     private void Apply(PasswordCreated e) {
       var challenge = ContactChallenges[e.CorrelationId];
-      challenge.IsRedeemed = true;
+      challenge.IsTokenRedeemed = true;
       ConfirmedLogins.Add(challenge.ContactValue);
       PasswordHash = e.PasswordHash;
     }
@@ -144,6 +179,8 @@ namespace EventSourced.Net.Domain.Users
 
     private abstract class ContactChallenge
     {
+      private const int MaxInvalidCodeAttempts = 3;
+
       protected ContactChallenge(ContactChallengePrepared e) {
         Stamp = e.Stamp;
         Purpose = e.Purpose;
@@ -151,9 +188,13 @@ namespace EventSourced.Net.Domain.Users
 
       internal string Stamp { get; }
       internal ContactChallengePurpose Purpose { get; }
-      internal bool IsVerified { get; set; }
-      internal bool IsRedeemed { get; set; }
       internal abstract string ContactValue { get; }
+      internal bool IsCodeVerified { get; set; }
+      internal int InvalidCodeAttemptCount { get; set; }
+      internal int NextCodeAttemptNumber => InvalidCodeAttemptCount + 1;
+      internal int CodeAttemptsRemainingCount => MaxInvalidCodeAttempts - InvalidCodeAttemptCount;
+      internal bool IsMaxCodeAttemptsExhausted { get; set; }
+      internal bool IsTokenRedeemed { get; set; }
     }
 
     private class ContactEmailChallenge : ContactChallenge
@@ -194,23 +235,23 @@ namespace EventSourced.Net.Domain.Users
         if (isRehashRequired) {
           passwordRehash = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
         }
-        RaiseEvent(new UserLoginVerified(login, happenedOn, passwordRehash));
+        RaiseEvent(new LoginVerified(Id, login, happenedOn, passwordRehash));
       } else {
         exceptionToThrowAfterSave = new Exception("nope");
-        RaiseEvent(new UserAttemptedLoginWithUnverifiedPassword(login, happenedOn));
+        RaiseEvent(new LoginInvalidPasswordAttempted(Id, login, happenedOn));
       }
     }
 
 
     [UsedImplicitly]
-    private void Apply(UserLoginVerified e) {
+    private void Apply(LoginVerified e) {
       if (e.PasswordRehash != null) {
         PasswordHash = e.PasswordRehash;
       }
     }
 
     [UsedImplicitly]
-    private void Apply(UserAttemptedLoginWithUnverifiedPassword e) {
+    private void Apply(LoginInvalidPasswordAttempted e) {
       // todo: lock out user after 3 bad password attempts
     }
 

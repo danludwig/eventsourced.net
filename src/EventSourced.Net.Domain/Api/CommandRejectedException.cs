@@ -12,11 +12,18 @@ namespace EventSourced.Net
       Errors = errors;
     }
 
-    internal CommandRejectedException(string key, object value, CommandRejectionReason reason, string message = null)
-      : base(BaseMessage) {
-      Errors = new Dictionary<string, CommandRejection[]>(StringComparer.OrdinalIgnoreCase) {
-        { key, new[] { new CommandRejection(key, value, reason, message), } }
-      };
-    }
+    internal CommandRejectedException(string key, object value, CommandRejectionReason reason)
+      : this(key, value, reason, null, null) { }
+
+    internal CommandRejectedException(string key, object value, CommandRejectionReason reason, string message)
+      : this(key, value, reason, message, null) { }
+
+    internal CommandRejectedException(string key, object value, CommandRejectionReason reason, object data)
+      : this(key, value, reason, null, data) { }
+
+    internal CommandRejectedException(string key, object value, CommandRejectionReason reason, string message, object data)
+      : this(new Dictionary<string, CommandRejection[]>(StringComparer.OrdinalIgnoreCase) {
+        { key, new[] { new CommandRejection(key, value, reason, message, data), } }
+      }) { }
   }
 }
