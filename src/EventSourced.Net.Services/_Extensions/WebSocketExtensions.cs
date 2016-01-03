@@ -15,36 +15,36 @@ namespace EventSourced.Net
       return configuration.GetConfiguration<ServerConfiguration>(section);
     }
 
-    public static void AddCorrelationService(this IServeWebSockets service, Guid correlationId) {
+    public static void AddCorrelationService(this IServeWebSockets service, ShortGuid correlationId) {
       service.Server.AddWebSocketService(correlationId.GetCorrelationEndpoint(leadingForwardSlash: true),
         () => new Correlation(correlationId));
     }
 
-    public static void RemoveCorrelationService(this IServeWebSockets service, Guid correlationId) {
+    public static void RemoveCorrelationService(this IServeWebSockets service, ShortGuid correlationId) {
       service.Server.RemoveWebSocketService(correlationId.GetCorrelationEndpoint(leadingForwardSlash: true));
     }
 
-    public static Uri GetCorrelationUri(this IServeWebSockets service, Guid correlationId) {
+    public static Uri GetCorrelationUri(this IServeWebSockets service, ShortGuid correlationId) {
       return new Uri(service.GetCorrelationUrl(correlationId));
     }
 
-    public static bool IsCorrelationService(this IServeWebSockets service, Guid correlationId) {
+    public static bool IsCorrelationService(this IServeWebSockets service, ShortGuid correlationId) {
       var endpoint = correlationId.GetCorrelationEndpoint(leadingForwardSlash: true);
       var isService = service.Server.WebSocketServices.Paths.Any(x => string.Equals(x, endpoint, StringComparison.OrdinalIgnoreCase));
       return isService;
     }
 
-    public static WebSocket CreateCorrelationClient(this IServeWebSockets service, Guid correlationId, bool connect = true) {
+    public static WebSocket CreateCorrelationClient(this IServeWebSockets service, ShortGuid correlationId, bool connect = true) {
       var client = new WebSocket(service.GetCorrelationUrl(correlationId));
       if (connect) client.Connect();
       return client;
     }
 
-    private static string GetCorrelationEndpoint(this Guid correlationId, bool leadingForwardSlash = false) {
+    private static string GetCorrelationEndpoint(this ShortGuid correlationId, bool leadingForwardSlash = false) {
       return $"{(leadingForwardSlash ? "/" : "")}correlations/{correlationId}";
     }
 
-    private static string GetCorrelationUrl(this IServeWebSockets service, Guid correlationId) {
+    private static string GetCorrelationUrl(this IServeWebSockets service, ShortGuid correlationId) {
       return $"{service.BaseUri}{correlationId.GetCorrelationEndpoint()}";
     }
 
