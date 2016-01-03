@@ -1,6 +1,6 @@
 using System;
 
-namespace EventSourced.Net.Services.Storage.EventStore.Repository
+namespace EventSourced.Net
 {
   public class AggregateNotFoundException : Exception
   {

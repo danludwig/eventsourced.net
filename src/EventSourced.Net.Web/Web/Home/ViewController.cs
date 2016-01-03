@@ -23,5 +23,10 @@ namespace EventSourced.Net.Web.Home
     public IActionResult Error404() {
       return View("~/Web/Home/404.cshtml");
     }
+
+    [HttpGet, Route("errors/400")]
+    public IActionResult Error400() {
+      return View("~/Web/Home/400.cshtml");
+    }
   }
 }

@@ -5,9 +5,14 @@ namespace EventSourced.Net
   public class PrepareUserContactChallenge : ICommand
   {
     public PrepareUserContactChallenge(Guid correlationId, string emailOrPhone) {
-      if (correlationId == Guid.Empty) throw new ArgumentException("Cannot be empty.", nameof(correlationId));
+      emailOrPhone = emailOrPhone?.Trim();
+      using (var validate = new CommandValidator()) {
+        validate.NotEmpty(correlationId, nameof(correlationId));
+        validate.NotEmpty(emailOrPhone, nameof(emailOrPhone));
+      }
+
       CorrelationId = correlationId;
-      EmailOrPhone = emailOrPhone?.Trim();
+      EmailOrPhone = emailOrPhone;
     }
 
     public Guid CorrelationId { get; }

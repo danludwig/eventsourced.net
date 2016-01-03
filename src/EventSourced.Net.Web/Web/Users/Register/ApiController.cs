@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading.Tasks;
 using EventSourced.Net.ReadModel.Users;
+using EventSourced.Net.Services.Web.Mvc;
 using EventSourced.Net.Services.Web.Sockets;
 using Microsoft.AspNet.Mvc;
 
 namespace EventSourced.Net.Web.Users.Register
 {
+  [Return400BadRequstIfCommandRejected]
   public class ApiController : Controller
   {
     private ISendCommand Command { get; }

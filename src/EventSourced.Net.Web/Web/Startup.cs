@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
@@ -49,7 +50,11 @@ namespace EventSourced.Net.Web
         .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(Container))
         .AddExternalCookieAuthentication()
         .AddMvc()
-          .AddJsonOptions(x => x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver());
+          .AddJsonOptions(x =>
+          {
+            x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            x.SerializerSettings.Converters.Add(new StringEnumConverter());
+          });
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

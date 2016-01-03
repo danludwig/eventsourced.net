@@ -36,29 +36,30 @@ namespace EventSourced.Net.Domain.Users
     #region Prepare Challenge
 
     public void PrepareContactChallenge(Guid correlationId, string emailOrPhone) {
+      if (ContactChallenges.ContainsKey(correlationId))
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
+          $"Contact challenge for correlationId '{correlationId}' has already been prepared.");
+
       MailAddress mailAddress = ContactIdParser.AsMailAddress(emailOrPhone);
       if (mailAddress != null) {
-        PrepareContactEmailChallenge(correlationId, mailAddress);
+        PrepareContactEmailChallenge(correlationId, mailAddress, Guid.NewGuid().ToString(),
+          ContactChallengePurpose.CreateUserFromEmail);
         return;
       }
 
       PhoneNumber phoneNumber = ContactIdParser.AsPhoneNumber(emailOrPhone);
       if (phoneNumber != null) {
-        PrepareContactSmsChallenge(correlationId, phoneNumber);
+        PrepareContactSmsChallenge(correlationId, phoneNumber, Guid.NewGuid().ToString(),
+          ContactChallengePurpose.CreateUserFromPhone);
         return;
       }
 
-      throw new InvalidOperationException(
-        $"'{emailOrPhone}' does not appear to be a valid email address or US phone number.");
+      throw new CommandRejectedException(nameof(emailOrPhone), emailOrPhone,
+        CommandRejectionReason.InvalidFormat);
     }
 
-    private void PrepareContactEmailChallenge(Guid correlationId, MailAddress mailAddress) {
-      if (ContactChallenges.ContainsKey(correlationId) && ContactChallenges[correlationId] != null)
-        throw new InvalidOperationException(
-          $"Contact challenge  for correlationId '{correlationId}' has already been prepared.");
-
-      string stamp = Guid.NewGuid().ToString();
-      var purpose = ContactChallengePurpose.CreateUserFromEmail;
+    private void PrepareContactEmailChallenge(Guid correlationId, MailAddress mailAddress, string stamp,
+      ContactChallengePurpose purpose) {
       string code = ContactChallengers.TotpCodeProvider.Generate(Id, mailAddress, purpose, stamp);
       string token = ContactChallengers.DataProtectionTokenProvider.Generate(Id, purpose, stamp);
       var assembly = Assembly.GetExecutingAssembly();
@@ -69,13 +70,8 @@ namespace EventSourced.Net.Domain.Users
         purpose, stamp, token, subject, body));
     }
 
-    private void PrepareContactSmsChallenge(Guid correlationId, PhoneNumber phoneNumber) {
-      if (ContactChallenges.ContainsKey(correlationId) && ContactChallenges[correlationId] != null)
-        throw new InvalidOperationException(
-          $"Contact challenge  for correlationId '{correlationId}' has already been prepared.");
-
-      string stamp = Guid.NewGuid().ToString();
-      var purpose = ContactChallengePurpose.CreateUserFromPhone;
+    private void PrepareContactSmsChallenge(Guid correlationId, PhoneNumber phoneNumber, string stamp,
+      ContactChallengePurpose purpose) {
       string code = ContactChallengers.TotpCodeProvider.Generate(Id, phoneNumber, purpose, stamp);
       string token = ContactChallengers.DataProtectionTokenProvider.Generate(Id, purpose, stamp);
       var assembly = Assembly.GetExecutingAssembly();
@@ -101,8 +97,10 @@ namespace EventSourced.Net.Domain.Users
     #region Verify Code
 
     public void VerifyContactChallengeResponse(Guid correlationId, string code) {
-      if (!ContactChallenges.ContainsKey(correlationId) || ContactChallenges[correlationId] == null)
-        throw new InvalidOperationException("nope");
+      if (!ContactChallenges.ContainsKey(correlationId))
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
+          $"{GetType().Namespace} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
+
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (challenge.IsVerified) throw new InvalidOperationException("nope..?");
       bool isValid = ContactChallengers.TotpCodeProvider.Validate(code, Id, challenge.ContactValue, challenge.Purpose, challenge.Stamp);

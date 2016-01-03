@@ -13,7 +13,10 @@ namespace EventSourced.Net.Domain.Users
     private IRepository Repository { get; }
 
     public async Task HandleAsync(VerifyUserContactChallengeResponse message) {
-      var user = await Repository.GetByIdAsync<User>(message.UserId);
+      RepositoryGetResult<User> result = await Repository.TryGetByIdAsync<User>(message.UserId);
+      User user = result.Aggregate;
+      result.RejectIfNull(nameof(user), message.UserId);
+
       user.VerifyContactChallengeResponse(message.CorrelationId, message.Code);
 
       var commitId = Guid.NewGuid();
