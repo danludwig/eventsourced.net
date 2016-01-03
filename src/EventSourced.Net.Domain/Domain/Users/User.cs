@@ -18,12 +18,12 @@ namespace EventSourced.Net.Domain.Users
     }
 
     public User(Guid id) : this() {
-      RaiseEvent(new UserCreated(id));
+      RaiseEvent(new UserCreated(id, DateTime.UtcNow));
     }
 
     [UsedImplicitly]
     private void Apply(UserCreated e) {
-      Id = e.Id;
+      Id = e.AggregateId;
     }
 
     #endregion
@@ -66,8 +66,8 @@ namespace EventSourced.Net.Domain.Users
       string body = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Body.txt"))
         .Replace("{Code}", code);
       string subject = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Subject.txt"));
-      RaiseEvent(new ContactEmailChallengePrepared(correlationId, Id, mailAddress.Address,
-        purpose, stamp, token, subject, body));
+      RaiseEvent(new ContactEmailChallengePrepared(Id, DateTime.UtcNow, correlationId,
+        mailAddress.Address, purpose, stamp, token, subject, body));
     }
 
     private void PrepareContactSmsChallenge(Guid correlationId, PhoneNumber phoneNumber, string stamp,
@@ -77,8 +77,8 @@ namespace EventSourced.Net.Domain.Users
       var assembly = Assembly.GetExecutingAssembly();
       string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt"))
         .Replace("{Code}", code);
-      RaiseEvent(new ContactSmsChallengePrepared(correlationId, Id, phoneNumber.NationalNumber,
-        ContactIdParser.DefaultRegionCode, purpose, stamp, token, message));
+      RaiseEvent(new ContactSmsChallengePrepared(Id, DateTime.UtcNow, correlationId,
+        phoneNumber.NationalNumber, ContactIdParser.DefaultRegionCode, purpose, stamp, token, message));
     }
 
     [UsedImplicitly]
@@ -114,11 +114,11 @@ namespace EventSourced.Net.Domain.Users
       DateTime happenedOn = DateTime.UtcNow;
 
       if (isValid) {
-        RaiseEvent(new ContactChallengeResponseVerified(correlationId, Id, challenge.NextCodeAttemptNumber, happenedOn));
+        RaiseEvent(new ContactChallengeResponseVerified(Id, happenedOn, correlationId, challenge.NextCodeAttemptNumber));
       } else {
-        RaiseEvent(new ContactChallengeResponseInvalidCodeAttempted(correlationId, Id, code, challenge.NextCodeAttemptNumber, happenedOn));
+        RaiseEvent(new ContactChallengeResponseInvalidCodeAttempted(Id, happenedOn, correlationId, code, challenge.NextCodeAttemptNumber));
         if (challenge.CodeAttemptsRemainingCount <= 0) {
-          RaiseEvent(new ContactChallengeResponseMaxInvalidCodesAttempted(correlationId, Id, happenedOn));
+          RaiseEvent(new ContactChallengeResponseMaxInvalidCodesAttempted(Id, happenedOn, correlationId));
           exceptionToThrowAfterSave = new CommandRejectedException(nameof(code), code, CommandRejectionReason.MaxAttempts);
           return;
         }
@@ -168,7 +168,7 @@ namespace EventSourced.Net.Domain.Users
       if (!isValid) throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.Unverified);
 
       string hashedPassword = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
-      RaiseEvent(new PasswordCreated(correlationId, Id, hashedPassword));
+      RaiseEvent(new PasswordCreated(Id, DateTime.UtcNow, correlationId, hashedPassword));
     }
 
     [UsedImplicitly]
@@ -240,10 +240,10 @@ namespace EventSourced.Net.Domain.Users
         if (isRehashRequired) {
           passwordRehash = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
         }
-        RaiseEvent(new LoginVerified(Id, login, happenedOn, passwordRehash));
+        RaiseEvent(new LoginVerified(Id, happenedOn, login, passwordRehash));
       } else {
         exceptionToThrowAfterSave = new Exception("nope");
-        RaiseEvent(new LoginInvalidPasswordAttempted(Id, login, happenedOn));
+        RaiseEvent(new LoginInvalidPasswordAttempted(Id, happenedOn, login));
       }
     }
 

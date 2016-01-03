@@ -2,18 +2,16 @@ using System;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class LoginVerified : IDomainEvent
+  public class LoginVerified : DomainEvent
   {
-    public LoginVerified(Guid userId, string login, DateTime happenedOn, string passwordRehash) {
-      UserId = userId;
+    public LoginVerified(Guid aggregateId, DateTime happenedOn,
+      string login, string passwordRehash) : base(aggregateId, happenedOn) {
+
       Login = login;
-      HappenedOn = happenedOn;
       PasswordRehash = passwordRehash;
     }
 
-    public Guid UserId { get; }
     public string Login { get; }
-    public DateTime HappenedOn { get; }
     public string PasswordRehash { get; }
   }
 }

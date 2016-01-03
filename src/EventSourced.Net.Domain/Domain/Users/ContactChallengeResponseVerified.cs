@@ -2,18 +2,16 @@ using System;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class ContactChallengeResponseVerified : IDomainEvent
+  public class ContactChallengeResponseVerified : DomainEvent
   {
-    public ContactChallengeResponseVerified(Guid correlationId, Guid userId, int attemptNumber, DateTime happenedOn) {
+    public ContactChallengeResponseVerified(Guid aggregateId, DateTime happenedOn,
+      Guid correlationId, int attemptNumber) : base(aggregateId, happenedOn) {
+
       CorrelationId = correlationId;
-      UserId = userId;
       AttemptNumber = attemptNumber;
-      HappenedOn = happenedOn;
     }
 
     public Guid CorrelationId { get; }
-    public Guid UserId { get; }
     public int AttemptNumber { get; }
-    public DateTime HappenedOn { get; }
   }
 }

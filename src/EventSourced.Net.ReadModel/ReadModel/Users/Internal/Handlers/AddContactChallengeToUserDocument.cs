@@ -27,7 +27,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
     }
 
     private async Task HandleAsync(ContactChallengePrepared message, UserDocumentContactChallenge challengeItem) {
-      UserDocument user = await Query.Execute(new UserDocumentById(message.UserId, throwIfNotFound: true));
+      UserDocument user = await Query.Execute(new UserDocumentById(message.AggregateId, throwIfNotFound: true));
       if (user.GetContactChallengeByCorrelationId(message.CorrelationId) == null) {
         user.AddContactChallenge(challengeItem);
         await Db.UpdateAsync<UserDocument>(user);

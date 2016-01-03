@@ -2,12 +2,9 @@
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class UserCreated : IDomainEvent
+  public class UserCreated : DomainEvent
   {
-    public Guid Id { get; }
-
-    public UserCreated(Guid id) {
-      Id = id;
-    }
+    public UserCreated(Guid aggregateId, DateTime happenedOn)
+      : base(aggregateId, happenedOn) { }
   }
 }

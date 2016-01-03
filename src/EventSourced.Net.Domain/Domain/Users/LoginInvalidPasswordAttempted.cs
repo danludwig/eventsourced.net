@@ -2,16 +2,13 @@ using System;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class LoginInvalidPasswordAttempted : IDomainEvent
+  public class LoginInvalidPasswordAttempted : DomainEvent
   {
-    public LoginInvalidPasswordAttempted(Guid userId, string login, DateTime happenedOn) {
-      UserId = userId;
+    public LoginInvalidPasswordAttempted(Guid aggregateId, DateTime happenedOn,
+      string login) : base(aggregateId, happenedOn) {
       Login = login;
-      HappenedOn = happenedOn;
     }
 
-    public Guid UserId { get; }
     public string Login { get; }
-    public DateTime HappenedOn { get; }
   }
 }

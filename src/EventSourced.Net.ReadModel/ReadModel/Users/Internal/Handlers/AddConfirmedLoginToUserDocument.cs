@@ -17,7 +17,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
     }
 
     public async Task HandleAsync(PasswordCreated message) {
-      UserDocument user = await Query.Execute(new UserDocumentById(message.UserId, throwIfNotFound: true));
+      UserDocument user = await Query.Execute(new UserDocumentById(message.AggregateId, throwIfNotFound: true));
       user.AddConfirmedLogin(message.CorrelationId);
       await Db.UpdateAsync<UserDocument>(user);
     }

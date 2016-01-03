@@ -4,10 +4,10 @@ namespace EventSourced.Net.Domain.Users
 {
   public class ContactEmailChallengePrepared : ContactChallengePrepared
   {
-    public ContactEmailChallengePrepared(Guid correlationId, Guid userId,
-      string emailAddress, ContactChallengePurpose purpose,
+    public ContactEmailChallengePrepared(Guid aggregateId, DateTime happenedOn,
+      Guid correlationId, string emailAddress, ContactChallengePurpose purpose,
       string stamp, string token, string messageSubject, string messageBody)
-      : base(correlationId, userId, purpose, stamp, token) {
+      : base(aggregateId, happenedOn, correlationId, purpose, stamp, token) {
 
       EmailAddress = emailAddress;
       MessageSubject = messageSubject;

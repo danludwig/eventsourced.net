@@ -5,13 +5,13 @@ using WebSocketSharp;
 
 namespace EventSourced.Net.Web.Users.Register
 {
-  public class HandleContactChallengePrepared :
+  public class SendPreparedContactChallengeToWebSocket :
     IHandleEvent<ContactEmailChallengePrepared>,
     IHandleEvent<ContactSmsChallengePrepared>
   {
     private IServeWebSockets WebSockets { get; }
 
-    public HandleContactChallengePrepared(IServeWebSockets webSockets) {
+    public SendPreparedContactChallengeToWebSocket(IServeWebSockets webSockets) {
       WebSockets = webSockets;
     }
 

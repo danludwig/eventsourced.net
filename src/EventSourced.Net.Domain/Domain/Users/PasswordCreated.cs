@@ -2,16 +2,16 @@ using System;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class PasswordCreated : IDomainEvent
+  public class PasswordCreated : DomainEvent
   {
-    public PasswordCreated(Guid correlationId, Guid userId, string passwordHash) {
+    public PasswordCreated(Guid aggregateId, DateTime happenedOn,
+      Guid correlationId, string passwordHash) : base(aggregateId, happenedOn) {
+
       CorrelationId = correlationId;
-      UserId = userId;
       PasswordHash = passwordHash;
     }
 
     public Guid CorrelationId { get; }
-    public Guid UserId { get; }
     public string PasswordHash { get; }
   }
 }

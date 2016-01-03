@@ -17,9 +17,9 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
     }
 
     public async Task HandleAsync(UserCreated message) {
-      UserDocument user = await Query.Execute(new UserDocumentById(message.Id));
+      UserDocument user = await Query.Execute(new UserDocumentById(message.AggregateId));
       if (user == null) {
-        user = new UserDocument { Id = message.Id, };
+        user = new UserDocument { Id = message.AggregateId, };
         await Db.InsertAsync<UserDocument>(user);
       }
     }

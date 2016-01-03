@@ -2,16 +2,13 @@ using System;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class ContactChallengeResponseMaxInvalidCodesAttempted : IDomainEvent
+  public class ContactChallengeResponseMaxInvalidCodesAttempted : DomainEvent
   {
-    public ContactChallengeResponseMaxInvalidCodesAttempted(Guid correlationId, Guid userId, DateTime happenedOn) {
+    public ContactChallengeResponseMaxInvalidCodesAttempted(Guid aggregateId, DateTime happenedOn,
+      Guid correlationId) : base(aggregateId, happenedOn) {
       CorrelationId = correlationId;
-      UserId = userId;
-      HappenedOn = happenedOn;
     }
 
     public Guid CorrelationId { get; }
-    public Guid UserId { get; }
-    public DateTime HappenedOn { get; }
   }
 }
