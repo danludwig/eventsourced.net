@@ -22,35 +22,39 @@ namespace EventSourced.Net.Web.Users.Register
 
     [HttpPost, Route("api/register")]
     public async Task<IActionResult> PostChallenge(string emailOrPhone) {
-      Guid correlationId = Guid.NewGuid();
+      ShortGuid correlationId = Guid.NewGuid();
       WebSockets.AddCorrelationService(correlationId);
 
       await Command.SendAsync(new PrepareUserContactChallenge(correlationId, emailOrPhone))
         .ConfigureAwait(false);
 
       Response.Headers.Add("X-Correlation-Socket", WebSockets.GetCorrelationUri(correlationId).ToString());
-      return new CreatedResult(Url.RouteUrl("RegisterVerifyRoute", new { correlationId }),
-        new { CorrelationId = correlationId, });
+      string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });
+      return new CreatedResult(location, new { CorrelationId = correlationId, });
     }
 
     [HttpPost, Route("api/register/{correlationId}")]
-    public async Task<IActionResult> PostVerify(Guid correlationId, string code) {
-      UserContactChallengeTokenView view = await Query.Execute(new UserContactChallengeTokenQuery(correlationId));
+    public async Task<IActionResult> PostVerify(string correlationId, string code) {
+      Guid correlationGuid;
+      if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
+      UserContactChallengeTokenView view = await Query.Execute(new UserContactChallengeTokenQuery(correlationGuid));
       if (view == null) return HttpNotFound(); // better yet, http bad request (400)
 
-      await Command.SendAsync(new VerifyUserContactChallengeResponse(view.UserId, correlationId, code))
+      await Command.SendAsync(new VerifyUserContactChallengeResponse(view.UserId, correlationGuid, code))
         .ConfigureAwait(false);
 
-      return new CreatedResult(Url.RouteUrl("RegisterRedeemRoute", new { token = view.Token, }),
-        new { CorrelationId = correlationId, });
+      var location = Url.RouteUrl("RegisterRedeemRoute", new { token = view.Token, });
+      return new CreatedResult(location, new { CorrelationId = correlationId, });
     }
 
     [HttpPost, Route("api/register/{correlationId}/redeem")]
-    public async Task<IActionResult> PostRedeem(Guid correlationId, string token, string password, string passwordConfirmation) {
-      Guid? userId = await Query.Execute(new UserIdByContactChallengeCorrelationId(correlationId));
+    public async Task<IActionResult> PostRedeem(string correlationId, string token, string password, string passwordConfirmation) {
+      Guid correlationGuid;
+      if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
+      Guid? userId = await Query.Execute(new UserIdByContactChallengeCorrelationId(correlationGuid));
       if (userId == null) return HttpNotFound(); // better yet, http bad request (400)
 
-      await Command.SendAsync(new CreateUserPassword(userId.Value, correlationId, token, password, passwordConfirmation))
+      await Command.SendAsync(new CreateUserPassword(userId.Value, correlationGuid, token, password, passwordConfirmation))
         .ConfigureAwait(false);
 
       return new CreatedResult(Url.RouteUrl("LoginRoute"),

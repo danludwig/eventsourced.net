@@ -5,7 +5,6 @@ using Microsoft.AspNet.Mvc;
 
 namespace EventSourced.Net.Web.Users.Register
 {
-
   public class ViewController : Controller
   {
     private IExecuteQuery Query { get; }
@@ -20,7 +19,7 @@ namespace EventSourced.Net.Web.Users.Register
     }
 
     [HttpGet, Route("register/{correlationId}", Name = "RegisterVerifyRoute")]
-    public IActionResult Verify(Guid correlationId) {
+    public IActionResult Verify(string correlationId) {
       var model = new VerifyViewModel {
         CorrelationId = correlationId,
       };
@@ -28,9 +27,11 @@ namespace EventSourced.Net.Web.Users.Register
     }
 
     [HttpGet, Route("register/{correlationId}/redeem", Name = "RegisterRedeemRoute")]
-    public async Task<IActionResult> Redeem(Guid correlationId, string token) {
+    public async Task<IActionResult> Redeem(string correlationId, string token) {
+      Guid correlationGuid;
+      if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
       UserContactChallengeCreatePasswordView view = await Query
-        .Execute(new UserContactChallengeCreatePasswordQuery(correlationId, token));
+        .Execute(new UserContactChallengeCreatePasswordQuery(correlationGuid, token));
       if (view == null) return HttpNotFound();
 
       var model = new RedeemViewModel {
