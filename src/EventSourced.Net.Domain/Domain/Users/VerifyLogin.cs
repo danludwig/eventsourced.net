@@ -14,7 +14,7 @@ namespace EventSourced.Net.Domain.Users
 
     public async Task HandleAsync(VerifyUserLogin message) {
       var user = await Repository.GetByIdAsync<User>(message.UserId);
-      Exception exceptionToThrowAfterSave;
+      CommandRejectedException exceptionToThrowAfterSave;
       user.VerifyLogin(message.Login, message.Password, out exceptionToThrowAfterSave);
 
       var commitId = Guid.NewGuid();

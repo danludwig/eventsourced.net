@@ -12,7 +12,7 @@ namespace EventSourced.Net
       Errors = errors;
     }
 
-    internal CommandRejectedException(string key, object value, CommandRejectionReason reason)
+    public CommandRejectedException(string key, object value, CommandRejectionReason reason)
       : this(key, value, reason, null, null) { }
 
     internal CommandRejectedException(string key, object value, CommandRejectionReason reason, string message)

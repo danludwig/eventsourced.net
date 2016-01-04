@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace EventSourced.Net.Web.Users.Register
+﻿namespace EventSourced.Net.Web.Users.Register
 {
   public class RedeemViewModel
   {

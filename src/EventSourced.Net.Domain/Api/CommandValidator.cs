@@ -16,6 +16,10 @@ namespace EventSourced.Net
       if (Errors.Any()) throw new CommandRejectedException(Errors);
     }
 
+    public void NotNull(object value, string key) {
+      if (value == null) AddError(key, null, CommandRejectionReason.Null);
+    }
+
     public void NotEmpty(Guid value, string key) {
       if (value == Guid.Empty) AddError(key, value, CommandRejectionReason.Empty);
     }

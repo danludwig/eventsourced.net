@@ -16,7 +16,7 @@ namespace EventSourced.Net.Domain.Users
       RepositoryGetResult<User> result = await Repository.TryGetByIdAsync<User>(message.UserId);
       User user = result.Aggregate;
       result.RejectIfNull(nameof(user), message.UserId);
-      Exception exceptionToThrowAfterSave;
+      CommandRejectedException exceptionToThrowAfterSave;
 
       user.VerifyContactChallengeResponse(message.CorrelationId, message.Code, out exceptionToThrowAfterSave);
 

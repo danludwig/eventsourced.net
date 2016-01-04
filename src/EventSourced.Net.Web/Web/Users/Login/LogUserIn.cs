@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EventSourced.Net.ReadModel.Users;
 using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 
@@ -8,20 +9,20 @@ namespace EventSourced.Net.Web.Users.Login
 {
   public class LogUserIn : ICommand
   {
-    public Guid UserId { get; }
-    public string Username { get; }
+    //public Guid UserId { get; }
+    public string Login { get; }
+    public string Password { get; }
     public AuthenticationManager AuthenticationManager { get; }
     public AuthenticationProperties AuthenticationProperties { get; }
 
-    public LogUserIn(Guid userId, string username,
-      AuthenticationManager authenticationManager,
-      AuthenticationProperties authenticationProperties = null) {
+    public LogUserIn(string login, string password, AuthenticationManager authenticationManager, AuthenticationProperties authenticationProperties = null) {
+      VerifyUserLogin.PreValidate(login, password);
+      using (var validate = new CommandValidator()) {
+        validate.NotNull(authenticationManager, nameof(authenticationManager));
+      }
 
-      if (authenticationManager == null) throw new ArgumentNullException(nameof(authenticationManager));
-      if (userId == Guid.Empty) throw new ArgumentException("Cannot be empty.", nameof(userId));
-      if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException("Cannot be empty.", nameof(username));
-      UserId = userId;
-      Username = username;
+      Login = login;
+      Password = password;
       AuthenticationManager = authenticationManager;
       AuthenticationProperties = authenticationProperties ?? new AuthenticationProperties();
     }
@@ -29,17 +30,25 @@ namespace EventSourced.Net.Web.Users.Login
 
   public class HandleLogUserIn : IHandleCommand<LogUserIn>
   {
+    private ISendCommand Command { get; }
     private IExecuteQuery Query { get; }
     private IdentityOptions Options { get; }
 
-    public HandleLogUserIn(IExecuteQuery query, IdentityOptions options) {
+    public HandleLogUserIn(ISendCommand command, IExecuteQuery query, IdentityOptions options) {
+      Command = command;
       Query = query;
       Options = options;
     }
 
     public async Task HandleAsync(LogUserIn message) {
+      Guid? userId = await Query.Execute(new UserIdByLogin(message.Login));
+      if (!userId.HasValue)
+        throw new CommandRejectedException(nameof(message.Login), null, CommandRejectionReason.Unverified);
+
+      await Command.SendAsync(new VerifyUserLogin(userId.Value, message.Login, message.Password));
+
       ClaimsPrincipal principal = await Query
-        .Execute(new ClaimsPrincipalForLogin(message.UserId, message.Username));
+        .Execute(new ClaimsPrincipalForLogin(userId.Value, message.Login));
       await message.AuthenticationManager
         .SignInAsync(Options.Cookies.ApplicationCookieAuthenticationScheme,
           principal, message.AuthenticationProperties);

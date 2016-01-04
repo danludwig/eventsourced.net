@@ -98,7 +98,7 @@ namespace EventSourced.Net.Domain.Users
     #endregion
     #region Verify Code
 
-    public void VerifyContactChallengeResponse(Guid correlationId, string code, out Exception exceptionToThrowAfterSave) {
+    public void VerifyContactChallengeResponse(Guid correlationId, string code, out CommandRejectedException exceptionToThrowAfterSave) {
       RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       exceptionToThrowAfterSave = null;
@@ -179,7 +179,7 @@ namespace EventSourced.Net.Domain.Users
     private void Apply(ContactChallengeRedeemed e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = true;
-      ConfirmedLogins.Add(challenge.ContactValue);
+      ConfirmedLogins.Add(challenge.NormalizedContactValue);
       PasswordHashes.Add(e.PasswordHash);
     }
 
@@ -187,7 +187,7 @@ namespace EventSourced.Net.Domain.Users
     private void Apply(ContactChallengeRedemptionReversed e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = false;
-      ConfirmedLogins.Remove(challenge.ContactValue);
+      ConfirmedLogins.Remove(challenge.NormalizedContactValue);
       PasswordHashes.RemoveAt(PasswordHashes.Count - 1);
     }
 
@@ -212,6 +212,7 @@ namespace EventSourced.Net.Domain.Users
       internal string Stamp { get; }
       internal ContactChallengePurpose Purpose { get; }
       internal abstract string ContactValue { get; }
+      internal string NormalizedContactValue => ContactIdParser.Normalize(ContactValue);
       internal bool IsCodeVerified { get; set; }
       internal int InvalidCodeAttemptCount { get; set; }
       internal int NextCodeAttemptNumber => InvalidCodeAttemptCount + 1;
@@ -245,9 +246,11 @@ namespace EventSourced.Net.Domain.Users
     #endregion
     #region Login
 
-    public void VerifyLogin(string login, string password, out Exception exceptionToThrowAfterSave) {
-      if (string.IsNullOrWhiteSpace(login)) throw new InvalidOperationException("nope");
-      if (!ConfirmedLogins.Any(x => string.Equals(x, ContactIdParser.Normalize(login)))) throw new InvalidOperationException("nope");
+    public void VerifyLogin(string login, string password, out CommandRejectedException exceptionToThrowAfterSave) {
+      var unverifiedException = new CommandRejectedException(nameof(login), null, CommandRejectionReason.Unverified);
+      if (!ConfirmedLogins.Any(x => string.Equals(x, ContactIdParser.Normalize(login))))
+        throw unverifiedException;
+
       exceptionToThrowAfterSave = null;
       bool isRehashRequired; // = false;
       bool isVerified = ContactChallengers.PasswordHasher.Instance.VerifyHashedPassword(CurrentPasswordHash, password, out isRehashRequired);
@@ -260,7 +263,7 @@ namespace EventSourced.Net.Domain.Users
         }
         RaiseEvent(new LoginVerified(Id, happenedOn, login, passwordRehash));
       } else {
-        exceptionToThrowAfterSave = new Exception("nope");
+        exceptionToThrowAfterSave = unverifiedException;
         RaiseEvent(new LoginInvalidPasswordAttempted(Id, happenedOn, login));
       }
     }

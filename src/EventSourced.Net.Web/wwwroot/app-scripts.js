@@ -41,18 +41,12 @@ function handleValidationErrors(xhr, $form) {
     }
   }
 }
-function addValidationError($form, message) {
-  var $ul = $form.find(".form-errors ul");
-  $ul.append($("<li></li>").text(message));
-}
-function clearValidationErrors($form) {
-  var $ul = $form.find(".form-errors ul");
-  $ul.empty();
-}
 function getValidationMessage(item) {
   var messages = window["validationMessages"];
-  if (messages[item.key] && messages[item.key][camelizeHack(item.reason)]) {
-    var message = messages[item.key][camelizeHack(item.reason)] || item.message;
+  var key = camelizeHack(item.key);
+  var reason = camelizeHack(item.reason);
+  if (messages[key] && messages[key][reason]) {
+    var message = messages[key][reason] || item.message;
     message = message.replace("{attemptedValue}", item.value);
     if (item.data) {
       for (var fieldName in item.data) {
@@ -63,6 +57,14 @@ function getValidationMessage(item) {
     return message;
   }
   return item.message || "An unexpected error occurred.";
+}
+function addValidationError($form, message) {
+  var $ul = $form.find(".form-errors ul");
+  $ul.append($("<li></li>").text(message));
+}
+function clearValidationErrors($form) {
+  var $ul = $form.find(".form-errors ul");
+  $ul.empty();
 }
 function camelizeHack(text) {
   return text.substr(0, 1).toLowerCase() + text.substr(1);

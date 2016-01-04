@@ -4,7 +4,7 @@ namespace EventSourced.Net.Web.Home
 {
   public class ViewController : Controller
   {
-    [HttpGet, Route("")]
+    [HttpGet, Route("", Name = "HomeRoute")]
     public IActionResult Home() {
       return View("~/Web/Home/Home.cshtml");
     }
