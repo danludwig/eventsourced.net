@@ -43,23 +43,7 @@
           data: data
         })
           .done(function (response, status, xhr) {
-            var socket = getCorrelationSocket(xhr);
-            socket.onopen = function (e) {
-              console.log('WebSockets: Correlation ' + e.type);
-            }
-            socket.onmessage = function (message) {
-              console.log('WebSockets: ' + message.data);
-              var messageData = parseMessageData(message);
-              switch (messageData.type) {
-                case 'ContactEmailChallengePrepared':
-                case 'ContactSmsChallengePrepared':
-                  setLocation(xhr);
-                  break;
-                default:
-                  console.log('Encountered unexpected data type "' + messageData.type + '"');
-                  enableForm($form);
-              }
-            }
+            setLocation(xhr);
           })
           .fail(function (xhr) {
             enableForm($form);
