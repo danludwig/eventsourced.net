@@ -15,6 +15,7 @@ namespace EventSourced.Net.Domain.Users
     private User() {
       ContactChallenges = new Dictionary<Guid, ContactChallenge>();
       ConfirmedLogins = new List<string>();
+      PasswordHashes = new List<string>();
     }
 
     public User(Guid id) : this() {
@@ -31,7 +32,8 @@ namespace EventSourced.Net.Domain.Users
 
     private IDictionary<Guid, ContactChallenge> ContactChallenges { get; }
     private IList<string> ConfirmedLogins { get; }
-    private string CurrentPasswordHash { get; set; }
+    private IList<string> PasswordHashes { get; }
+    private string CurrentPasswordHash => PasswordHashes.Count > 0 ? PasswordHashes.Last() : null;
 
     #region Prepare Challenge
 
@@ -97,10 +99,7 @@ namespace EventSourced.Net.Domain.Users
     #region Verify Code
 
     public void VerifyContactChallengeResponse(Guid correlationId, string code, out Exception exceptionToThrowAfterSave) {
-      if (!ContactChallenges.ContainsKey(correlationId))
-        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
-          $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
-
+      RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       exceptionToThrowAfterSave = null;
 
@@ -149,10 +148,7 @@ namespace EventSourced.Net.Domain.Users
     #region Redeem to Create Password
 
     public void RedeemContactChallenge(Guid correlationId, string token, string password) {
-      if (!ContactChallenges.ContainsKey(correlationId))
-        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
-          $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
-
+      RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (challenge.IsTokenRedeemed)
         throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.StateConflict);
@@ -176,7 +172,7 @@ namespace EventSourced.Net.Domain.Users
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = true;
       ConfirmedLogins.Add(challenge.ContactValue);
-      CurrentPasswordHash = e.PasswordHash;
+      PasswordHashes.Add(e.PasswordHash);
     }
 
     public void ReverseContactChallengeRedemption(Guid correlationId) {
@@ -188,11 +184,17 @@ namespace EventSourced.Net.Domain.Users
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = false;
       ConfirmedLogins.Remove(challenge.ContactValue);
-      CurrentPasswordHash = null;
+      PasswordHashes.RemoveAt(PasswordHashes.Count - 1);
     }
 
     #endregion
-    #region Private Classes
+    #region Private Classes & Methods
+
+    private void RejectIfNullContactChallengeCorrelation(Guid correlationId) {
+      if (!ContactChallenges.ContainsKey(correlationId))
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.Null,
+          $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
+    }
 
     private abstract class ContactChallenge
     {
@@ -263,7 +265,8 @@ namespace EventSourced.Net.Domain.Users
     [UsedImplicitly]
     private void Apply(LoginVerified e) {
       if (e.PasswordRehash != null) {
-        CurrentPasswordHash = e.PasswordRehash;
+        PasswordHashes.RemoveAt(PasswordHashes.Count - 1);
+        PasswordHashes.Add(e.PasswordRehash);
       }
     }
 
