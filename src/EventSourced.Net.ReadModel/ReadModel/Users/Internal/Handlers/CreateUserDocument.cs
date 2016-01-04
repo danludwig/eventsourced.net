@@ -6,7 +6,7 @@ using EventSourced.Net.ReadModel.Users.Internal.Queries;
 
 namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
 {
-  public class CreateUserDocument : IHandleEvent<UserCreated>
+  public class CreateUserDocument : IHandleEvent<Created>
   {
     private IExecuteQuery Query { get; }
     private IArangoDatabase Db { get; }
@@ -16,7 +16,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
       Db = db;
     }
 
-    public async Task HandleAsync(UserCreated message) {
+    public async Task HandleAsync(Created message) {
       UserDocument user = await Query.Execute(new UserDocumentById(message.AggregateId));
       if (user == null) {
         user = new UserDocument { Id = message.AggregateId, };

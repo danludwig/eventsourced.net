@@ -51,7 +51,33 @@
           data: data
         })
           .done(function (response, status, xhr) {
-            setLocation(xhr);
+            var socket = getCorrelationSocket(xhr);
+            var isUniqueConstraintViolated = false;
+            socket.onopen = function (e) {
+              console.log('WebSockets: Correlation ' + e.type);
+            }
+            socket.onmessage = function (message) {
+              console.log('WebSockets: ' + message.data);
+              if (isUniqueConstraintViolated) return;
+              var messageData = parseMessageData(message);
+              switch (messageData.type) {
+                case 'ContactChallengeRedemptionReversed':
+                  isUniqueConstraintViolated = true;
+                  var validationMessage = getValidationMessage({
+                    key: 'emailOrPhone',
+                    reason: 'notUnique'
+                  });
+                  addValidationError($form, validationMessage);
+                  enableForm($form);
+                  break;
+                case 'ContactChallengeRedemptionConcluded':
+                  setLocation(xhr);
+                  break;
+                default:
+                  console.log('Encountered unexpected data type "' + messageData.type + '"');
+                  enableForm($form);
+              }
+            }
           })
           .fail(function (xhr) {
             enableForm($form);
@@ -75,6 +101,9 @@
         },
         correlationId: {
           stateConflict: 'Something went wrong. Please restart the registration process.'
+        },
+        emailOrPhone: {
+          notUnique: 'You have already registered the login "@Model.ContactValue". Did you forget your password?'
         }
       }
     });

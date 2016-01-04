@@ -4,9 +4,9 @@ using CommonDomain.Persistence;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class HandleVerifyUserLogin : IHandleCommand<VerifyUserLogin>
+  public class VerifyLogin : IHandleCommand<VerifyUserLogin>
   {
-    public HandleVerifyUserLogin(IRepository repository) {
+    public VerifyLogin(IRepository repository) {
       Repository = repository;
     }
 

@@ -147,7 +147,8 @@ namespace EventSourced.Net.Services.Storage.ArangoDb
             using (var appDb = new ArangoDatabase(settings.ServerUrl, settings.DbName)) {
               List<CreateCollectionResult> collections = appDb.ListCollections();
               string[] collectionsNeeded = {
-                typeof(ReadModel.Users.Internal.Documents.UserDocument).Name
+                typeof(ReadModel.Users.Internal.Documents.UserDocument).Name,
+                typeof(ReadModel.Users.Internal.Documents.UserLoginIndex).Name,
               };
               foreach (string collectionNeeded in collectionsNeeded) {
                 if (!collections.Any(x => collectionNeeded.Equals(x.Name))) {

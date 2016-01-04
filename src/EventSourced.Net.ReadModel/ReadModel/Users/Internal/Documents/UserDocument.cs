@@ -59,7 +59,8 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
       UserDocumentContactChallenge challenge = GetContactChallengeByCorrelationId(correlationId);
       if (challenge == null) throw new InvalidOperationException(
         $"There is no {typeof(UserDocumentContactChallenge).Name} with correlation id '{correlationId}'.");
-      ConfirmedLogins.Add(challenge.ContactValue);
+      if (!ConfirmedLogins.Any(x => string.Equals(x, challenge.ContactValue, StringComparison.OrdinalIgnoreCase)))
+        ConfirmedLogins.Add(challenge.ContactValue);
     }
   }
 }

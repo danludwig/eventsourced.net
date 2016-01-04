@@ -18,11 +18,11 @@ namespace EventSourced.Net.Domain.Users
     }
 
     public User(Guid id) : this() {
-      RaiseEvent(new UserCreated(id, DateTime.UtcNow));
+      RaiseEvent(new Created(id, DateTime.UtcNow));
     }
 
     [UsedImplicitly]
-    private void Apply(UserCreated e) {
+    private void Apply(Created e) {
       Id = e.AggregateId;
     }
 
@@ -148,7 +148,7 @@ namespace EventSourced.Net.Domain.Users
     #endregion
     #region Redeem to Create Password
 
-    public void CreatePassword(Guid correlationId, string token, string password) {
+    public void RedeemContactChallenge(Guid correlationId, string token, string password) {
       if (!ContactChallenges.ContainsKey(correlationId))
         throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
           $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
@@ -168,15 +168,27 @@ namespace EventSourced.Net.Domain.Users
       if (!isValid) throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.Unverified);
 
       string hashedPassword = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
-      RaiseEvent(new PasswordCreated(Id, DateTime.UtcNow, correlationId, hashedPassword));
+      RaiseEvent(new ContactChallengeRedeemed(Id, DateTime.UtcNow, correlationId, hashedPassword));
     }
 
     [UsedImplicitly]
-    private void Apply(PasswordCreated e) {
+    private void Apply(ContactChallengeRedeemed e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = true;
       ConfirmedLogins.Add(challenge.ContactValue);
       CurrentPasswordHash = e.PasswordHash;
+    }
+
+    public void ReverseContactChallengeRedemption(Guid correlationId) {
+      RaiseEvent(new ContactChallengeRedemptionReversed(Id, DateTime.UtcNow, correlationId));
+    }
+
+    [UsedImplicitly]
+    private void Apply(ContactChallengeRedemptionReversed e) {
+      var challenge = ContactChallenges[e.CorrelationId];
+      challenge.IsTokenRedeemed = false;
+      ConfirmedLogins.Remove(challenge.ContactValue);
+      CurrentPasswordHash = null;
     }
 
     #endregion

@@ -2,9 +2,9 @@ using System;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class PasswordCreated : DomainEvent
+  public class ContactChallengeRedeemed : DomainEvent
   {
-    public PasswordCreated(Guid aggregateId, DateTime happenedOn,
+    public ContactChallengeRedeemed(Guid aggregateId, DateTime happenedOn,
       Guid correlationId, string passwordHash) : base(aggregateId, happenedOn) {
 
       CorrelationId = correlationId;

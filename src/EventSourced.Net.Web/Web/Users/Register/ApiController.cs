@@ -23,14 +23,14 @@ namespace EventSourced.Net.Web.Users.Register
     [HttpPost, Route("api/register")]
     public async Task<IActionResult> PostChallenge(string emailOrPhone) {
       ShortGuid correlationId = Guid.NewGuid();
-      WebSockets.AddCorrelationService(correlationId);
 
       await Command.SendAsync(new PrepareUserContactChallenge(correlationId, emailOrPhone))
         .ConfigureAwait(false);
 
-      string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });
+      WebSockets.AddCorrelationService(correlationId);
       var correlationUrl = WebSockets.GetCorrelationUri(correlationId).ToString();
       Response.Headers.Add("X-Correlation-Socket", correlationUrl);
+      string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });
       return new CreatedResult(location, new { CorrelationId = correlationId, });
     }
 
@@ -55,11 +55,14 @@ namespace EventSourced.Net.Web.Users.Register
       Guid? userId = await Query.Execute(new UserIdByContactChallengeCorrelationId(correlationGuid));
       if (userId == null) return HttpNotFound(); // better yet, http bad request (400)
 
-      await Command.SendAsync(new CreateUserPassword(userId.Value, correlationGuid, token, password, passwordConfirmation))
+      await Command.SendAsync(new RedeemUserContactChallenge(userId.Value, correlationGuid, token, password, passwordConfirmation))
         .ConfigureAwait(false);
 
-      return new CreatedResult(Url.RouteUrl("LoginRoute"),
-        new { CorrelationId = correlationId, });
+      WebSockets.AddCorrelationService(correlationId);
+      var correlationUrl = WebSockets.GetCorrelationUri(correlationId).ToString();
+      Response.Headers.Add("X-Correlation-Socket", correlationUrl);
+      var location = Url.RouteUrl("LoginRoute");
+      return new CreatedResult(location, new { CorrelationId = correlationId, });
     }
   }
 }

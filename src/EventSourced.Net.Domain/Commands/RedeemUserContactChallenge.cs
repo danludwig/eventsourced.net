@@ -2,9 +2,9 @@
 
 namespace EventSourced.Net
 {
-  public class CreateUserPassword : ICommand
+  public class RedeemUserContactChallenge : ICommand
   {
-    public CreateUserPassword(Guid userId, Guid correlationId, string token, string password, string passwordConfirmation) {
+    public RedeemUserContactChallenge(Guid userId, Guid correlationId, string token, string password, string passwordConfirmation) {
       using (var validate = new CommandValidator()) {
         validate.NotEmpty(userId, nameof(userId));
         validate.NotEmpty(correlationId, nameof(correlationId));

@@ -26,11 +26,8 @@ namespace EventSourced.Net.ReadModel.Users
     public Task<Guid?> Handle(UserIdByLogin query) {
       Guid? userId = null;
       string normalizedLogin = ContactIdParser.Normalize(query.Login);
-      // ReSharper disable ConvertClosureToMethodGroup
-      UserDocument user = Db.Query<UserDocument>()
-        .SingleOrDefault(x => AQL.In(normalizedLogin, x.ConfirmedLogins.Select(y => AQL.Lower(y))));
-      // ReSharper restore ConvertClosureToMethodGroup
-      if (user != null) userId = user.Id;
+      UserLoginIndex index = Db.Query<UserLoginIndex>().SingleOrDefault(x => x.Key == normalizedLogin);
+      if (index != null) userId = index.UserId;
       return Task.FromResult(userId);
     }
   }
