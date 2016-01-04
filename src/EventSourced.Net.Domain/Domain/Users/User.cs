@@ -167,16 +167,20 @@ namespace EventSourced.Net.Domain.Users
       RaiseEvent(new ContactChallengeRedeemed(Id, DateTime.UtcNow, correlationId, hashedPassword));
     }
 
+    public void ReverseContactChallengeRedemption(Guid correlationId) {
+      RejectIfNullContactChallengeCorrelation(correlationId);
+      ContactChallenge challenge = ContactChallenges[correlationId];
+      if (!challenge.IsTokenRedeemed)
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict);
+      RaiseEvent(new ContactChallengeRedemptionReversed(Id, DateTime.UtcNow, correlationId));
+    }
+
     [UsedImplicitly]
     private void Apply(ContactChallengeRedeemed e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = true;
       ConfirmedLogins.Add(challenge.ContactValue);
       PasswordHashes.Add(e.PasswordHash);
-    }
-
-    public void ReverseContactChallengeRedemption(Guid correlationId) {
-      RaiseEvent(new ContactChallengeRedemptionReversed(Id, DateTime.UtcNow, correlationId));
     }
 
     [UsedImplicitly]

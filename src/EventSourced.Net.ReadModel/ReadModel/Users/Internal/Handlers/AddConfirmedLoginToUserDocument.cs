@@ -28,9 +28,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
       string login = challenge.ContactValue;
 
       var isConstraintSatisfied = await IsConstraintSatisfied(message.AggregateId, challenge);
-      if (isConstraintSatisfied.HasValue && !isConstraintSatisfied.Value) {
-        return;
-      }
+      if (isConstraintSatisfied.HasValue && !isConstraintSatisfied.Value) return;
 
       if (!isConstraintSatisfied.HasValue) {
         try {
@@ -42,9 +40,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
           await Db.InsertAsync<UserLoginIndex>(index);
         } catch (ArangoServerException) {
           isConstraintSatisfied = await IsConstraintSatisfied(message.AggregateId, challenge);
-          if (isConstraintSatisfied.HasValue && !isConstraintSatisfied.Value) {
-            return;
-          }
+          if (isConstraintSatisfied.HasValue && !isConstraintSatisfied.Value) return;
           throw;
         }
       }
