@@ -8,6 +8,9 @@
     NotEqual,
     Unverified,
     MaxAttempts,
-    StateConflict,
+    AlreadyApplied,
+    NotFound,
+    UnexpectedVersion,
+    Deleted,
   }
 }

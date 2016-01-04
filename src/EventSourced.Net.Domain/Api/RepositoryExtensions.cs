@@ -24,7 +24,14 @@ namespace EventSourced.Net
     public static void RejectIfNull<TAggregate>(this RepositoryGetResult<TAggregate> result, string key, Guid id)
       where TAggregate : class, IAggregate {
       if (result.Aggregate == null) {
-        throw new CommandRejectedException(key, id, CommandRejectionReason.Null);
+        switch (result.Status) {
+          case RepositoryGetStatus.NotFound:
+            throw new CommandRejectedException(key, id, CommandRejectionReason.NotFound);
+          case RepositoryGetStatus.UnexpectedVersion:
+            throw new CommandRejectedException(key, id, CommandRejectionReason.UnexpectedVersion);
+          case RepositoryGetStatus.Deleted:
+            throw new CommandRejectedException(key, id, CommandRejectionReason.Deleted);
+        }
       }
     }
   }

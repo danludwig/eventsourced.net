@@ -39,7 +39,7 @@ namespace EventSourced.Net.Domain.Users
 
     public void PrepareContactChallenge(Guid correlationId, string emailOrPhone) {
       if (ContactChallenges.ContainsKey(correlationId))
-        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict,
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.AlreadyApplied,
           $"Contact challenge for correlationId '{correlationId}' has already been prepared.");
 
       MailAddress mailAddress = ContactIdParser.AsMailAddress(emailOrPhone);
@@ -104,7 +104,7 @@ namespace EventSourced.Net.Domain.Users
       exceptionToThrowAfterSave = null;
 
       if (challenge.IsCodeVerified)
-        throw new CommandRejectedException(nameof(code), code, CommandRejectionReason.StateConflict);
+        throw new CommandRejectedException(nameof(code), code, CommandRejectionReason.AlreadyApplied);
 
       if (challenge.IsMaxCodeAttemptsExhausted)
         throw new CommandRejectedException(nameof(code), code, CommandRejectionReason.MaxAttempts);
@@ -151,7 +151,7 @@ namespace EventSourced.Net.Domain.Users
       RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (challenge.IsTokenRedeemed)
-        throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.StateConflict);
+        throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.AlreadyApplied);
 
       // todo: create a better password policy
       const int minCharacters = 8;
@@ -171,7 +171,7 @@ namespace EventSourced.Net.Domain.Users
       RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (!challenge.IsTokenRedeemed)
-        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.StateConflict);
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.AlreadyApplied);
       RaiseEvent(new ContactChallengeRedemptionReversed(Id, DateTime.UtcNow, correlationId));
     }
 
@@ -196,7 +196,7 @@ namespace EventSourced.Net.Domain.Users
 
     private void RejectIfNullContactChallengeCorrelation(Guid correlationId) {
       if (!ContactChallenges.ContainsKey(correlationId))
-        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.Null,
+        throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.NotFound,
           $"{GetType().Name} '{Id}' has no prepared contact challenge for correlation id '{correlationId}'.");
     }
 
