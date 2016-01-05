@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using EventSourced.Net.ReadModel.Users;
 using EventSourced.Net.Services.Web.Mvc;
@@ -23,9 +24,10 @@ namespace EventSourced.Net.Web.Users.Register
     [HttpPost, Route("api/register")]
     public async Task<IActionResult> PostChallenge(string emailOrPhone) {
       ShortGuid correlationId = Guid.NewGuid();
+      Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(emailOrPhone));
 
-      await Command.SendAsync(new PrepareUserContactChallenge(correlationId, emailOrPhone))
-        .ConfigureAwait(false);
+      await Command.SendAsync(new PrepareUserContactChallenge(correlationId, emailOrPhone,
+        userIdByLogin, User.IsSignedIn())).ConfigureAwait(false);
 
       string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });
       return new CreatedResult(location, new { CorrelationId = correlationId, });
@@ -36,7 +38,7 @@ namespace EventSourced.Net.Web.Users.Register
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
       UserContactChallengeTokenView view = await Query.Execute(new UserContactChallengeTokenQuery(correlationGuid));
-      if (view == null) return HttpNotFound(); // better yet, http bad request (400)
+      if (view == null) return HttpNotFound();
 
       await Command.SendAsync(new VerifyUserContactChallengeResponse(view.UserId, correlationGuid, code))
         .ConfigureAwait(false);
@@ -50,7 +52,7 @@ namespace EventSourced.Net.Web.Users.Register
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
       Guid? userId = await Query.Execute(new UserIdByContactChallengeCorrelationId(correlationGuid));
-      if (userId == null) return HttpNotFound(); // better yet, http bad request (400)
+      if (userId == null) return HttpNotFound();
 
       await Command.SendAsync(new RedeemUserContactChallenge(userId.Value, correlationGuid, token, password, passwordConfirmation))
         .ConfigureAwait(false);

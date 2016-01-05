@@ -9,7 +9,6 @@ namespace EventSourced.Net.Web.Users.Login
 {
   public class LogUserIn : ICommand
   {
-    //public Guid UserId { get; }
     public string Login { get; }
     public string Password { get; }
     public AuthenticationManager AuthenticationManager { get; }

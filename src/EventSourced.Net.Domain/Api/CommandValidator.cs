@@ -20,6 +20,14 @@ namespace EventSourced.Net
       if (value == null) AddError(key, null, CommandRejectionReason.Null);
     }
 
+    public void Null(Guid? value, string key, CommandRejectionReason reason = CommandRejectionReason.NotNull, object data = null) {
+      if (value.HasValue) AddError(key, null, reason, data);
+    }
+
+    public void False(bool value, string key) {
+      if (value) AddError(key, true, CommandRejectionReason.NotFalse);
+    }
+
     public void NotEmpty(Guid value, string key) {
       if (value == Guid.Empty) AddError(key, value, CommandRejectionReason.Empty);
     }
@@ -36,7 +44,7 @@ namespace EventSourced.Net
       return Errors.ContainsKey(key) && Errors[key].Any(x => x.Reason == reason);
     }
 
-    private void AddError(string key, object value, CommandRejectionReason reason) {
+    private void AddError(string key, object value, CommandRejectionReason reason, object data = null) {
       key = key?.Trim() ?? "";
       string errorsKey = Errors.Select(x => x.Key).SingleOrDefault(x => x.Equals(key, StringComparison.InvariantCultureIgnoreCase));
       if (errorsKey != null) key = errorsKey;
@@ -46,7 +54,7 @@ namespace EventSourced.Net
 
       CommandRejection[] commandRejections = Errors[key] ?? new CommandRejection[0];
       List<CommandRejection> errorsAsList = commandRejections.ToList();
-      errorsAsList.Add(new CommandRejection(key, value, reason));
+      errorsAsList.Add(new CommandRejection(key, value, reason, data));
       Errors[key] = errorsAsList.ToArray();
     }
   }
