@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EventSourced.Net.Domain.Users;
 using EventSourced.Net.ReadModel.Users;
 using Microsoft.AspNet.Mvc;
 
@@ -38,14 +39,15 @@ namespace EventSourced.Net.Web.Users.Register
 
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
-      UserContactChallengeCreatePasswordView view = await Query
-        .Execute(new UserContactChallengeCreatePasswordQuery(correlationGuid, token));
-      if (view == null) return HttpNotFound();
+      UserRegistrationRedeemData data = await Query
+        .Execute(new UserRegistrationRedeemView(correlationGuid, token));
+      if (data == null) return HttpNotFound();
 
       var model = new RedeemViewModel {
         CorrelationId = correlationId,
         Token = token,
-        ContactValue = view.ContactValue,
+        ContactValue = data.ContactValue,
+        Purpose = data.Purpose,
       };
       return View("~/Web/Users/Register/Redeem.cshtml", model);
     }

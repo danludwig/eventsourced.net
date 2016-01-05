@@ -1,47 +1,50 @@
 ﻿using System;
 using System.Threading.Tasks;
+using EventSourced.Net.Domain.Users;
 using EventSourced.Net.ReadModel.Users.Internal.Documents;
 using EventSourced.Net.ReadModel.Users.Internal.Queries;
 
 namespace EventSourced.Net.ReadModel.Users
 {
-  public class UserContactChallengeCreatePasswordQuery : IQuery<Task<UserContactChallengeCreatePasswordView>>
+  public class UserRegistrationRedeemView : IQuery<Task<UserRegistrationRedeemData>>
   {
     public Guid CorrelationId { get; }
     public string Token { get; }
 
-    public UserContactChallengeCreatePasswordQuery(Guid correlationId, string token) {
+    public UserRegistrationRedeemView(Guid correlationId, string token) {
       CorrelationId = correlationId;
       Token = token;
     }
   }
 
-  public class UserContactChallengeCreatePasswordView
+  public class UserRegistrationRedeemData
   {
     public Guid UserId { get; }
     public string ContactValue { get; }
+    public ContactChallengePurpose Purpose { get; }
 
-    internal UserContactChallengeCreatePasswordView(Guid userId, string contactValue) {
+    internal UserRegistrationRedeemData(Guid userId, string contactValue, ContactChallengePurpose purpose) {
       UserId = userId;
       ContactValue = contactValue;
+      Purpose = purpose;
     }
   }
 
-  public class HandleUserContactChallengeCreatePasswordView
-    : IHandleQuery<UserContactChallengeCreatePasswordQuery, Task<UserContactChallengeCreatePasswordView>>
+  public class HandleUserRegistrationRedeemView
+    : IHandleQuery<UserRegistrationRedeemView, Task<UserRegistrationRedeemData>>
   {
     private IExecuteQuery Query { get; }
 
-    public HandleUserContactChallengeCreatePasswordView(IExecuteQuery query) {
+    public HandleUserRegistrationRedeemView(IExecuteQuery query) {
       Query = query;
     }
 
-    public async Task<UserContactChallengeCreatePasswordView> Handle(UserContactChallengeCreatePasswordQuery query) {
-      UserContactChallengeCreatePasswordView view = null;
+    public async Task<UserRegistrationRedeemData> Handle(UserRegistrationRedeemView query) {
+      UserRegistrationRedeemData view = null;
       UserDocument user = await Query.Execute(new UserDocumentByContactChallengeCorrelationId(query.CorrelationId));
       var challenge = user?.GetContactChallengeByCorrelationId(query.CorrelationId);
       if (challenge != null && challenge.Token == query.Token)
-        view = new UserContactChallengeCreatePasswordView(user.Id, challenge.ContactValue);
+        view = new UserRegistrationRedeemData(user.Id, challenge.ContactValue, challenge.Purpose);
       return view;
     }
   }

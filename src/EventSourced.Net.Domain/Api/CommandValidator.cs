@@ -28,6 +28,12 @@ namespace EventSourced.Net
       if (!string.IsNullOrWhiteSpace(value)) AddError(key, value, CommandRejectionReason.NotEmpty);
     }
 
+    public void Length(string value, string key, int minLength, int maxLength) {
+      if (value != null)
+        if (value.Length < minLength || value.Length > maxLength)
+          AddError(key, value, CommandRejectionReason.InvalidFormat);
+    }
+
     public void False(bool value, string key) {
       if (value) AddError(key, true, CommandRejectionReason.NotFalse);
     }
@@ -42,6 +48,24 @@ namespace EventSourced.Net
 
     public void AreEqual(string value, string key, string otherValue) {
       if (value != otherValue) AddError(key, value, CommandRejectionReason.NotEqual);
+    }
+
+    public void OnlyCharacters(string value, string key, string allowedCharacters, bool ignoreCase = true) {
+      char[] valueCharacters = value?.ToCharArray();
+      char[] allowedCharactersArray = allowedCharacters.ToCharArray();
+      if (ignoreCase) {
+        var allowedCharactersList = new List<char>();
+        allowedCharactersList.AddRange(allowedCharactersArray);
+        allowedCharactersList.AddRange(allowedCharacters.ToLower().ToCharArray());
+        allowedCharactersArray = allowedCharactersList.Distinct().ToArray();
+      }
+
+      if (valueCharacters != null) {
+        bool hasDisallowedCharacters = valueCharacters.Any(x => !allowedCharactersArray.Contains(x));
+        if (hasDisallowedCharacters) {
+          AddError(key, value, CommandRejectionReason.InvalidFormat);
+        }
+      }
     }
 
     public bool HasError(string key, CommandRejectionReason reason) {

@@ -9,6 +9,9 @@ function serializeFormData($form) {
 function disableForm($form) {
   $form.find("input, button").attr("disabled", "disabled");
 }
+function enableForm($form) {
+  $form.find("input, button").removeAttr("disabled");
+}
 function getCorrelationSocket(xhr) {
   var correlationUrl = xhr.getResponseHeader("x-correlation-socket");
   var socket = new WebSocket(correlationUrl);
@@ -23,9 +26,6 @@ function parseMessageData(message) {
 }
 function setLocation(xhr) {
   window.location = xhr.getResponseHeader("location");
-}
-function enableForm($form) {
-  $form.find("input, button").removeAttr("disabled");
 }
 function handleValidationErrors(xhr, $form) {
   if (xhr.status === 400 && xhr.responseJSON) {

@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Security.Claims;
+using System.Linq;
 using System.Threading.Tasks;
 using EventSourced.Net.ReadModel.Users;
 using EventSourced.Net.Services.Web.Mvc;
@@ -37,13 +37,13 @@ namespace EventSourced.Net.Web.Users.Register
     public async Task<IActionResult> PostVerify(string correlationId, string code) {
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
-      UserContactChallengeTokenView view = await Query.Execute(new UserContactChallengeTokenQuery(correlationGuid));
-      if (view == null) return HttpNotFound();
+      UserContactChallengeTokenData data = await Query.Execute(new UserContactChallengeTokenView(correlationGuid));
+      if (data == null) return HttpNotFound();
 
-      await Command.SendAsync(new VerifyUserContactChallengeResponse(view.UserId, correlationGuid, code))
+      await Command.SendAsync(new VerifyUserContactChallengeResponse(data.UserId, correlationGuid, code))
         .ConfigureAwait(false);
 
-      var location = Url.RouteUrl("RegisterRedeemRoute", new { token = view.Token, });
+      var location = Url.RouteUrl("RegisterRedeemRoute", new { token = data.Token, });
       return new CreatedResult(location, new { CorrelationId = correlationId, });
     }
 
@@ -62,6 +62,18 @@ namespace EventSourced.Net.Web.Users.Register
       Response.Headers.Add("X-Correlation-Socket", correlationUrl);
       var location = Url.RouteUrl("LoginRoute");
       return new CreatedResult(location, new { CorrelationId = correlationId, });
+    }
+
+    [HttpPost, Route("api/check-username", Name = "CheckUsernameRoute")]
+    public async Task<IActionResult> PostCheckUsername(string username) {
+      Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(username));
+      ValidateUsername validation = new ValidateUsername(username, userIdByLogin);
+      CommandRejectionReason? reasonInvalid = validation.Errors
+        .SelectMany(x => x.Value.Select(y => y.Reason))
+        .Cast<CommandRejectionReason?>().FirstOrDefault();
+      return Ok(new UsernameCheckResponseModel {
+        ReasonInvalid = reasonInvalid,
+      });
     }
   }
 }
