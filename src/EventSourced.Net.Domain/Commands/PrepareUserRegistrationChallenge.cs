@@ -1,17 +1,18 @@
 ﻿using System;
+using System.Security.Principal;
 
 namespace EventSourced.Net
 {
-  public class PrepareUserContactChallenge : ICommand
+  public class PrepareUserRegistrationChallenge : ICommand
   {
-    public PrepareUserContactChallenge(Guid correlationId, string emailOrPhone, Guid? userIdByEmailOrPhone, bool isAlreadyLoggedIn) {
+    public PrepareUserRegistrationChallenge(Guid correlationId, string emailOrPhone, Guid? userIdByEmailOrPhone, IPrincipal principal) {
       emailOrPhone = emailOrPhone?.Trim();
       using (var validate = new CommandValidator()) {
         validate.NotEmpty(correlationId, nameof(correlationId));
         validate.NotEmpty(emailOrPhone, nameof(emailOrPhone));
         validate.Null(userIdByEmailOrPhone, nameof(emailOrPhone), CommandRejectionReason.AlreadyExists,
           new { emailOrPhone });
-        validate.False(isAlreadyLoggedIn, nameof(isAlreadyLoggedIn));
+        validate.Empty(principal?.Identity?.AuthenticationType, nameof(principal));
       }
 
       CorrelationId = correlationId;

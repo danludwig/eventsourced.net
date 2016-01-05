@@ -19,7 +19,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
     public string Token { get; set; }
     [JsonConverter(typeof(StringEnumConverter))]
     public ContactChallengePurpose Purpose { get; set; }
-    [ArangoDB.Client.Common.Newtonsoft.Json.JsonIgnore]
+    [JsonIgnore]
     public abstract string ContactValue { get; }
   }
 }

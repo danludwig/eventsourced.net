@@ -26,8 +26,8 @@ namespace EventSourced.Net.Web.Users.Register
       ShortGuid correlationId = Guid.NewGuid();
       Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(emailOrPhone));
 
-      await Command.SendAsync(new PrepareUserContactChallenge(correlationId, emailOrPhone,
-        userIdByLogin, User.IsSignedIn())).ConfigureAwait(false);
+      await Command.SendAsync(new PrepareUserRegistrationChallenge(correlationId, emailOrPhone,
+        userIdByLogin, User)).ConfigureAwait(false);
 
       string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });
       return new CreatedResult(location, new { CorrelationId = correlationId, });

@@ -6,6 +6,7 @@
     NotNull,
     NotFalse,
     Empty,
+    NotEmpty,
     InvalidFormat,
     NotEqual,
     Unverified,

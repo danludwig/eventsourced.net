@@ -24,6 +24,10 @@ namespace EventSourced.Net
       if (value.HasValue) AddError(key, null, reason, data);
     }
 
+    public void Empty(string value, string key) {
+      if (!string.IsNullOrWhiteSpace(value)) AddError(key, value, CommandRejectionReason.NotEmpty);
+    }
+
     public void False(bool value, string key) {
       if (value) AddError(key, true, CommandRejectionReason.NotFalse);
     }
