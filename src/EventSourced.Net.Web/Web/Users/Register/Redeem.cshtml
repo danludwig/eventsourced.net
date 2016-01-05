@@ -91,7 +91,7 @@
           reason: reason || 'success',
           value: usernameValue
         });
-        $checkUsernameMessage.text(validationMessage);
+        $checkUsernameMessage.html(validationMessage);
         $button.parents('.form-group').find('.help-block').hide();
         $checkUsernameMessage.show();
       }
@@ -176,7 +176,7 @@
       window['validationMessages'] = {
         username: {
           empty: 'Username is required.',
-          alreadyExists: 'Sorry, the username "{attemptedValue}" is already taken.',
+          alreadyExists: 'Sorry, the username **{attemptedValue}** is already taken.',
           invalidFormat: 'Username can only contain letters, numbers, hyphens, underscores, dots, and must be between 2 and 12 characters long.',
           success: 'You will also be able to login with the username above.'
         },
@@ -196,7 +196,7 @@
           'null': 'Something went wrong. Please restart the registration process.'
         },
         emailOrPhone: {
-          notUnique: 'The login "@Model.ContactValue" has already been registered. Did you forget your password?'
+          notUnique: 'The login **@Model.ContactValue** has already been registered. Did you forget your password?'
         }
       }
     });

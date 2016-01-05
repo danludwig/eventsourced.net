@@ -54,13 +54,13 @@ function getValidationMessage(item) {
         message = message.replace("{" + fieldName + "}", item.data[fieldName]);
       }
     }
-    return message;
+    return markdown.toHTML(message);
   }
   return item.message || "An unexpected error occurred.";
 }
 function addValidationError($form, message) {
   var $ul = $form.find(".form-errors ul");
-  $ul.append($("<li></li>").text(message));
+  $ul.append($("<li></li>").html(message));
 }
 function clearValidationErrors($form) {
   var $ul = $form.find(".form-errors ul");
