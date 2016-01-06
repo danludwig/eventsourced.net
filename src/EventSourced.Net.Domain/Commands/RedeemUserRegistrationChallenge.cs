@@ -12,8 +12,10 @@ namespace EventSourced.Net
         validate.NotEmpty(userId, nameof(userId));
         validate.NotEmpty(correlationId, nameof(correlationId));
         validate.NotEmpty(token, nameof(token));
+
         validate.IsAvailable(emailOrPhone, nameof(emailOrPhone), () => !userIdByContact.HasValue);
         validate.AddErrors(new ValidateUsername(username, userIdByUsername).Errors);
+
         validate.NotEmpty(password, nameof(password));
         validate.NotEmpty(passwordConfirmation, nameof(passwordConfirmation));
         if (!validate.HasError(nameof(password), CommandRejectionReason.Empty)

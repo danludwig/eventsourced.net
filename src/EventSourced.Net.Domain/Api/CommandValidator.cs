@@ -46,6 +46,11 @@ namespace EventSourced.Net
       if (value != otherValue) AddError(key, value, CommandRejectionReason.NotEqual);
     }
 
+    public void NotPhoneNumber(string possiblePhoneNumber, string key) {
+      var asPhoneNumber = ContactIdParser.AsPhoneNumber(possiblePhoneNumber);
+      if (asPhoneNumber != null) AddError(key, possiblePhoneNumber, CommandRejectionReason.PhoneNumber);
+    }
+
     public void IsAvailable(string value, string key, Func<bool> isAvailable) {
       if (!isAvailable()) {
         AddError(key, value, CommandRejectionReason.AlreadyExists);

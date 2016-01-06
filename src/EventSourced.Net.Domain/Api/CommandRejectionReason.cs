@@ -11,6 +11,7 @@
     MaxAttempts,
     AlreadyApplied,
     AlreadyExists,
+    PhoneNumber,
     NotFound,
     UnexpectedVersion,
     Deleted,

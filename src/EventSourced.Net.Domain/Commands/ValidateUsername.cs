@@ -19,6 +19,7 @@ namespace EventSourced.Net
             if (!validate.HasError(nameof(username), CommandRejectionReason.InvalidFormat)) {
               validate.Length(username, nameof(username), MinLength, MaxLength);
             }
+            validate.NotPhoneNumber(username, nameof(username));
           }
         }
         Errors = validate.Errors;
