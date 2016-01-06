@@ -89,7 +89,7 @@ The first time you clone the repository, and each time a nuget package dependenc
 Note that restoring packages may take a couple of minutes when run for the first time.
 
 ##### Work around a known `FileSystemWatcher` issue
-There is just one last thing you need to do before you can run the app. There is a pretty well known issue about the MVC file watcher that may snag you. To avoid it, run the following:
+There is just one last thing you need to do before you can run the app. There is [a pretty well known issue about the MVC file watcher](https://github.com/aspnet/Mvc/issues/2348) that will probably snag you. To avoid it, run the following:
 
     export MONO_MANAGED_WATCHER=false
 
