@@ -3,10 +3,8 @@
   public enum CommandRejectionReason
   {
     Null,
-    NotNull,
-    NotFalse,
     Empty,
-    NotEmpty,
+    NotLoggedOff,
     InvalidFormat,
     NotEqual,
     Unverified,

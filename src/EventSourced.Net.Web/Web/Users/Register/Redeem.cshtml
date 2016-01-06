@@ -14,11 +14,12 @@
       @if (Model.Purpose == ContactChallengePurpose.CreateUserFromEmail) {
         <label class="control-label sr-only">Email address:</label>
         <input type="email" name="emailOrPhone" class="form-control" value="@Model.ContactValue" disabled="disabled" />
-        <p class="help-block">You will always be able to login using your email address above.</p>
+        <p class="help-block">You will be able to login using your email address above.</p>
+
       } else if (Model.Purpose == ContactChallengePurpose.CreateUserFromPhone) {
         <label class="control-label sr-only">Phone number:</label>
         <input type="tel" name="emailOrPhone" class="form-control" value="@Model.PhoneNumberFormatted" disabled="disabled" />
-        <p class="help-block">You will always be able to login using your phone number above.</p>
+        <p class="help-block">You will be able to login using your phone number above.</p>
       }
     </div>
   </div>
@@ -139,35 +140,52 @@
         })
           .done(function (response, status, xhr) {
             var socket = getCorrelationSocket(xhr);
-            var isUniqueConstraintViolated = false;
+            var isConstraintViolated = false;
             socket.onopen = function (e) {
               console.log('WebSockets: Correlation ' + e.type);
             }
             socket.onmessage = function (message) {
               console.log('WebSockets: ' + message.data);
-              if (isUniqueConstraintViolated) return;
+              if (isConstraintViolated) return;
               var messageData = parseMessageData(message);
-              switch (messageData.type) {
-                case 'ContactChallengeRedemptionReversed':
-                  isUniqueConstraintViolated = true;
-                  var validationMessage = getValidationMessage({
-                    key: 'emailOrPhone',
-                    reason: 'notUnique'
+              if (messageData.isComplete) {
+                setLocation(xhr);
+                return;
+              } else if (messageData.isComplete === false) {
+                isConstraintViolated = true;
+                var validationMessage;
+
+                if (messageData.duplicateUsername) {
+                  validationMessage = getValidationMessage({
+                    key: 'username',
+                    reason: 'alreadyExists',
+                    value: messageData.duplicateUsername
                   });
                   addValidationError($form, validationMessage);
-                  enableForm($form);
-                  break;
-                case 'ContactChallengeRedemptionConcluded':
-                  setLocation(xhr);
-                  break;
-                default:
-                  console.log('Encountered unexpected data type "' + messageData.type + '"');
-                  enableForm($form);
+                }
+                if (messageData.duplicateContact) {
+                  validationMessage = getValidationMessage({
+                    key: 'emailOrPhone',
+                    reason: 'alreadyExists',
+                    value: messageData.duplicateContact
+                  });
+                  addValidationError($form, validationMessage);
+                }
+                if (!messageData.duplicateUsername && !messageData.duplicateContact) {
+                  validationMessage = getValidationMessage({
+                    key: 'unknown',
+                    reason: 'unknown'
+                  });
+                  addValidationError($form, validationMessage);
+                }
+                enableForm($form);
+                $form.find('[name=emailOrPhone]').attr('disabled', 'disabled');
               }
             }
           })
           .fail(function (xhr) {
             enableForm($form);
+            $form.find('[name=emailOrPhone]').attr('disabled', 'disabled');
             handleValidationErrors(xhr, $form);
           });
         return false;
@@ -176,8 +194,8 @@
       window['validationMessages'] = {
         username: {
           empty: 'Username is required.',
-          alreadyExists: 'Sorry, the username **{attemptedValue}** is already taken.',
           invalidFormat: 'Username can only contain letters, numbers, hyphens, underscores, dots, and must be between 2 and 12 characters long.',
+          alreadyExists: 'Sorry, the username **{attemptedValue}** is already taken. Please choose a different username.',
           success: 'You will also be able to login with the username above.'
         },
         password: {
@@ -196,7 +214,7 @@
           'null': 'Something went wrong. Please restart the registration process.'
         },
         emailOrPhone: {
-          notUnique: 'The login **@Model.ContactValue** has already been registered. Did you forget your password?'
+          alreadyExists: 'The login **{attemptedValue}** has already been registered. Did you forget your password?'
         }
       }
     });

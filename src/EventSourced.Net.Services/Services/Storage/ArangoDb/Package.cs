@@ -18,6 +18,7 @@ namespace EventSourced.Net.Services.Storage.ArangoDb
           Url = Settings.ServerUrl,
           Database = Settings.DbName,
           WaitForSync = true,
+          CreateCollectionOnTheFly = true,
         }
       );
       container.Register<IArangoDatabase>(() =>

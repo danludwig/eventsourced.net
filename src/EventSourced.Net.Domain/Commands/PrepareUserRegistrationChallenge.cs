@@ -10,9 +10,8 @@ namespace EventSourced.Net
       using (var validate = new CommandValidator()) {
         validate.NotEmpty(correlationId, nameof(correlationId));
         validate.NotEmpty(emailOrPhone, nameof(emailOrPhone));
-        validate.Null(userIdByEmailOrPhone, nameof(emailOrPhone), CommandRejectionReason.AlreadyExists,
-          new { emailOrPhone });
-        validate.Empty(principal?.Identity?.AuthenticationType, nameof(principal));
+        validate.IsAvailable(emailOrPhone, nameof(emailOrPhone), () => !userIdByEmailOrPhone.HasValue);
+        validate.LoggedOff(principal?.Identity, nameof(principal));
       }
 
       CorrelationId = correlationId;

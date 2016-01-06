@@ -21,5 +21,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
     public ContactChallengePurpose Purpose { get; set; }
     [JsonIgnore]
     public abstract string ContactValue { get; }
+    [JsonIgnore]
+    public string NormalizedContactValue => ContactIdParser.Normalize(ContactValue);
   }
 }

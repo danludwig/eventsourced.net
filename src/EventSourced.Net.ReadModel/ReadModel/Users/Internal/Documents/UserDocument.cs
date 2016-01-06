@@ -15,9 +15,15 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
       ConfirmedLogins = new List<string>();
     }
 
+    public Guid Id { get; set; }
+
+    [JsonProperty("_key")]
     [DocumentProperty(Identifier = IdentifierType.Key)]
     public string Key => Id.ToString();
-    public Guid Id { get; set; }
+
+    [DocumentProperty(Identifier = IdentifierType.Revision)]
+    [JsonProperty("_rev")]
+    public string Revision { get; set; }
 
     public IList<UserDocumentContactSmsChallenge> ContactSmsChallenges { get; }
     public IList<UserDocumentContactEmailChallenge> ContactEmailChallenges { get; }
@@ -59,8 +65,12 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
       UserDocumentContactChallenge challenge = GetContactChallengeByCorrelationId(correlationId);
       if (challenge == null) throw new InvalidOperationException(
         $"There is no {typeof(UserDocumentContactChallenge).Name} with correlation id '{correlationId}'.");
-      if (!ConfirmedLogins.Any(x => string.Equals(x, challenge.ContactValue, StringComparison.OrdinalIgnoreCase)))
-        ConfirmedLogins.Add(challenge.ContactValue);
+      AddConfirmedLogin(challenge.ContactValue);
+    }
+
+    public void AddConfirmedLogin(string username) {
+      if (!ConfirmedLogins.Any(x => string.Equals(x, username, StringComparison.OrdinalIgnoreCase)))
+        ConfirmedLogins.Add(username);
     }
   }
 }

@@ -7,7 +7,7 @@ using WebSocketSharp;
 namespace EventSourced.Net.Web.Users.Register
 {
   public class SendContactChallengeRedemptionToWebSocket :
-    IHandleEvent<ContactChallengeRedemptionReversed>,
+    IHandleEvent<RegistrationChallengeRedemptionReversed>,
     IHandleEvent<ContactChallengeRedemptionConcluded>
   {
     private IServeWebSockets WebSockets { get; }
@@ -16,12 +16,15 @@ namespace EventSourced.Net.Web.Users.Register
       WebSockets = webSockets;
     }
 
-    public Task HandleAsync(ContactChallengeRedemptionReversed message) {
+    public Task HandleAsync(RegistrationChallengeRedemptionReversed message) {
       if (!WebSockets.IsCorrelationService(message.CorrelationId)) return Task.FromResult(true);
 
       using (WebSocket client = WebSockets.CreateCorrelationClient(message.CorrelationId)) {
         client.Send(new {
           Type = message.GetType().Name,
+          IsComplete = false,
+          message.DuplicateContact,
+          message.DuplicateUsername,
         });
       }
       WebSockets.RemoveCorrelationService(message.CorrelationId);
@@ -34,6 +37,7 @@ namespace EventSourced.Net.Web.Users.Register
       using (WebSocket client = WebSockets.CreateCorrelationClient(message.CorrelationId)) {
         client.Send(new {
           Type = message.GetType().Name,
+          IsComplete = true,
         });
       }
       WebSockets.RemoveCorrelationService(message.CorrelationId);

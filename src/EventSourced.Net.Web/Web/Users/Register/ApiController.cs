@@ -48,14 +48,19 @@ namespace EventSourced.Net.Web.Users.Register
     }
 
     [HttpPost, Route("api/register/{correlationId}/redeem")]
-    public async Task<IActionResult> PostRedeem(string correlationId, string token, string password, string passwordConfirmation) {
+    public async Task<IActionResult> PostRedeem(string correlationId, string token, string username, string password, string passwordConfirmation) {
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
-      Guid? userId = await Query.Execute(new UserIdByContactChallengeCorrelationId(correlationGuid));
-      if (userId == null) return HttpNotFound();
 
-      await Command.SendAsync(new RedeemUserContactChallenge(userId.Value, correlationGuid, token, password, passwordConfirmation))
-        .ConfigureAwait(false);
+      UserRegistrationRedeemData data = await Query
+        .Execute(new UserRegistrationRedeemView(correlationGuid, token));
+      if (data == null) return HttpNotFound();
+      Guid? userIdByUsername = await Query.Execute(new UserIdByLogin(username));
+      Guid? userIdByContact = await Query.Execute(new UserIdByLogin(data.ContactValue));
+
+      await Command.SendAsync(new RedeemUserRegistrationChallenge(data.UserId, correlationGuid, token,
+        data.ContactValue, userIdByContact, username, userIdByUsername, password, passwordConfirmation))
+          .ConfigureAwait(false);
 
       WebSockets.AddCorrelationService(correlationId);
       var correlationUrl = WebSockets.GetCorrelationUri(correlationId).ToString();

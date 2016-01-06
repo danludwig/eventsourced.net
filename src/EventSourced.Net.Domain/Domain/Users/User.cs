@@ -145,9 +145,9 @@ namespace EventSourced.Net.Domain.Users
     }
 
     #endregion
-    #region Redeem to Create Password
+    #region Redeem to Create Username & Password
 
-    public void RedeemContactChallenge(Guid correlationId, string token, string password) {
+    public void RedeemRegistrationChallenge(Guid correlationId, string token, string username, string password) {
       RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (challenge.IsTokenRedeemed)
@@ -164,30 +164,35 @@ namespace EventSourced.Net.Domain.Users
       if (!isValid) throw new CommandRejectedException(nameof(token), token, CommandRejectionReason.Unverified);
 
       string hashedPassword = ContactChallengers.PasswordHasher.Instance.HashPassword(password);
-      RaiseEvent(new ContactChallengeRedeemed(Id, DateTime.UtcNow, correlationId, hashedPassword));
+      RaiseEvent(new RegistrationChallengeRedeemed(Id, DateTime.UtcNow, correlationId, username, hashedPassword));
     }
 
-    public void ReverseContactChallengeRedemption(Guid correlationId) {
+    public void ReverseRegistrationChallengeRedemption(Guid correlationId, string duplicateContact, string duplicateUsername) {
       RejectIfNullContactChallengeCorrelation(correlationId);
       ContactChallenge challenge = ContactChallenges[correlationId];
       if (!challenge.IsTokenRedeemed)
         throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.AlreadyApplied);
-      RaiseEvent(new ContactChallengeRedemptionReversed(Id, DateTime.UtcNow, correlationId));
+      RaiseEvent(new RegistrationChallengeRedemptionReversed(Id, DateTime.UtcNow, correlationId, duplicateUsername, duplicateContact));
     }
 
     [UsedImplicitly]
-    private void Apply(ContactChallengeRedeemed e) {
-      var challenge = ContactChallenges[e.CorrelationId];
+    private void Apply(RegistrationChallengeRedeemed e) {
+      ContactChallenge challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = true;
+      challenge.Username = e.Username;
       ConfirmedLogins.Add(challenge.NormalizedContactValue);
+      if (challenge.NormalizedUsername != null)
+        ConfirmedLogins.Add(challenge.NormalizedUsername);
       PasswordHashes.Add(e.PasswordHash);
     }
 
     [UsedImplicitly]
-    private void Apply(ContactChallengeRedemptionReversed e) {
+    private void Apply(RegistrationChallengeRedemptionReversed e) {
       var challenge = ContactChallenges[e.CorrelationId];
       challenge.IsTokenRedeemed = false;
       ConfirmedLogins.Remove(challenge.NormalizedContactValue);
+      if (challenge.NormalizedUsername != null)
+        ConfirmedLogins.Remove(challenge.NormalizedUsername);
       PasswordHashes.RemoveAt(PasswordHashes.Count - 1);
     }
 
@@ -219,6 +224,8 @@ namespace EventSourced.Net.Domain.Users
       internal int CodeAttemptsRemainingCount => MaxInvalidCodeAttempts - InvalidCodeAttemptCount;
       internal bool IsMaxCodeAttemptsExhausted { get; set; }
       internal bool IsTokenRedeemed { get; set; }
+      internal string Username { get; set; }
+      internal string NormalizedUsername => Username?.Trim().ToLower();
     }
 
     private class ContactEmailChallenge : ContactChallenge
