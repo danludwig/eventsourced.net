@@ -1,4 +1,4 @@
-﻿namespace EventSourced.Net.Domain.Users
+﻿namespace EventSourced.Net
 {
   public enum ContactChallengePurpose
   {

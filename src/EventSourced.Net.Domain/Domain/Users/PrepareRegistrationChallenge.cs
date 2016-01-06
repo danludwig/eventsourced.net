@@ -4,9 +4,9 @@ using CommonDomain.Persistence;
 
 namespace EventSourced.Net.Domain.Users
 {
-  public class PrepareContactChallenge : IHandleCommand<PrepareUserRegistrationChallenge>
+  public class PrepareRegistrationChallenge : IHandleCommand<PrepareUserRegistrationChallenge>
   {
-    public PrepareContactChallenge(IRepository repository) {
+    public PrepareRegistrationChallenge(IRepository repository) {
       Repository = repository;
     }
 
@@ -14,7 +14,7 @@ namespace EventSourced.Net.Domain.Users
 
     public async Task HandleAsync(PrepareUserRegistrationChallenge message) {
       var user = new User(GuidComb.NewGuid());
-      user.PrepareContactChallenge(message.CorrelationId, message.EmailOrPhone);
+      user.PrepareRegistrationChallenge(message.CorrelationId, message.EmailOrPhone, message.Purpose);
 
       var commitId = Guid.NewGuid();
       await Repository.SaveAsync(user, commitId);

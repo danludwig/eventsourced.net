@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using EventSourced.Net.Domain.Users;
 using EventSourced.Net.ReadModel.Users;
 using Microsoft.AspNet.Mvc;
 

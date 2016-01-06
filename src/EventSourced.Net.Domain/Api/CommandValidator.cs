@@ -46,6 +46,12 @@ namespace EventSourced.Net
       if (value != otherValue) AddError(key, value, CommandRejectionReason.NotEqual);
     }
 
+    public void EmailOrPhone(string emailOrPhone, string key) {
+      bool isPhone = ContactIdParser.AsPhoneNumber(emailOrPhone) != null;
+      bool isEmail = !isPhone && ContactIdParser.AsMailAddress(emailOrPhone) != null;
+      if (!isEmail && !isPhone) AddError(key, emailOrPhone, CommandRejectionReason.InvalidFormat);
+    }
+
     public void NotPhoneNumber(string possiblePhoneNumber, string key) {
       var asPhoneNumber = ContactIdParser.AsPhoneNumber(possiblePhoneNumber);
       if (asPhoneNumber != null) AddError(key, possiblePhoneNumber, CommandRejectionReason.PhoneNumber);

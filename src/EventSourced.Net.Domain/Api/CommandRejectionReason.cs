@@ -2,6 +2,7 @@
 {
   public enum CommandRejectionReason
   {
+    Unknown,
     Null,
     Empty,
     NotLoggedOff,

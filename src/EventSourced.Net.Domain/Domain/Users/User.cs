@@ -37,50 +37,36 @@ namespace EventSourced.Net.Domain.Users
 
     #region Prepare Challenge
 
-    public void PrepareContactChallenge(Guid correlationId, string emailOrPhone) {
+    public void PrepareRegistrationChallenge(Guid correlationId, string emailOrPhone, ContactChallengePurpose purpose) {
       if (ContactChallenges.ContainsKey(correlationId))
         throw new CommandRejectedException(nameof(correlationId), correlationId, CommandRejectionReason.AlreadyApplied,
           $"Contact challenge for correlationId '{correlationId}' has already been prepared.");
 
-      MailAddress mailAddress = ContactIdParser.AsMailAddress(emailOrPhone);
-      if (mailAddress != null) {
-        PrepareContactEmailChallenge(correlationId, mailAddress, Guid.NewGuid().ToString(),
-          ContactChallengePurpose.CreateUserFromEmail);
-        return;
-      }
-
-      PhoneNumber phoneNumber = ContactIdParser.AsPhoneNumber(emailOrPhone);
-      if (phoneNumber != null) {
-        PrepareContactSmsChallenge(correlationId, phoneNumber, Guid.NewGuid().ToString(),
-          ContactChallengePurpose.CreateUserFromPhone);
-        return;
-      }
-
-      throw new CommandRejectedException(nameof(emailOrPhone), emailOrPhone,
-        CommandRejectionReason.InvalidFormat);
-    }
-
-    private void PrepareContactEmailChallenge(Guid correlationId, MailAddress mailAddress, string stamp,
-      ContactChallengePurpose purpose) {
-      string code = ContactChallengers.TotpCodeProvider.Generate(Id, mailAddress, purpose, stamp);
+      string stamp = Guid.NewGuid().ToString();
+      string code = ContactChallengers.TotpCodeProvider.Generate(Id, emailOrPhone, purpose, stamp);
       string token = ContactChallengers.DataProtectionTokenProvider.Generate(Id, purpose, stamp);
       var assembly = Assembly.GetExecutingAssembly();
-      string body = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Body.txt"))
-        .Replace("{Code}", code);
-      string subject = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Subject.txt"));
-      RaiseEvent(new ContactEmailChallengePrepared(Id, DateTime.UtcNow, correlationId,
-        mailAddress.Address, purpose, stamp, token, subject, body));
-    }
+      string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt")).Replace("{Code}", code);
+      ContactChallengePrepared eventToRaise;
+      switch (purpose) {
 
-    private void PrepareContactSmsChallenge(Guid correlationId, PhoneNumber phoneNumber, string stamp,
-      ContactChallengePurpose purpose) {
-      string code = ContactChallengers.TotpCodeProvider.Generate(Id, phoneNumber, purpose, stamp);
-      string token = ContactChallengers.DataProtectionTokenProvider.Generate(Id, purpose, stamp);
-      var assembly = Assembly.GetExecutingAssembly();
-      string message = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Message.txt"))
-        .Replace("{Code}", code);
-      RaiseEvent(new ContactSmsChallengePrepared(Id, DateTime.UtcNow, correlationId,
-        phoneNumber.NationalNumber, ContactIdParser.DefaultRegionCode, purpose, stamp, token, message));
+        case ContactChallengePurpose.CreateUserFromEmail:
+          string subject = assembly.GetManifestResourceText(assembly.GetManifestResourceName($"{purpose}.Subject.txt"));
+          eventToRaise = new ContactEmailChallengePrepared(Id, DateTime.UtcNow, correlationId,
+            emailOrPhone, purpose, stamp, token, subject, message);
+          break;
+
+        case ContactChallengePurpose.CreateUserFromPhone:
+          var phoneNumber = ContactIdParser.AsPhoneNumber(emailOrPhone);
+          eventToRaise = new ContactSmsChallengePrepared(Id, DateTime.UtcNow, correlationId,
+            phoneNumber.NationalNumber, ContactIdParser.DefaultRegionCode, purpose, stamp, token, message);
+          break;
+
+        default:
+          throw new CommandRejectedException(nameof(emailOrPhone), emailOrPhone, CommandRejectionReason.Unknown);
+      }
+
+      RaiseEvent(eventToRaise);
     }
 
     [UsedImplicitly]

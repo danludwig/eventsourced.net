@@ -1,5 +1,4 @@
-﻿using EventSourced.Net.Domain.Users;
-using PhoneNumbers;
+﻿using PhoneNumbers;
 
 namespace EventSourced.Net.Web.Users.Register
 {

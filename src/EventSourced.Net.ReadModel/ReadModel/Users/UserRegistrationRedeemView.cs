@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using EventSourced.Net.Domain.Users;
 using EventSourced.Net.ReadModel.Users.Internal.Documents;
 using EventSourced.Net.ReadModel.Users.Internal.Queries;
 
