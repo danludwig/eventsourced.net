@@ -33,6 +33,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Handlers
 
       user.AddConfirmedLogin(message.CorrelationId);
       user.AddConfirmedLogin(message.Username);
+      user.Username = message.Username;
 
       UserLoginIndex contactIndex = BuildUserLoginIndex(message, challenge.NormalizedContactValue);
       UserLoginIndex usernameIndex = BuildUserLoginIndex(message, message.NormalizedUsername);

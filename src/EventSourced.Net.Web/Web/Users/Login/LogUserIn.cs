@@ -47,7 +47,7 @@ namespace EventSourced.Net.Web.Users.Login
       await Command.SendAsync(new VerifyUserLogin(userId.Value, message.Login, message.Password));
 
       ClaimsPrincipal principal = await Query
-        .Execute(new ClaimsPrincipalForLogin(userId.Value, message.Login));
+        .Execute(new ClaimsPrincipalForLogin(userId.Value));
       await message.AuthenticationManager
         .SignInAsync(Options.Cookies.ApplicationCookieAuthenticationScheme,
           principal, message.AuthenticationProperties);

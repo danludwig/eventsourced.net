@@ -59,6 +59,7 @@ namespace EventSourced.Net.ReadModel.Users.Internal.Documents
       new ReadOnlyCollection<UserDocumentContactChallenge>(ContactEmailChallenges
         .Cast<UserDocumentContactChallenge>().Union(ContactSmsChallenges).ToArray());
 
+    public string Username { get; set; }
     public IList<string> ConfirmedLogins { get; }
 
     public void AddConfirmedLogin(Guid correlationId) {

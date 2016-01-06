@@ -59,7 +59,7 @@ namespace EventSourced.Net.Domain.Users
         case ContactChallengePurpose.CreateUserFromPhone:
           var phoneNumber = ContactIdParser.AsPhoneNumber(emailOrPhone);
           eventToRaise = new ContactSmsChallengePrepared(Id, DateTime.UtcNow, correlationId,
-            phoneNumber.NationalNumber, ContactIdParser.DefaultRegionCode, purpose, stamp, token, message);
+            phoneNumber.NationalNumber, ContactIdParser.DefaultRegionCode, emailOrPhone, purpose, stamp, token, message);
           break;
 
         default:
@@ -228,10 +228,12 @@ namespace EventSourced.Net.Domain.Users
     {
       internal ContactSmsChallenge(ContactSmsChallengePrepared e) : base(e) {
         PhoneNumber = ContactIdParser.AsPhoneNumber(e.PhoneNumber, e.RegionCode);
+        UnformattedPhone = e.UnformattedPhone;
       }
 
       internal PhoneNumber PhoneNumber { get; }
-      internal override string ContactValue => PhoneNumber.NationalNumber.ToString();
+      internal string UnformattedPhone { get; }
+      internal override string ContactValue => UnformattedPhone;
     }
 
     #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EventSourced.Net.ReadModel.Users;
 using Microsoft.AspNet.Identity;
 
 namespace EventSourced.Net.Web.Users.Login
@@ -8,32 +9,32 @@ namespace EventSourced.Net.Web.Users.Login
   public class ClaimsPrincipalForLogin : IQuery<Task<ClaimsPrincipal>>
   {
     public Guid UserId { get; }
-    public string Username { get; }
 
-    public ClaimsPrincipalForLogin(Guid userId, string username) {
+    public ClaimsPrincipalForLogin(Guid userId) {
       if (userId == Guid.Empty) throw new ArgumentException("Cannot be empty.", nameof(userId));
-      if (string.IsNullOrWhiteSpace(username)) throw new ArgumentException("Cannot be empty.", nameof(username));
       UserId = userId;
-      Username = username;
     }
   }
 
   public class HandleClaimsPrincipalForLogin : IHandleQuery<ClaimsPrincipalForLogin, Task<ClaimsPrincipal>>
   {
+    private IExecuteQuery Query { get; }
     private IdentityOptions Options { get; }
 
-    public HandleClaimsPrincipalForLogin(IdentityOptions options) {
+    public HandleClaimsPrincipalForLogin(IExecuteQuery query, IdentityOptions options) {
+      Query = query;
       Options = options;
     }
 
-    public Task<ClaimsPrincipal> Handle(ClaimsPrincipalForLogin query) {
+    public async Task<ClaimsPrincipal> Handle(ClaimsPrincipalForLogin query) {
       var id = new ClaimsIdentity(Options.Cookies.ApplicationCookieAuthenticationScheme,
-          Options.ClaimsIdentity.UserNameClaimType,
-          Options.ClaimsIdentity.RoleClaimType);
-      id.AddClaim(new Claim(Options.ClaimsIdentity.UserIdClaimType, query.UserId.ToString()));
-      id.AddClaim(new Claim(Options.ClaimsIdentity.UserNameClaimType, query.Username));
+          ClaimTypes.Name, ClaimTypes.Role);
+      var claims = await Query.Execute(new ClaimsByUserId(query.UserId));
+      foreach (Claim claim in claims) {
+        id.AddClaim(claim);
+      }
       ClaimsPrincipal principal = new ClaimsPrincipal(id);
-      return Task.FromResult(principal);
+      return principal;
     }
   }
 }
