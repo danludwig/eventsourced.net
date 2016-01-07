@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using EventSourced.Net.ReadModel.Users.Internal.Queries;
+using Microsoft.AspNet.Identity;
 
 namespace EventSourced.Net.ReadModel.Users
 {
@@ -20,9 +21,11 @@ namespace EventSourced.Net.ReadModel.Users
   public class HandleClaimsByUserId : IHandleQuery<ClaimsByUserId, Task<Claim[]>>
   {
     private IExecuteQuery Query { get; }
+    private IdentityOptions Options { get; }
 
-    public HandleClaimsByUserId(IExecuteQuery query) {
+    public HandleClaimsByUserId(IExecuteQuery query, IdentityOptions options) {
       Query = query;
+      Options = options;
     }
 
     public async Task<Claim[]> Handle(ClaimsByUserId query) {
@@ -31,6 +34,8 @@ namespace EventSourced.Net.ReadModel.Users
 
       var user = await Query.Execute(new UserDocumentById(query.UserId));
       if (user != null) {
+        claims.Add(new Claim(Options.ClaimsIdentity.SecurityStampClaimType, user.Revision));
+
         if (!string.IsNullOrWhiteSpace(user.Username)) {
           claims.Add(new Claim(ClaimTypes.Name, user.Username));
         }

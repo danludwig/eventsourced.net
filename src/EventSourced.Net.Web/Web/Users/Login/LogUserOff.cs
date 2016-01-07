@@ -25,8 +25,7 @@ namespace EventSourced.Net.Web.Users.Login
     }
 
     public async Task HandleAsync(LogUserOff message) {
-      await message.AuthenticationManager.SignOutAsync(Options.Cookies.ApplicationCookieAuthenticationScheme);
-      await message.AuthenticationManager.SignOutAsync(Options.Cookies.ExternalCookieAuthenticationScheme);
+      await message.AuthenticationManager.LogOffAsync(Options);
     }
   }
 }

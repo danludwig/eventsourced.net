@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "ArangoDB.Client": "0.7.2.9",
-        "EventSourced.Net.Domain": "1.0.0-*"
+        "EventSourced.Net.Domain": "1.0.0-*",
+        "Microsoft.AspNet.Identity": "3.0.0-rc1-final"
     }
 }

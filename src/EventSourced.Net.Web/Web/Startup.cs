@@ -3,6 +3,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Mvc.Controllers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,10 +49,10 @@ namespace EventSourced.Net.Web
       services
         .AddSingleton(x => Container)
         .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(Container))
+        .AddScoped<ISecurityStampValidator, Services.Web.Mvc.SecurityStampValidator>()
         .AddExternalCookieAuthentication()
         .AddMvc()
-          .AddJsonOptions(x =>
-          {
+          .AddJsonOptions(x => {
             x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             x.SerializerSettings.Converters.Add(new StringEnumConverter());
           });
@@ -64,8 +65,8 @@ namespace EventSourced.Net.Web
       app
         .UseIISPlatformHandler()
         .UseStaticFiles()
-        .UseAuthentication()
         .UseExecutionContextScope()
+        .UseAuthentication()
         .UseStatusCodePagesWithReExecute("/errors/{0}")
         .UseMvc()
       ;

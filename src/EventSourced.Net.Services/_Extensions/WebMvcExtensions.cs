@@ -1,5 +1,7 @@
-﻿using EventSourced.Net.Services.Web.Mvc;
+﻿using System.Threading.Tasks;
+using EventSourced.Net.Services.Web.Mvc;
 using Microsoft.AspNet.Builder;
+using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.OptionsModel;
@@ -24,6 +26,11 @@ namespace EventSourced.Net
         .UseCookieAuthentication(options.Cookies.ApplicationCookie)
         .UseCookieAuthentication(options.Cookies.ExternalCookie)
       ;
+    }
+
+    public static async Task LogOffAsync(this AuthenticationManager authentication, IdentityOptions options) {
+      await authentication.SignOutAsync(options.Cookies.ApplicationCookieAuthenticationScheme);
+      await authentication.SignOutAsync(options.Cookies.ExternalCookieAuthenticationScheme);
     }
   }
 }

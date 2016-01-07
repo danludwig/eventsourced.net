@@ -11,19 +11,21 @@ namespace EventSourced.Net.Web.Users.Login
   {
     public string Login { get; }
     public string Password { get; }
-    public AuthenticationManager AuthenticationManager { get; }
-    public AuthenticationProperties AuthenticationProperties { get; }
+    public AuthenticationManager Authentication { get; }
+    public AuthenticationProperties Properties { get; }
 
-    public LogUserIn(string login, string password, AuthenticationManager authenticationManager, AuthenticationProperties authenticationProperties = null) {
+    public LogUserIn(string login, string password, AuthenticationManager authentication,
+      AuthenticationProperties properties = null) {
+
       VerifyUserLogin.PreValidate(login, password);
       using (var validate = new CommandValidator()) {
-        validate.NotNull(authenticationManager, nameof(authenticationManager));
+        validate.NotNull(authentication, nameof(authentication));
       }
 
       Login = login;
       Password = password;
-      AuthenticationManager = authenticationManager;
-      AuthenticationProperties = authenticationProperties ?? new AuthenticationProperties();
+      Authentication = authentication;
+      Properties = properties ?? new AuthenticationProperties();
     }
   }
 
@@ -47,10 +49,10 @@ namespace EventSourced.Net.Web.Users.Login
       await Command.SendAsync(new VerifyUserLogin(userId.Value, message.Login, message.Password));
 
       ClaimsPrincipal principal = await Query
-        .Execute(new ClaimsPrincipalForLogin(userId.Value));
-      await message.AuthenticationManager
+        .Execute(new ClaimsPrincipalByUserId(userId.Value));
+      await message.Authentication
         .SignInAsync(Options.Cookies.ApplicationCookieAuthenticationScheme,
-          principal, message.AuthenticationProperties);
+          principal, message.Properties);
     }
   }
 }
