@@ -36,38 +36,5 @@
     NOTE: this is a terrible way to do client script.
     TODO: replace cshtml & viewcontrollers with redux/react spa.
   *@
-  <script>
-    $(document).on('ready', function () {
-      var formId = 'login_form', login = 'login';
-      setFocus(formId, login);
-      $('#' + formId).on('submit', function () {
-        var $form = $(this), data = serializeFormData($form);
-        clearValidationErrors($form);
-        disableForm($form);
-        $.ajax({
-          type: 'POST',
-          url: $form.attr('action'),
-          data: data
-        })
-          .done(function (response, status, xhr) {
-            setLocation(xhr);
-          })
-          .fail(function (xhr) {
-            enableForm($form);
-            handleValidationErrors(xhr, $form);
-          });
-        return false;
-      });
-
-      window['validationMessages'] = {
-        login: {
-          empty: 'Email or phone is required.',
-          unverified: 'Invalid login or password.'
-        },
-        password: {
-          empty: 'Password is required.'
-        }
-      }
-    });
-  </script>
+  <script src="/js/login.js"></script>
 }

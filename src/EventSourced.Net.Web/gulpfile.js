@@ -5,7 +5,9 @@ var gulp = require("gulp"),
     rimraf = require("rimraf"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
-    uglify = require("gulp-uglify");
+    uglify = require("gulp-uglify"),
+    webpack = require("webpack"),
+    gutil = require("gulp-util");
 
 var paths = {
     webroot: "./wwwroot/"
@@ -43,3 +45,11 @@ gulp.task("min:css", function () {
 });
 
 gulp.task("min", ["min:js", "min:css"]);
+
+gulp.task("build", function (callback) {
+    webpack(require("./webpack.config"), function(err, stats) {
+        if(err) throw new gutil.PluginError("webpack", err);
+        gutil.log("[webpack]", stats.toString());
+        callback();
+    });
+});
