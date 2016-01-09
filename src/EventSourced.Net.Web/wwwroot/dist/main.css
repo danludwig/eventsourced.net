@@ -26,10 +26,6 @@ body {
   }
 }
 
-#myCarousel {
-    margin-top: 50px;
-}
-
 /* hack bootstrap */
 .input-group .input-group-btn-right {
   left: 1px;
