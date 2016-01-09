@@ -46,10 +46,15 @@ gulp.task("min:css", function () {
 
 gulp.task("min", ["min:js", "min:css"]);
 
-gulp.task("build", function (callback) {
-    webpack(require("./webpack.config"), function(err, stats) {
-        if(err) throw new gutil.PluginError("webpack", err);
-        gutil.log("[webpack]", stats.toString());
-        callback();
-    });
-});
+
+function runWebpack(configPath) {
+  return function (callback) {
+      webpack(require(configPath), function(err, stats) {
+          if(err) throw new gutil.PluginError("webpack", err);
+          gutil.log("[webpack]", stats.toString());
+          callback();
+      });
+  }
+}
+
+gulp.task("build", runWebpack('./webpack.config'));
