@@ -11,7 +11,7 @@ namespace EventSourced.Net.Web.Users.Login
       Command = command;
     }
 
-    [HttpGet, Route("login", Name = "LoginRoute")]
+    [HttpGet, Route("login1", Name = "LoginRoute")]
     public IActionResult Login() {
       return View("~/Web/Users/Login/Login.cshtml", new LoginViewModel());
     }

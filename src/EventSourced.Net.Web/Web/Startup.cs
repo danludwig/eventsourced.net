@@ -90,13 +90,12 @@ namespace EventSourced.Net.Web
 
       var packages = new IPackage[] {
 
+        new Services.Web.Mvc.ApplicationEnvironmentPackage(applicationServices),
         new Services.Web.Mvc.IdentityOptionsPackage(applicationServices),
-
         new Services.DataProtection.Package(applicationServices),
 
         new Services.Storage.EventStore.Connection.Package(
           Configuration.GetEventStoreConnectionConfiguration()),
-
         new Services.Storage.EventStore.Subscriptions.Package(),
 
         new Services.Storage.ArangoDb.Package(),

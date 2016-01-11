@@ -46,8 +46,9 @@
         disableForm($form);
         $.ajax({
           type: 'POST',
+          contentType: 'application/json',
           url: $form.attr('action'),
-          data: data
+          data: JSON.stringify(data)
         })
           .done(function (response, status, xhr) {
             setLocation(xhr);
