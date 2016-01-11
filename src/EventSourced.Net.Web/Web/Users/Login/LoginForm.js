@@ -3,19 +3,10 @@ import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import * as actions from './actions'
-import { camelize } from 'humps'
+import ValidationSummary from '../../components/ValidationSummary'
+import { messages as validationMessages } from './validation'
 
 const fields = ['login', 'password']
-
-const validationMessages = {
-  login: {
-    empty: 'Email or phone is required.',
-    unverified: 'Invalid login or password.'
-  },
-  password: {
-    empty: 'Password is required.'
-  }
-}
 
 const validate = values => {
   const errors = { }
@@ -25,6 +16,18 @@ const validate = values => {
 }
 
 class Login extends Component {
+  submit(formInput) {
+    return new Promise((resolve, reject) => {
+      this.props.submitLogin(formInput)
+        .then(() => {
+          if (this.props.serverErrors) {
+            return reject(this.props.serverErrors)
+          }
+          return resolve()
+        })
+    })
+  }
+
   render() {
     const {
       fields: { login, password },
@@ -34,7 +37,7 @@ class Login extends Component {
       <div>
         <Helmet title="Log in" />
         <h2>Log in.</h2>
-        <form id="login_form" action="/api/login" method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(submitLogin)}>
+        <form id="login_form" action="/api/login" method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit.bind(this))}>
           <h4>Use a local account to log in.</h4>
           <hr />
           <div className="form-group">
@@ -51,56 +54,23 @@ class Login extends Component {
           </div>
           <div className="form-group">
             <div className="col-md-10">
-              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(submitLogin)}>Log in</button>
+              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit.bind(this))}>Log in</button>
             </div>
           </div>
-          { (login.touched && password.touched) && this.renderErrors() }
+          { login.touched && password.touched && <ValidationSummary form={this.props} /> }
         </form>
       </div>
     )
   }
 
-  renderErrors() {
-    if (this.props.submitting) return;
-    let allErrors = []
-    for (var field in this.props.errors) {
-      if (!this.props.errors.hasOwnProperty(field)) continue
-      if (!this.props.errors[field]) continue
-      allErrors.push(this.props.errors[field])
+  static get propTypes() {
+    return {
+      fields: PropTypes.object.isRequired,
+      handleSubmit: PropTypes.func.isRequired,
+      submitting: PropTypes.bool.isRequired,
+      serverErrors: PropTypes.object
     }
-    for (var field in this.props.serverErrors) {
-      if (!this.props.serverErrors.hasOwnProperty(field)) continue
-      if (!this.props.serverErrors[field]) continue
-      for (let serverError of this.props.serverErrors[field]) {
-        var reason = camelize(serverError.reason)
-        if (validationMessages[field] && validationMessages[field][reason]) {
-          allErrors.push(validationMessages[field][reason])
-        }
-        else if (serverError.message) {
-          allErrors.push(serverError.message)
-        }
-        else {
-          allErrors.push("An unknown error occurred.")
-        }
-      }
-    }
-    if (!allErrors.length) return false
-    return (
-      <div className="text-danger form-errors">
-        <ul>
-          {allErrors.map((entry, i) =>
-            <li key={i}>{entry}</li>
-          )}
-        </ul>
-      </div>
-    )
   }
-}
-
-Login.propTypes = {
-  fields: PropTypes.object.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  submitting: PropTypes.bool.isRequired
 }
 
 function select(state) {

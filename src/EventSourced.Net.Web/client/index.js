@@ -14,6 +14,7 @@ import Home from './Home/Home'
 import About from './Home/About'
 import Contact  from './Home/Contact'
 import Login  from './Users/Login/LoginForm'
+import Register  from './Users/Register/RegisterForm'
 
 const loggerMiddleware = createLogger()
 const createStoreWithMiddleware = applyMiddleware(
@@ -37,6 +38,7 @@ render(
         <Route path="about" component={About} />
         <Route path="contact" component={Contact} />
         <Route path="login" component={Login} />
+        <Route path="register" component={Register} />
       </Route>
     </Router>
   </Provider>,

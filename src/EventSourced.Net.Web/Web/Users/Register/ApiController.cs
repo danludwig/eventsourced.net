@@ -22,11 +22,12 @@ namespace EventSourced.Net.Web.Users.Register
     }
 
     [HttpPost, Route("api/register")]
-    public async Task<IActionResult> PostChallenge(string emailOrPhone) {
+    public async Task<IActionResult> PostChallenge([FromBody] RegisterRequestModel model) {
+      if (model == null) throw new CommandRejectedException(nameof(model), null, CommandRejectionReason.Null);
       ShortGuid correlationId = Guid.NewGuid();
-      Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(emailOrPhone));
+      Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(model.EmailOrPhone));
 
-      await Command.SendAsync(new PrepareUserRegistrationChallenge(correlationId, emailOrPhone,
+      await Command.SendAsync(new PrepareUserRegistrationChallenge(correlationId, model.EmailOrPhone,
         userIdByLogin, User)).ConfigureAwait(false);
 
       string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });

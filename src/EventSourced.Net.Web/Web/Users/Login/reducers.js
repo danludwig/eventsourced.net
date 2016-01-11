@@ -1,21 +1,22 @@
-import { LOG_IN, RECEIVE_LOG_IN_ERROR, RECEIVE_LOG_IN_RESPONSE } from './actions'
+import { SENT_LOGIN, FAILED_LOGIN, RECEIVED_LOGIN } from './actions'
 import { createReducer } from '../../reducers'
+import { convertServerErrors } from '../../reducers'
 
 const loginUI = createReducer({}, {
-  [LOG_IN](state, action) {
+  [SENT_LOGIN](state, action) {
     const newState = {
       submitting: true
     }
     return newState
   },
-  [RECEIVE_LOG_IN_ERROR](state, action) {
+  [FAILED_LOGIN](state, action) {
     const newState = {
       submitting: false,
-      serverErrors: action.serverErrors
+      serverErrors: convertServerErrors(action)
     }
     return newState
   },
-  [RECEIVE_LOG_IN_RESPONSE](state, action) {
+  [RECEIVED_LOGIN](state, action) {
     const newState = {
       submitting: false
     }
@@ -24,7 +25,7 @@ const loginUI = createReducer({}, {
 })
 
 const loginData = createReducer({}, {
-  [RECEIVE_LOG_IN_RESPONSE](state, action) {
+  [RECEIVED_LOGIN](state, action) {
     const newState = Object.assign({}, state, {
       username: action.username
     })
@@ -47,13 +48,13 @@ const reduceLogin = function(state, action) {
 }
 
 const login = createReducer({}, {
-  [LOG_IN](state, action) {
+  [SENT_LOGIN](state, action) {
     return reduceLogin(state, action)
   },
-  [RECEIVE_LOG_IN_ERROR](state, action) {
+  [FAILED_LOGIN](state, action) {
     return reduceLogin(state, action)
   },
-  [RECEIVE_LOG_IN_RESPONSE](state, action) {
+  [RECEIVED_LOGIN](state, action) {
     return reduceLogin(state, action)
   }
 })

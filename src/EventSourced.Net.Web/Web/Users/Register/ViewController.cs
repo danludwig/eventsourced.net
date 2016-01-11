@@ -14,7 +14,7 @@ namespace EventSourced.Net.Web.Users.Register
       Query = query;
     }
 
-    [HttpGet, Route("register")]
+    [HttpGet, Route("register1")]
     public IActionResult Register() {
       string viewName = !User.IsSignedIn() ? "Register" : "AlreadyLoggedIn";
       return View($"~/Web/Users/Register/{viewName}.cshtml");

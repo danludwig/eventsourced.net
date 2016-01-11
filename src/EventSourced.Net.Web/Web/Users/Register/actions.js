@@ -2,16 +2,16 @@ import fetch from 'isomorphic-fetch'
 import { pushPath } from 'redux-simple-router'
 import { messages } from './validation'
 
-export const SENT_LOGIN = 'SENT_LOGIN'
-export const FAILED_LOGIN = 'FAILED_LOGIN'
-export const RECEIVED_LOGIN = 'RECEIVED_LOGIN'
+export const SENT_REGISTER = 'SENT_REGISTER'
+export const FAILED_REGISTER = 'FAILED_REGISTER'
+export const RECEIVED_REGISTER = 'RECEIVED_REGISTER'
 
-export function submitLogin(formInput) {
-  // submitLogin action
+export function submitRegister(formInput) {
+  // submitRegister action
   return dispatch => {
-    dispatch(sentLogin(formInput))
+    dispatch(sentRegister(formInput))
 
-    return fetch(`/api/login`, {
+    return fetch(`/api/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -24,40 +24,39 @@ export function submitLogin(formInput) {
       .then(response => {
         if (!response.ok) {
           return response.json().then(json => {
-            dispatch(failedLogin(formInput, json))
+            dispatch(failedRegister(formInput, json))
           })
         }
         const returnUrl = response.headers.get("location")
         return response.json().then(json => {
-          dispatch(receivedLogin(formInput, json.username))
-          //dispatch(pushPath(returnUrl))
-          window.location = returnUrl
+          dispatch(receivedRegister(formInput))
+          dispatch(pushPath(returnUrl))
+          //window.location = returnUrl
         })
       })
   }
 }
 
-function sentLogin(formInput) {
+function sentRegister(formInput) {
   return {
-    type: SENT_LOGIN,
+    type: SENT_REGISTER,
     formInput
   }
 }
 
-function failedLogin(formInput, serverErrors) {
+function failedRegister(formInput, serverErrors) {
   return {
-    type: FAILED_LOGIN,
+    type: FAILED_REGISTER,
     formInput,
     serverErrors,
     messages
   }
 }
 
-function receivedLogin(formInput, username) {
+function receivedRegister(formInput) {
   return {
-    type: RECEIVED_LOGIN,
+    type: RECEIVED_REGISTER,
     formInput,
-    username,
     receivedAt: Date.now()
   }
 }

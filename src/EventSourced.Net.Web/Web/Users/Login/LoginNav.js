@@ -20,7 +20,7 @@ class LoginNav extends Component {
         </form>
         :
         <ul className="nav navbar-nav">
-          <li><a href="/register">Register</a></li>
+          <li><Link to="/register">Register</Link></li>
           <li><Link to="/login">Log in</Link></li>
         </ul>
         }
