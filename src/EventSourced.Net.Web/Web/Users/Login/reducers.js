@@ -1,62 +1,43 @@
-import { SENT_LOGIN, FAILED_LOGIN, RECEIVED_LOGIN } from './actions'
-import { createReducer } from '../../reducers'
+import { LOGIN_SENT, LOGIN_DONE } from './actions'
 import { convertServerErrors } from '../../forms/reducers'
+import { handleActions } from 'redux-actions'
 
-const loginUI = createReducer({}, {
-  [SENT_LOGIN](state, action) {
-    const newState = {
-      submitting: true
-    }
-    return newState
-  },
-  [FAILED_LOGIN](state, action) {
-    const newState = {
-      submitting: false,
-      serverErrors: convertServerErrors(action)
-    }
-    return newState
-  },
-  [RECEIVED_LOGIN](state, action) {
-    const newState = {
-      submitting: false
-    }
-    return newState
+const defaultState = {
+  ui: { },
+  data: {
+    user: {}
   }
-})
-
-const loginData = createReducer({}, {
-  [RECEIVED_LOGIN](state, action) {
-    const newState = Object.assign({}, state, {
-      username: action.username
-    })
-    return newState
-  }
-})
-
-const reduceLogin = function(state, action) {
-  const newState = Object.assign({}, state, {
-    ui: {
-      ...state.ui,
-      login: loginUI(state.ui.login, action)
-    },
-    data: {
-      ...state.data,
-      user: loginData(state.data.user, action)
-    },
-  })
-  return newState
 }
 
-const login = createReducer({}, {
-  [SENT_LOGIN](state, action) {
-    return reduceLogin(state, action)
-  },
-  [FAILED_LOGIN](state, action) {
-    return reduceLogin(state, action)
-  },
-  [RECEIVED_LOGIN](state, action) {
-    return reduceLogin(state, action)
+const login = handleActions({
+  LOGIN_SENT: (state = defaultState, action) =>
+    Object.assign({}, state, {
+      ui: {
+        ...state.ui,
+        login: {
+          submitting: true
+        }
+      }
+  }),
+  LOGIN_DONE: {
+    throw: (state, action) => Object.assign({}, state, {
+      ui: {
+        ...state.ui,
+        login: {
+          submitting: false,
+          serverErrors: convertServerErrors(action.payload)
+        }
+      }
+    }),
+    next: (state, action) => Object.assign({}, state, {
+      data: {
+        ...state.data,
+        user: {
+          username: action.payload.username
+        }
+      }
+    })
   }
-})
+}, defaultState)
 
 export default login

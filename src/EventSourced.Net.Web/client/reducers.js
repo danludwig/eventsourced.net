@@ -1,65 +1,47 @@
 import { combineReducers } from 'redux'
 import { reducer as formReducer} from 'redux-form'
 import { routeReducer } from 'redux-simple-router'
-import { RECEIVED_INITIALIZE, FAILED_INITIALIZE } from './actions'
-import { SENT_LOGIN, FAILED_LOGIN, RECEIVED_LOGIN } from './Users/Login/actions'
+import { handleActions } from 'redux-actions'
+import { INITIALIZE_DONE } from './actions'
 import login from './Users/Login/reducers'
-import { SENT_REGISTER, FAILED_REGISTER, RECEIVED_REGISTER } from './Users/Register/actions'
 import register from './Users/Register/reducers'
 
-const initialState = {
+const defaultState = {
   server: {
     initialized: false,
     unavailable: false
   },
   ui: {
-    register: {},
-    login: {}
+    login: {},
+    register: {}
   },
   data: {
-    user: {
-      username: undefined
-    }
+    user: {}
   }
 }
 
-export function createReducer(initialState, handlers) {
-  return function reducer(state = initialState, action) {
-    return handlers.hasOwnProperty(action.type)
-      ? handlers[action.type](state, action)
-      : state
+const initialize = handleActions({
+  INITIALIZE_DONE: {
+    throw: (state, action) => Object.assign({}, state, {
+      server: {
+        ...state.server,
+        unavailable: true
+      }
+    }),
+    next: (state, action) => Object.assign({}, state, {
+      server: action.payload.state.server,
+      data: {
+        ...state.data,
+        user: action.payload.state.data.user
+      }
+    })
   }
-}
+}, defaultState)
 
-function app(state = initialState, action) {
-  // app reducer
-  let newState
-  switch (action.type) {
-    case RECEIVED_INITIALIZE:
-      newState = Object.assign({}, state, action.state)
-      return newState
-    case FAILED_INITIALIZE:
-      newState = Object.assign({}, state, {
-        ...state,
-        server: {
-          ...state.server,
-          unavailable: true
-        }
-      })
-      return newState
-    case SENT_LOGIN:
-    case FAILED_LOGIN:
-    case RECEIVED_LOGIN:
-      newState = login(state, action)
-      return newState
-    case SENT_REGISTER:
-    case FAILED_REGISTER:
-    case RECEIVED_REGISTER:
-      newState = register(state, action)
-      return newState
-    default:
-      return state
-  }
+const app = function(state = defaultState, action) {
+  state = initialize(state, action)
+  state = login(state, action)
+  state = register(state, action)
   return state
 }
 

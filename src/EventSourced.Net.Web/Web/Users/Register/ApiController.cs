@@ -24,6 +24,7 @@ namespace EventSourced.Net.Web.Users.Register
     [HttpPost, Route("api/register")]
     public async Task<IActionResult> PostChallenge([FromBody] RegisterRequestModel model) {
       if (model == null) return HttpBadRequest();
+      //await Task.Delay(1000);
       ShortGuid correlationId = Guid.NewGuid();
       Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(model.EmailOrPhone));
 

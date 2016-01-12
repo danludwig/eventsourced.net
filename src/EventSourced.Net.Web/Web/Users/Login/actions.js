@@ -2,10 +2,10 @@ import fetch from 'isomorphic-fetch'
 import { pushPath } from 'redux-simple-router'
 import { messages } from './validation'
 import { submitToApi } from '../../forms/actions'
+import { createAction } from 'redux-actions'
 
-export const SENT_LOGIN = 'SENT_LOGIN'
-export const FAILED_LOGIN = 'FAILED_LOGIN'
-export const RECEIVED_LOGIN = 'RECEIVED_LOGIN'
+export const LOGIN_SENT = 'LOGIN_SENT'
+export const LOGIN_DONE = 'LOGIN_DONE'
 
 export function submitLogin(formInput) {
   return submitToApi({
@@ -18,26 +18,24 @@ export function submitLogin(formInput) {
   })
 }
 
-function sendLogin(dispatch, context) {
-  return dispatch(sentLogin(context.formInput))
+function sendLogin(dispatch) {
+  return dispatch(sentLogin())
 }
-function sentLogin(formInput) {
-  return {
-    type: SENT_LOGIN,
-    formInput
-  }
+function sentLogin() {
+  const action = createAction(LOGIN_SENT)()
+  return action
 }
 
 function failLogin(dispatch, context, response, data) {
   return dispatch(failedLogin(context.formInput, data))
 }
 function failedLogin(formInput, serverErrors) {
-  return {
-    type: FAILED_LOGIN,
-    formInput,
-    serverErrors,
-    messages
-  }
+  const error = new TypeError('Request failed.')
+  error.formInput = formInput
+  error.serverErrors = serverErrors
+  error.messages = messages
+  const action = createAction(LOGIN_DONE)(error)
+  return action
 }
 
 function receiveLogin(dispatch, context, response, data) {
@@ -47,10 +45,9 @@ function receiveLogin(dispatch, context, response, data) {
   return window.location = returnUrl
 }
 function receivedLogin(formInput, username) {
-  return {
-    type: RECEIVED_LOGIN,
-    formInput,
+  const action = createAction(LOGIN_DONE)({
     username,
     receivedAt: Date.now()
-  }
+  })
+  return action
 }

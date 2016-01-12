@@ -22,7 +22,7 @@ namespace EventSourced.Net.Web.Users.Login
     [HttpPost, Route("api/login")]
     public async Task<IActionResult> PostLogin([FromBody] LoginRequestModel model) {
       if (model == null) return HttpBadRequest();
-      //await Task.Delay(3000);
+      //await Task.Delay(1000);
       await Command.SendAsync(new LogUserIn(model.Login, model.Password, HttpContext.Authentication));
       Response.Headers["Location"] = model.ReturnUrl ?? Url.RouteUrl("HomeRoute");
       Guid? userId = await Query.Execute(new UserIdByLogin(model.Login));

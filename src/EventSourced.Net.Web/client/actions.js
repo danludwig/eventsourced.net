@@ -1,12 +1,13 @@
 import fetch from 'isomorphic-fetch'
 import { submitToApi } from './forms/actions'
+import { createAction } from 'redux-actions'
 
-export const SENT_INITIALIZE = 'SENT_INITIALIZE'
-export const FAILED_INITIALIZE = 'FAILED_INITIALIZE'
-export const RECEIVED_INITIALIZE = 'RECEIVED_INITIALIZE'
+export const INITIALIZE_SENT = 'INITIALIZE_SENT'
+export const INITIALIZE_DONE = 'INITIALIZE_DONE'
 
 export function submitInitialize(formInput) {
   return submitToApi({
+    method: 'GET',
     url: '/',
     send: sendInitialize,
     fail: failInitialize,
@@ -18,26 +19,26 @@ function sendInitialize(dispatch) {
   return dispatch(sentInitialize())
 }
 function sentInitialize() {
-  return {
-    type: SENT_INITIALIZE
-  }
+  const action = createAction(INITIALIZE_SENT)()
+  return action
 }
 
 function failInitialize(dispatch) {
   return dispatch(failedInitialize())
 }
 function failedInitialize() {
-  return {
-    type: FAILED_INITIALIZE
-  }
+  const error = new TypeError('Request failed.')
+  const action = createAction(INITIALIZE_DONE)(error)
+  return action
 }
 
 function receiveInitialize(dispatch, context, response, data) {
   return dispatch(receivedInitialize(data))
 }
 function receivedInitialize(state) {
-  return {
-    type: RECEIVED_INITIALIZE,
-    state
-  }
+  const action = createAction(INITIALIZE_DONE)({
+    state,
+    receivedAt: Date.now()
+  })
+  return action
 }
