@@ -23,7 +23,7 @@ namespace EventSourced.Net.Web.Users.Register
 
     [HttpPost, Route("api/register")]
     public async Task<IActionResult> PostChallenge([FromBody] RegisterRequestModel model) {
-      if (model == null) throw new CommandRejectedException(nameof(model), null, CommandRejectionReason.Null);
+      if (model == null) return HttpBadRequest();
       ShortGuid correlationId = Guid.NewGuid();
       Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(model.EmailOrPhone));
 

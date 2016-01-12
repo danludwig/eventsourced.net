@@ -1,6 +1,6 @@
 import { SENT_LOGIN, FAILED_LOGIN, RECEIVED_LOGIN } from './actions'
 import { createReducer } from '../../reducers'
-import { convertServerErrors } from '../../reducers'
+import { convertServerErrors } from '../../forms/reducers'
 
 const loginUI = createReducer({}, {
   [SENT_LOGIN](state, action) {

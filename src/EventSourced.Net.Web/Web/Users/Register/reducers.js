@@ -1,6 +1,6 @@
 import { SENT_REGISTER, FAILED_REGISTER, RECEIVED_REGISTER } from './actions'
 import { createReducer } from '../../reducers'
-import { convertServerErrors } from '../../reducers'
+import { convertServerErrors } from '../../forms/reducers'
 
 const registerUI = createReducer({}, {
   [SENT_REGISTER](state, action) {

@@ -3,7 +3,7 @@ import { reduxForm } from 'redux-form';
 import { connect } from 'react-redux'
 import Helmet from 'react-helmet'
 import * as actions from './actions'
-import ValidationSummary from '../../components/ValidationSummary'
+import ValidationSummary from '../../forms/ValidationSummary'
 import { messages as validationMessages } from './validation'
 
 const fields = ['login', 'password']

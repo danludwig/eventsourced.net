@@ -1,42 +1,26 @@
 import fetch from 'isomorphic-fetch'
 import { pushPath } from 'redux-simple-router'
 import { messages } from './validation'
+import { submitToApi } from '../../forms/actions'
 
 export const SENT_LOGIN = 'SENT_LOGIN'
 export const FAILED_LOGIN = 'FAILED_LOGIN'
 export const RECEIVED_LOGIN = 'RECEIVED_LOGIN'
 
 export function submitLogin(formInput) {
-  // submitLogin action
-  return dispatch => {
-    dispatch(sentLogin(formInput))
-
-    return fetch(`/api/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'isomorphic-fetch'
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify(formInput)
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(json => {
-            dispatch(failedLogin(formInput, json))
-          })
-        }
-        const returnUrl = response.headers.get("location")
-        return response.json().then(json => {
-          dispatch(receivedLogin(formInput, json.username))
-          //dispatch(pushPath(returnUrl))
-          window.location = returnUrl
-        })
-      })
-  }
+  return submitToApi({
+    method: 'POST',
+    url: '/login',
+    formInput: formInput,
+    send: sendLogin,
+    fail: failLogin,
+    done: receiveLogin
+  })
 }
 
+function sendLogin(dispatch, context) {
+  return dispatch(sentLogin(context.formInput))
+}
 function sentLogin(formInput) {
   return {
     type: SENT_LOGIN,
@@ -44,6 +28,9 @@ function sentLogin(formInput) {
   }
 }
 
+function failLogin(dispatch, context, response, data) {
+  return dispatch(failedLogin(context.formInput, data))
+}
 function failedLogin(formInput, serverErrors) {
   return {
     type: FAILED_LOGIN,
@@ -53,6 +40,12 @@ function failedLogin(formInput, serverErrors) {
   }
 }
 
+function receiveLogin(dispatch, context, response, data) {
+  dispatch(receivedLogin(context.formInput, data.username))
+  const returnUrl = response.headers.get("location")
+  //dispatch(pushPath(returnUrl))
+  return window.location = returnUrl
+}
 function receivedLogin(formInput, username) {
   return {
     type: RECEIVED_LOGIN,

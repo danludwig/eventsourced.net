@@ -8,7 +8,7 @@ import { Router, Route, IndexRoute } from 'react-router'
 import { createHistory, useBasename } from 'history'
 import { syncReduxAndRouter } from 'redux-simple-router'
 import reducer from './reducers'
-import { requestInitialState } from './actions'
+import { submitInitialize } from './actions'
 import App from './components/App';
 import Home from './Home/Home'
 import About from './Home/About'
@@ -23,7 +23,7 @@ const createStoreWithMiddleware = applyMiddleware(
 )(createStore)
 
 const store = createStoreWithMiddleware(reducer);
-store.dispatch(requestInitialState())
+store.dispatch(submitInitialize())
 const history = useBasename(createHistory)({
   basename: '/'
 })

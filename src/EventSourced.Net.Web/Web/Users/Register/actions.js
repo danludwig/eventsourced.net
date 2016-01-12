@@ -1,42 +1,26 @@
 import fetch from 'isomorphic-fetch'
 import { pushPath } from 'redux-simple-router'
 import { messages } from './validation'
+import { submitToApi } from '../../forms/actions'
 
 export const SENT_REGISTER = 'SENT_REGISTER'
 export const FAILED_REGISTER = 'FAILED_REGISTER'
 export const RECEIVED_REGISTER = 'RECEIVED_REGISTER'
 
 export function submitRegister(formInput) {
-  // submitRegister action
-  return dispatch => {
-    dispatch(sentRegister(formInput))
-
-    return fetch(`/api/register`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'X-Requested-With': 'isomorphic-fetch'
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify(formInput)
-    })
-      .then(response => {
-        if (!response.ok) {
-          return response.json().then(json => {
-            dispatch(failedRegister(formInput, json))
-          })
-        }
-        const returnUrl = response.headers.get("location")
-        return response.json().then(json => {
-          dispatch(receivedRegister(formInput))
-          dispatch(pushPath(returnUrl))
-          //window.location = returnUrl
-        })
-      })
-  }
+  return submitToApi({
+    method: 'POST',
+    url: '/register',
+    formInput: formInput,
+    send: sendRegister,
+    fail: failRegister,
+    done: receiveRegister
+  })
 }
 
+function sendRegister(dispatch, context) {
+  return dispatch(sentRegister(context.formInput))
+}
 function sentRegister(formInput) {
   return {
     type: SENT_REGISTER,
@@ -44,6 +28,9 @@ function sentRegister(formInput) {
   }
 }
 
+function failRegister(dispatch, context, response, data) {
+  return dispatch(failedRegister(context.formInput, data))
+}
 function failedRegister(formInput, serverErrors) {
   return {
     type: FAILED_REGISTER,
@@ -53,6 +40,11 @@ function failedRegister(formInput, serverErrors) {
   }
 }
 
+function receiveRegister(dispatch, context, response, data) {
+  dispatch(receivedRegister(context.formInput))
+  //const returnUrl = response.headers.get("location")
+  //dispatch(pushPath(returnUrl))
+}
 function receivedRegister(formInput) {
   return {
     type: RECEIVED_REGISTER,
