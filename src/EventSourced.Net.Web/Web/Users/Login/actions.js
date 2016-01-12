@@ -19,35 +19,23 @@ export function submitLogin(formInput) {
 }
 
 function sendLogin(dispatch) {
-  return dispatch(sentLogin())
-}
-function sentLogin() {
-  const action = createAction(LOGIN_SENT)()
-  return action
+  return dispatch(createAction(LOGIN_SENT)())
 }
 
-function failLogin(dispatch, context, response, data) {
-  return dispatch(failedLogin(context.formInput, data))
-}
-function failedLogin(formInput, serverErrors) {
+function failLogin(dispatch, context, response, serverErrors) {
   const error = new TypeError('Request failed.')
-  error.formInput = formInput
+  error.formInput = context.formInput
   error.serverErrors = serverErrors
   error.messages = messages
-  const action = createAction(LOGIN_DONE)(error)
-  return action
+  return dispatch(createAction(LOGIN_DONE)(error))
 }
 
 function receiveLogin(dispatch, context, response, data) {
-  dispatch(receivedLogin(context.formInput, data.username))
+  dispatch(createAction(LOGIN_DONE)({
+    username: data.username,
+    receivedAt: Date.now()
+  }))
   const returnUrl = response.headers.get("location")
   //dispatch(pushPath(returnUrl))
   return window.location = returnUrl
-}
-function receivedLogin(formInput, username) {
-  const action = createAction(LOGIN_DONE)({
-    username,
-    receivedAt: Date.now()
-  })
-  return action
 }

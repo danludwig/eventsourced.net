@@ -27,7 +27,7 @@ class App extends Component {
 
 function select(state) {
   return {
-    initialized: state.app.server.initialized
+    initialized: state.app.data.server.initialized
   };
 }
 

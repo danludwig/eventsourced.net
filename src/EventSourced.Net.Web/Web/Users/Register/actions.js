@@ -18,34 +18,22 @@ export function submitRegister(formInput) {
   })
 }
 
-function sendRegister(dispatch, context) {
-  return dispatch(sentRegister(context.formInput))
-}
-function sentRegister(formInput) {
-  const action = createAction(REGISTER_SENT)()
-  return action
+function sendRegister(dispatch) {
+  return dispatch(createAction(REGISTER_SENT)())
 }
 
-function failRegister(dispatch, context, response, data) {
-  return dispatch(failedRegister(context.formInput, data))
-}
-function failedRegister(formInput, serverErrors) {
+function failRegister(dispatch, context, response, serverErrors) {
   const error = new TypeError('Request failed.')
-  error.formInput = formInput
+  error.formInput = context.formInput
   error.serverErrors = serverErrors
   error.messages = messages
-  const action = createAction(REGISTER_DONE)(error)
-  return action
+  return dispatch(createAction(REGISTER_DONE)(error))
 }
 
 function receiveRegister(dispatch, context, response, data) {
-  dispatch(receivedRegister())
+  dispatch(createAction(REGISTER_DONE)({
+    receivedAt: Date.now()
+  }))
   //const returnUrl = response.headers.get("location")
   //dispatch(pushPath(returnUrl))
-}
-function receivedRegister() {
-  const action = createAction(REGISTER_DONE)({
-    receivedAt: Date.now()
-  })
-  return action
 }

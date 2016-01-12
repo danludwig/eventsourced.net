@@ -26306,60 +26306,41 @@
 
 	var _reducers = __webpack_require__(302);
 
-	var _reducers2 = _interopRequireDefault(_reducers);
+	var _reducers2 = __webpack_require__(307);
 
-	var _reducers3 = __webpack_require__(307);
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var _reducers4 = _interopRequireDefault(_reducers3);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var defaultState = {
-	  server: {
-	    initialized: false,
-	    unavailable: false
+	var dataServerInitialize = _defineProperty({}, _actions.INITIALIZE_DONE, {
+	  throw: function _throw(state, action) {
+	    return Object.assign({}, state, {
+	      unavailable: true
+	    });
 	  },
-	  ui: {
-	    login: {},
-	    register: {}
-	  },
-	  data: {
-	    user: {}
+	  next: function next(state, action) {
+	    return Object.assign({}, state, action.payload.state.server);
 	  }
-	};
+	});
 
-	var initialize = (0, _reduxActions.handleActions)({
-	  INITIALIZE_DONE: {
-	    throw: function _throw(state, action) {
-	      return Object.assign({}, state, {
-	        server: _extends({}, state.server, {
-	          unavailable: true
-	        })
-	      });
-	    },
-	    next: function next(state, action) {
-	      return Object.assign({}, state, {
-	        server: action.payload.state.server,
-	        data: _extends({}, state.data, {
-	          user: action.payload.state.data.user
-	        })
-	      });
-	    }
+	var dataUserInitialize = _defineProperty({}, _actions.INITIALIZE_DONE, {
+	  next: function next(state, action) {
+	    return Object.assign({}, state, action.payload.state.data.user);
 	  }
-	}, defaultState);
-
-	var app = function app() {
-	  var state = arguments.length <= 0 || arguments[0] === undefined ? defaultState : arguments[0];
-	  var action = arguments[1];
-
-	  state = initialize(state, action);
-	  state = (0, _reducers2.default)(state, action);
-	  state = (0, _reducers4.default)(state, action);
-	  return state;
-	};
+	});
 
 	exports.default = (0, _redux.combineReducers)({
-	  app: app,
+	  app: (0, _redux.combineReducers)({
+	    ui: (0, _redux.combineReducers)({
+	      login: (0, _reduxActions.handleActions)(_reducers.uiLogin, {}),
+	      register: (0, _reduxActions.handleActions)(_reducers2.uiRegister, {})
+	    }),
+	    data: (0, _redux.combineReducers)({
+	      server: (0, _reduxActions.handleActions)(dataServerInitialize, {
+	        initialized: false,
+	        unavailable: false
+	      }),
+	      user: (0, _reduxActions.handleActions)(_extends({}, dataUserInitialize, _reducers.dataUserLogin), {})
+	    })
+	  }),
 	  form: _reduxForm.reducer,
 	  routing: _reduxSimpleRouter.routeReducer
 	});
@@ -30281,31 +30262,19 @@
 	}
 
 	function sendInitialize(dispatch) {
-	  return dispatch(sentInitialize());
-	}
-	function sentInitialize() {
-	  var action = (0, _reduxActions.createAction)(INITIALIZE_SENT)();
-	  return action;
+	  return dispatch((0, _reduxActions.createAction)(INITIALIZE_SENT)());
 	}
 
 	function failInitialize(dispatch) {
-	  return dispatch(failedInitialize());
-	}
-	function failedInitialize() {
 	  var error = new TypeError('Request failed.');
-	  var action = (0, _reduxActions.createAction)(INITIALIZE_DONE)(error);
-	  return action;
+	  return dispatch((0, _reduxActions.createAction)(INITIALIZE_DONE)(error));
 	}
 
-	function receiveInitialize(dispatch, context, response, data) {
-	  return dispatch(receivedInitialize(data));
-	}
-	function receivedInitialize(state) {
-	  var action = (0, _reduxActions.createAction)(INITIALIZE_DONE)({
+	function receiveInitialize(dispatch, context, response, state) {
+	  return dispatch((0, _reduxActions.createAction)(INITIALIZE_DONE)({
 	    state: state,
 	    receivedAt: Date.now()
-	  });
-	  return action;
+	  }));
 	}
 
 /***/ },
@@ -30795,61 +30764,46 @@
 
 	'use strict';
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _uiLogin;
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.dataUserLogin = exports.uiLogin = undefined;
 
 	var _actions = __webpack_require__(303);
 
 	var _reducers = __webpack_require__(305);
 
-	var _reduxActions = __webpack_require__(286);
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var defaultState = {
-	  ui: {},
-	  data: {
-	    user: {}
-	  }
-	};
-
-	var login = (0, _reduxActions.handleActions)({
-	  LOGIN_SENT: function LOGIN_SENT() {
-	    var state = arguments.length <= 0 || arguments[0] === undefined ? defaultState : arguments[0];
-	    var action = arguments[1];
+	var uiLogin = exports.uiLogin = (_uiLogin = {}, _defineProperty(_uiLogin, _actions.LOGIN_SENT, function (state, action) {
+	  return Object.assign({}, state, {
+	    submitting: true,
+	    serverErrors: undefined
+	  });
+	}), _defineProperty(_uiLogin, _actions.LOGIN_DONE, {
+	  throw: function _throw(state, action) {
 	    return Object.assign({}, state, {
-	      ui: _extends({}, state.ui, {
-	        login: {
-	          submitting: true
-	        }
-	      })
+	      submitting: false,
+	      serverErrors: (0, _reducers.convertServerErrors)(action.payload)
 	    });
 	  },
-	  LOGIN_DONE: {
-	    throw: function _throw(state, action) {
-	      return Object.assign({}, state, {
-	        ui: _extends({}, state.ui, {
-	          login: {
-	            submitting: false,
-	            serverErrors: (0, _reducers.convertServerErrors)(action.payload)
-	          }
-	        })
-	      });
-	    },
-	    next: function next(state, action) {
-	      return Object.assign({}, state, {
-	        data: _extends({}, state.data, {
-	          user: {
-	            username: action.payload.username
-	          }
-	        })
-	      });
-	    }
+	  next: function next(state, action) {
+	    return Object.assign({}, state, {
+	      submitting: false,
+	      serverErrors: undefined
+	    });
 	  }
-	}, defaultState);
+	}), _uiLogin);
 
-	exports.default = login;
+	var dataUserLogin = exports.dataUserLogin = _defineProperty({}, _actions.LOGIN_DONE, {
+	  next: function next(state, action) {
+	    return Object.assign({}, state, {
+	      username: action.payload.username
+	    });
+	  }
+	});
 
 /***/ },
 /* 303 */
@@ -30892,37 +30846,25 @@
 	}
 
 	function sendLogin(dispatch) {
-	  return dispatch(sentLogin());
-	}
-	function sentLogin() {
-	  var action = (0, _reduxActions.createAction)(LOGIN_SENT)();
-	  return action;
+	  return dispatch((0, _reduxActions.createAction)(LOGIN_SENT)());
 	}
 
-	function failLogin(dispatch, context, response, data) {
-	  return dispatch(failedLogin(context.formInput, data));
-	}
-	function failedLogin(formInput, serverErrors) {
+	function failLogin(dispatch, context, response, serverErrors) {
 	  var error = new TypeError('Request failed.');
-	  error.formInput = formInput;
+	  error.formInput = context.formInput;
 	  error.serverErrors = serverErrors;
 	  error.messages = _validation.messages;
-	  var action = (0, _reduxActions.createAction)(LOGIN_DONE)(error);
-	  return action;
+	  return dispatch((0, _reduxActions.createAction)(LOGIN_DONE)(error));
 	}
 
 	function receiveLogin(dispatch, context, response, data) {
-	  dispatch(receivedLogin(context.formInput, data.username));
+	  dispatch((0, _reduxActions.createAction)(LOGIN_DONE)({
+	    username: data.username,
+	    receivedAt: Date.now()
+	  }));
 	  var returnUrl = response.headers.get("location");
 	  //dispatch(pushPath(returnUrl))
 	  return window.location = returnUrl;
-	}
-	function receivedLogin(formInput, username) {
-	  var action = (0, _reduxActions.createAction)(LOGIN_DONE)({
-	    username: username,
-	    receivedAt: Date.now()
-	  });
-	  return action;
 	}
 
 /***/ },
@@ -31176,54 +31118,38 @@
 
 	'use strict';
 
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+	var _uiRegister;
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.uiRegister = undefined;
 
 	var _actions = __webpack_require__(308);
 
 	var _reducers = __webpack_require__(305);
 
-	var _reduxActions = __webpack_require__(286);
+	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var defaultState = {
-	  ui: {}
-	};
-
-	var register = (0, _reduxActions.handleActions)({
-	  REGISTER_SENT: function REGISTER_SENT(state, action) {
+	var uiRegister = exports.uiRegister = (_uiRegister = {}, _defineProperty(_uiRegister, _actions.REGISTER_SENT, function (state, action) {
+	  return Object.assign({}, state, {
+	    submitting: true,
+	    serverErrors: undefined
+	  });
+	}), _defineProperty(_uiRegister, _actions.REGISTER_DONE, {
+	  throw: function _throw(state, action) {
 	    return Object.assign({}, state, {
-	      ui: _extends({}, state.ui, {
-	        register: {
-	          submitting: true
-	        }
-	      })
+	      submitting: false,
+	      serverErrors: (0, _reducers.convertServerErrors)(action.payload)
 	    });
 	  },
-	  REGISTER_DONE: {
-	    throw: function _throw(state, action) {
-	      return Object.assign({}, state, {
-	        ui: _extends({}, state.ui, {
-	          register: {
-	            submitting: false,
-	            serverErrors: (0, _reducers.convertServerErrors)(action.payload)
-	          }
-	        })
-	      });
-	    },
-	    next: function next() {
-	      var state = arguments.length <= 0 || arguments[0] === undefined ? defaultState : arguments[0];
-	      var action = arguments[1];
-	      return Object.assign({}, state, {
-	        data: _extends({}, state.data)
-	      });
-	    }
+	  next: function next(state, action) {
+	    return Object.assign({}, state, {
+	      submitting: false,
+	      serverErrors: undefined
+	    });
 	  }
-	}, defaultState);
-
-	exports.default = register;
+	}), _uiRegister);
 
 /***/ },
 /* 308 */
@@ -31265,36 +31191,24 @@
 	  });
 	}
 
-	function sendRegister(dispatch, context) {
-	  return dispatch(sentRegister(context.formInput));
-	}
-	function sentRegister(formInput) {
-	  var action = (0, _reduxActions.createAction)(REGISTER_SENT)();
-	  return action;
+	function sendRegister(dispatch) {
+	  return dispatch((0, _reduxActions.createAction)(REGISTER_SENT)());
 	}
 
-	function failRegister(dispatch, context, response, data) {
-	  return dispatch(failedRegister(context.formInput, data));
-	}
-	function failedRegister(formInput, serverErrors) {
+	function failRegister(dispatch, context, response, serverErrors) {
 	  var error = new TypeError('Request failed.');
-	  error.formInput = formInput;
+	  error.formInput = context.formInput;
 	  error.serverErrors = serverErrors;
 	  error.messages = _validation.messages;
-	  var action = (0, _reduxActions.createAction)(REGISTER_DONE)(error);
-	  return action;
+	  return dispatch((0, _reduxActions.createAction)(REGISTER_DONE)(error));
 	}
 
 	function receiveRegister(dispatch, context, response, data) {
-	  dispatch(receivedRegister());
+	  dispatch((0, _reduxActions.createAction)(REGISTER_DONE)({
+	    receivedAt: Date.now()
+	  }));
 	  //const returnUrl = response.headers.get("location")
 	  //dispatch(pushPath(returnUrl))
-	}
-	function receivedRegister() {
-	  var action = (0, _reduxActions.createAction)(REGISTER_DONE)({
-	    receivedAt: Date.now()
-	  });
-	  return action;
 	}
 
 /***/ },
@@ -31391,7 +31305,7 @@
 
 	function select(state) {
 	  return {
-	    initialized: state.app.server.initialized
+	    initialized: state.app.data.server.initialized
 	  };
 	}
 
@@ -31861,8 +31775,8 @@
 
 	function select(state) {
 	  return {
-	    initialized: state.app.server.initialized,
-	    unavailable: state.app.server.unavailable
+	    initialized: state.app.data.server.initialized,
+	    unavailable: state.app.data.server.unavailable
 	  };
 	}
 

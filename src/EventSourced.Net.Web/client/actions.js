@@ -16,29 +16,17 @@ export function submitInitialize(formInput) {
 }
 
 function sendInitialize(dispatch) {
-  return dispatch(sentInitialize())
-}
-function sentInitialize() {
-  const action = createAction(INITIALIZE_SENT)()
-  return action
+  return dispatch(createAction(INITIALIZE_SENT)())
 }
 
 function failInitialize(dispatch) {
-  return dispatch(failedInitialize())
-}
-function failedInitialize() {
   const error = new TypeError('Request failed.')
-  const action = createAction(INITIALIZE_DONE)(error)
-  return action
+  return dispatch(createAction(INITIALIZE_DONE)(error))
 }
 
-function receiveInitialize(dispatch, context, response, data) {
-  return dispatch(receivedInitialize(data))
-}
-function receivedInitialize(state) {
-  const action = createAction(INITIALIZE_DONE)({
+function receiveInitialize(dispatch, context, response, state) {
+  return dispatch(createAction(INITIALIZE_DONE)({
     state,
     receivedAt: Date.now()
-  })
-  return action
+  }))
 }

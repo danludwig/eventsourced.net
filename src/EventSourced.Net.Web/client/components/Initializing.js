@@ -38,8 +38,8 @@ Initializing.propTypes = {
 
 function select(state) {
   return {
-    initialized: state.app.server.initialized,
-    unavailable: state.app.server.unavailable
+    initialized: state.app.data.server.initialized,
+    unavailable: state.app.data.server.unavailable
   };
 }
 
