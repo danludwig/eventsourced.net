@@ -2,6 +2,7 @@ import fetch from 'isomorphic-fetch'
 import { submitToApi } from './forms/actions'
 import { createAction } from 'redux-actions'
 
+export const REDUX_INIT = '@@redux/INIT'
 export const INITIALIZE_SENT = 'INITIALIZE_SENT'
 export const INITIALIZE_DONE = 'INITIALIZE_DONE'
 

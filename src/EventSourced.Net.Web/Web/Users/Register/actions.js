@@ -24,7 +24,6 @@ function sendRegister(dispatch) {
 
 function failRegister(dispatch, context, response, serverErrors) {
   const error = new TypeError('Request failed.')
-  error.formInput = context.formInput
   error.serverErrors = serverErrors
   error.messages = messages
   return dispatch(createAction(REGISTER_DONE)(error))

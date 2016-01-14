@@ -8,3 +8,9 @@ export const messages = {
     notEmpty: 'You are already logged in. Please log off to register a new user account.'
   }
 }
+
+export default values => {
+  const errors = { }
+  if (!values.emailOrPhone) errors.emailOrPhone = messages.emailOrPhone.empty
+  return errors;
+}

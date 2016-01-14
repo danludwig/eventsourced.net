@@ -1,59 +1,76 @@
 import { camelize } from 'humps'
+import { createSelector } from 'reselect'
 
-export function convertServerErrors(action) {
-  const errors = {}, { serverErrors, formInput, messages } = action
-  if (serverErrors) {
-    for (let field in serverErrors) {
-      if (!serverErrors.hasOwnProperty(field) || !serverErrors[field]) continue
-      for (let serverError of serverErrors[field]) {
-        if (errors[field]) break
-        let reason = camelize(serverError.reason)
-        let message = 'An unexpected error occurred'
-        if (messages[field] && messages[field][reason]) {
-          message = formatMessage(messages[field][reason], formInput)
-        }
-        else if (serverError.message) {
-          message = serverError.message
-        }
-        if (formInput[field]) {
-          errors[field] = message
-        }
-        else if (field === '_error' || !formInput._error) {
-          errors._error = message
+const selectState = (state, props) => state.app.ui[props.formKey]
+const selectValues = (state, props) => props.values
+const selectServerErrors = createSelector(
+  selectState,
+  selectValues,
+  (state, props) => {
+    const errors = {}, { serverErrors, messages } = state
+    if (serverErrors) {
+      for (let field in serverErrors) {
+        if (!serverErrors.hasOwnProperty(field) || !serverErrors[field]) continue
+        for (let serverError of serverErrors[field]) {
+          if (errors[field]) break
+          let reason = camelize(serverError.reason)
+          let message = 'An unexpected error occurred'
+          if (messages && messages[field] && messages[field][reason]) {
+            message = formatMessage(messages[field][reason], props)
+          }
+          else if (serverError.message) {
+            message = serverError.message
+          }
+          if (props[field]) {
+            errors[field] = message
+          }
+          else if (field === '_error' || !props._error) {
+            errors._error = message
+          }
         }
       }
     }
+    return errors
   }
-  return errors
-}
+)
 
-function formatMessage(unformattedMessage, formInput) {
-  let formattedMessage = '', startIndex, endIndex, token, tokenValue
-  if (unformattedMessage.indexOf('{')) {
-    for (let i = 0; i < unformattedMessage.length; i++) {
-      if (unformattedMessage[i] === '{') {
-        if (unformattedMessage[i+1] === '{') {
-          formattedMessage += unformattedMessage[i] + unformattedMessage[i+1]
+export const selectForm = createSelector(
+  [selectState, selectServerErrors],
+  (state, serverErrors) => {
+    return {
+      submitting: state.submitting || false,
+      serverErrors
+    }
+  }
+)
+
+const formatMessage = function(template, values) {
+  let message = '', startIndex, endIndex, token, tokenValue
+  if (template.indexOf('{')) {
+    for (let i = 0; i < template.length; i++) {
+      if (template[i] === '{') {
+        if (template[i+1] === '{') {
+          message += template[i] + template[i+1]
           ++i
           continue
         }
         startIndex = i
-        endIndex = unformattedMessage.substr(startIndex).indexOf('}')
-        token = unformattedMessage.substr(startIndex + 1, endIndex -1)
-        if (formInput && formInput[token] && formInput[token]) {
-          tokenValue = formInput[token].trim()
-          formattedMessage += tokenValue
+        endIndex = template.substr(startIndex).indexOf('}')
+        token = template.substr(startIndex + 1, endIndex -1)
+        if (values && values[token] && values[token]) {
+          tokenValue = values[token].trim()
+          message += tokenValue
           i = startIndex + endIndex
           continue
         }
         else {
-          formattedMessage += unformattedMessage[i]
+          message += template[i]
         }
       }
       else {
-        formattedMessage += unformattedMessage[i]
+        message += template[i]
       }
     }
   }
-  return formattedMessage
+  return message
 }

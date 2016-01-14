@@ -1,19 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form';
+import validate from './validation'
 import { connect } from 'react-redux'
-import Helmet from 'react-helmet'
+import { selectForm as select } from '../../forms/reducers'
 import * as actions from './actions'
+import Helmet from 'react-helmet'
 import ValidationSummary from '../../forms/ValidationSummary'
-import { messages as validationMessages } from './validation'
-
-const fields = ['login', 'password']
-
-const validate = values => {
-  const errors = { }
-  if (!values.login) errors.login = validationMessages.login.empty
-  if (!values.password) errors.password = validationMessages.password.empty
-  return errors;
-}
 
 class Login extends Component {
   submit(formInput) {
@@ -65,23 +57,24 @@ class Login extends Component {
 
   static get propTypes() {
     return {
-      fields: PropTypes.object.isRequired,
-      handleSubmit: PropTypes.func.isRequired,
       submitting: PropTypes.bool.isRequired,
       serverErrors: PropTypes.object
     }
   }
 }
 
-function select(state) {
-  return {
-    submitting: state.app.ui.login.submitting || false,
-    serverErrors: state.app.ui.login.serverErrors
-  };
-}
-
-export default reduxForm({
-  form: 'login',
+const form = 'login'
+const fields = ['login', 'password']
+const ReduxForm = reduxForm({
+  form,
   fields,
   validate
 })(connect(select, actions)(Login))
+
+export default class Container extends Component {
+  render() {
+    return (
+      <ReduxForm formKey={form} />
+    )
+  }
+}

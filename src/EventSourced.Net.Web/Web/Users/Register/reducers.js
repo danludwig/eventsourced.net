@@ -1,5 +1,4 @@
 import { REGISTER_SENT, REGISTER_DONE } from './actions'
-import { convertServerErrors } from '../../forms/reducers'
 
 export const uiRegister = {
   [REGISTER_SENT]: (state, action) =>
@@ -10,7 +9,8 @@ export const uiRegister = {
   [REGISTER_DONE]: {
     throw: (state, action) => Object.assign({}, state, {
       submitting: false,
-      serverErrors: convertServerErrors(action.payload)
+      serverErrors: action.payload.serverErrors,
+      messages: action.payload.messages
     }),
     next: (state, action) => Object.assign({}, state, {
       submitting: false,

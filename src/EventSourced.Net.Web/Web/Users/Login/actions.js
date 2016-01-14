@@ -24,7 +24,6 @@ function sendLogin(dispatch) {
 
 function failLogin(dispatch, context, response, serverErrors) {
   const error = new TypeError('Request failed.')
-  error.formInput = context.formInput
   error.serverErrors = serverErrors
   error.messages = messages
   return dispatch(createAction(LOGIN_DONE)(error))
