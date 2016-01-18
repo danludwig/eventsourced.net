@@ -116,7 +116,7 @@ export default class Home extends Component {
 // function select(state) {
 //   return {
 //     title: state.getIn(['viewTitles', 'home'])
-//   };
+//   }
 // }
 //
-// export default connect(select)(Home);
+// export default connect(select)(Home)

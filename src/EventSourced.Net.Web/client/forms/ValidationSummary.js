@@ -45,7 +45,7 @@ class ValidationSummary extends Component {
 
 function select(state) {
   // validation summary state selector
-  return { };
+  return { }
 }
 
 export default connect(select)(ValidationSummary)

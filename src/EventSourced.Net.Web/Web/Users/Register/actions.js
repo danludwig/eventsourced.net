@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { pushPath } from 'redux-simple-router'
-import { messages } from './validation'
-import { submitToApi } from '../../forms/actions'
+import { registerMessages as messages } from './validation'
+import { submitToApi } from '../../../client/forms/actions'
 import { createAction } from 'redux-actions'
 
 export const REGISTER_SENT = 'REGISTER_SENT'
@@ -35,4 +35,8 @@ function receiveRegister(dispatch, context, response, data) {
   }))
   //const returnUrl = response.headers.get("location")
   //dispatch(pushPath(returnUrl))
+}
+
+export function submitVerify(dispatch, formInput) {
+  return dispatch(createAction('VERIFY_SENT'))
 }

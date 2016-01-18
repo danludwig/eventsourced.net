@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { pushPath } from 'redux-simple-router'
 import { messages } from './validation'
-import { submitToApi } from '../../forms/actions'
+import { submitToApi } from '../../../client/forms/actions'
 import { createAction } from 'redux-actions'
 
 export const LOGIN_SENT = 'LOGIN_SENT'

@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react'
 import {connect} from 'react-redux'
-import Layout from '../Home/Layout'
+import Layout from '../../Web/Home/Layout'
 import Initializing from './Initializing'
 
 class App extends Component {
   render() {
-    const { initialized, children } = this.props;
+    const { initialized, children } = this.props
     return (
       <div>
         {initialized ?
@@ -28,7 +28,7 @@ class App extends Component {
 function select(state) {
   return {
     initialized: state.app.data.server.initialized
-  };
+  }
 }
 
 export default connect(select)(App)

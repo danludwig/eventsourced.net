@@ -6,13 +6,11 @@ var gulp = require("gulp"),
     rimraf = require("rimraf"),
     concat = require("gulp-concat"),
     cssmin = require("gulp-cssmin"),
-    babel = require("gulp-babel"),
-    webpack = require("gulp-webpack"),
-    uglify = require("gulp-uglify");
+    uglify = require("gulp-uglify"),
+    webpack = require('webpack');
 
 var paths = {
-  webroot: "./wwwroot/",
-  client: "./client/"
+  webroot: "./wwwroot/"
 };
 
 paths.js = paths.webroot + "js/**/*.js";
@@ -21,32 +19,12 @@ paths.css = paths.webroot + "css/**/*.css";
 paths.minCss = paths.webroot + "css/**/*.min.css";
 paths.concatJsDest = paths.webroot + "js/site.min.js";
 paths.concatCssDest = paths.webroot + "css/site.min.css";
-paths.srcJs = paths.client + "src/**/*.js";
-paths.binJs = paths.client + "dist/";
-paths.distJs = paths.binJs + "**/*.js";
-paths.binBundle = paths.webroot + "lib/";
-paths.fileBundle = "bundle.js";
-paths.bundleJs = paths.webroot + paths.fileBundle;
 
-gulp.task("build:babel", function() {
-  return gulp.src(["./client/**/*.js", "!./client/babel/**/*.*", "./Web/**/*.js"])
-    .pipe(babel({
-      presets: ["es2015", "react"]
-    }))
-    .pipe(gulp.dest("./client/babel"))
-  ;
-})
-
-gulp.task("build:webpack", ["build:babel"], function() {
-  return gulp.src("./client/babel/**/*.js")
-    .pipe(webpack(require("./webpack.config")))
-    .pipe(gulp.dest(paths.webroot))
-  ;
-})
-
-gulp.task("build", ["build:webpack"], function(cb) {
-  rimraf("./client/babel/", cb);
-})
+gulp.task("build", function(cb) {
+  webpack(require("./webpack.config"), function() {
+    cb();
+  })
+});
 
 gulp.task("clean:app", function (cb) {
   rimraf(paths.binJs, cb);

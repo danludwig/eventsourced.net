@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
-import Footer from '../Home/Footer'
+import Footer from '../../Web/Home/Footer'
 
 class Initializing extends Component {
   render() {
-    const { initialized, unavailable } = this.props;
+    const { initialized, unavailable } = this.props
     return (
       <div>
         <div className="navbar navbar-inverse navbar-fixed-top">
@@ -40,7 +40,7 @@ function select(state) {
   return {
     initialized: state.app.data.server.initialized,
     unavailable: state.app.data.server.unavailable
-  };
+  }
 }
 
 export default connect(select)(Initializing)

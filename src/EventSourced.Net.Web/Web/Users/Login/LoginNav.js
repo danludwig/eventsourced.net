@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 class LoginNav extends Component {
   render() {
-    const { username } = this.props;
+    const { username } = this.props
     return (
       <div className="navbar-right">
         { this.props.username ?
@@ -38,7 +38,7 @@ class LoginNav extends Component {
 function select(state) {
   return {
     username: state.app.data.user.username
-  };
+  }
 }
 
-export default connect(select)(LoginNav);
+export default connect(select)(LoginNav)

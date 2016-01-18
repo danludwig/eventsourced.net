@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react'
-import { reduxForm } from 'redux-form';
+import { reduxForm } from 'redux-form'
 import validate from './validation'
 import { connect } from 'react-redux'
-import { selectForm as select } from '../../forms/reducers'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import ValidationSummary from '../../forms/ValidationSummary'
+import { selectForm as select } from '../../../client/forms/reducers'
+import ValidationSummary from '../../../client/forms/ValidationSummary'
 
 class Login extends Component {
   submit(formInput) {
@@ -24,7 +24,7 @@ class Login extends Component {
     const {
       fields: { login, password },
       submitLogin, handleSubmit, submitting
-    } = this.props;
+    } = this.props
     return (
       <div>
         <Helmet title="Log in" />

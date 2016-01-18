@@ -5,7 +5,7 @@ import Footer from './Footer'
 
 class Layout extends Component {
   render() {
-    const { children } = this.props;
+    const { children } = this.props
     return (
       <div>
         <TopNav />
@@ -19,7 +19,7 @@ class Layout extends Component {
 }
 
 function select(state) {
-  return { };
+  return { }
 }
 
 export default connect(select)(Layout)

@@ -1,11 +1,11 @@
 import React, { Component, PropTypes } from 'react'
-import { reduxForm } from 'redux-form';
-import validate from './validation'
+import { reduxForm } from 'redux-form'
+import { registerValidate as validate } from './validation'
 import { connect } from 'react-redux'
-import { selectForm as select } from '../../forms/reducers'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import ValidationSummary from '../../forms/ValidationSummary'
+import { selectForm as select } from '../../../client/forms/reducers'
+import ValidationSummary from '../../../client/forms/ValidationSummary'
 
 class Register extends Component {
   submit(formInput) {
@@ -24,7 +24,7 @@ class Register extends Component {
     const {
       fields: { emailOrPhone },
       submitRegister, handleSubmit, submitting
-    } = this.props;
+    } = this.props
 
     return(
       <div>
@@ -43,9 +43,6 @@ class Register extends Component {
             <div className="col-md-10">
               <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit.bind(this))}>Register</button>
             </div>
-          </div>
-          <div className="text-danger form-errors">
-            <ul></ul>
           </div>
           { emailOrPhone.touched && <ValidationSummary form={this.props} /> }
         </form>
