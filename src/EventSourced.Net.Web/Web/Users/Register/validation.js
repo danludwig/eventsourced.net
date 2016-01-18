@@ -5,7 +5,7 @@ export const registerMessages = {
     alreadyExists: '**{emailOrPhone}** has already been registered. [Did you mean to log in](/login)?'
   },
   principal: {
-    notEmpty: 'You are already logged in. Please log off to register a new user account.'
+    notLoggedOff: 'You are already logged in as **{username}**. Please log off to register a new user account.'
   }
 }
 

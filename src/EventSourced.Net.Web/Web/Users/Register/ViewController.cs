@@ -20,7 +20,7 @@ namespace EventSourced.Net.Web.Users.Register
       return View($"~/Web/Users/Register/{viewName}.cshtml");
     }
 
-    [HttpGet, Route("register/{correlationId}", Name = "RegisterVerifyRoute")]
+    [HttpGet, Route("register1/{correlationId}", Name = "RegisterVerifyRoute1")]
     public IActionResult Verify(string correlationId) {
       if (User.IsSignedIn())
         return View("~/Web/Users/Register/AlreadyLoggedIn.cshtml");

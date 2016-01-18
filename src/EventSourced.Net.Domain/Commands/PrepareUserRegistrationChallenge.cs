@@ -8,12 +8,14 @@ namespace EventSourced.Net
     public PrepareUserRegistrationChallenge(Guid correlationId, string emailOrPhone, Guid? userIdByEmailOrPhone, IPrincipal principal) {
       emailOrPhone = emailOrPhone?.Trim();
       using (var validate = new CommandValidator()) {
-        validate.NotEmpty(correlationId, nameof(correlationId));
-        validate.NotEmpty(emailOrPhone, nameof(emailOrPhone));
-        validate.EmailOrPhone(emailOrPhone, nameof(emailOrPhone));
-        if (!validate.HasError(nameof(emailOrPhone), CommandRejectionReason.InvalidFormat))
-          validate.IsAvailable(emailOrPhone, nameof(emailOrPhone), () => !userIdByEmailOrPhone.HasValue);
         validate.LoggedOff(principal?.Identity, nameof(principal));
+        if (!validate.HasError(nameof(principal), CommandRejectionReason.NotLoggedOff)) {
+          validate.NotEmpty(correlationId, nameof(correlationId));
+          validate.NotEmpty(emailOrPhone, nameof(emailOrPhone));
+          validate.EmailOrPhone(emailOrPhone, nameof(emailOrPhone));
+          if (!validate.HasError(nameof(emailOrPhone), CommandRejectionReason.InvalidFormat))
+            validate.IsAvailable(emailOrPhone, nameof(emailOrPhone), () => !userIdByEmailOrPhone.HasValue);
+        }
       }
 
       CorrelationId = correlationId;

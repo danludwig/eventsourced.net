@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import { pushPath } from 'redux-simple-router'
+import { routeActions } from 'redux-simple-router'
 import { messages } from './validation'
 import { submitToApi } from '../../../client/forms/actions'
 import { createAction } from 'redux-actions'
@@ -35,6 +35,6 @@ function receiveLogin(dispatch, context, response, data) {
     receivedAt: Date.now()
   }))
   const returnUrl = response.headers.get("location")
-  //dispatch(pushPath(returnUrl))
-  return window.location = returnUrl
+  dispatch(routeActions.push(returnUrl))
+  //return window.location = returnUrl
 }

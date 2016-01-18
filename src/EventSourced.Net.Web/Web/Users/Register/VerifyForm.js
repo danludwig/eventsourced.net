@@ -10,16 +10,13 @@ import ValidationSummary from '../../../client/forms/ValidationSummary'
 class Verify extends Component {
   submit(formInput) {
     return new Promise((resolve, reject) => {
-      return reject({
-        code: 'The server is not ready for you yet.'
-      })
-      // this.props.submitVerify(this.props.dispatch, formInput)
-      //   .then(() => {
-      //     if (this.props.serverErrors) {
-      //       return reject(this.props.serverErrors)
-      //     }
-      //     return resolve()
-      //   })
+      this.props.submitVerify(this.props.params.correlationId, formInput)
+        .then(() => {
+          if (this.props.serverErrors) {
+            return reject(this.props.serverErrors)
+          }
+          return resolve()
+        })
     })
   }
 
@@ -56,6 +53,7 @@ class Verify extends Component {
   static get propTypes() {
     return {
       parentUi: PropTypes.arrayOf(PropTypes.string).isRequired,
+      params: PropTypes.object.isRequired,
       submitting: PropTypes.bool.isRequired,
       serverErrors: PropTypes.object
     }
@@ -77,7 +75,7 @@ const ReduxForm = reduxForm({
 export default class Container extends Component {
   render() {
     return (
-      <ReduxForm formKey={form} parentUi={['register']} />
+      <ReduxForm formKey={form} parentUi={['register']} params={this.props.params} />
     )
   }
 }

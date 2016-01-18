@@ -17,8 +17,8 @@ namespace EventSourced.Net.Web.Home
       return View("~/Web/Home/Home.cshtml");
     }
 
-    [HttpGet, Route("", Name = "HomeRoute"), Route("about"), Route("contact"), Route("login"), Route("register"), Route("verify")]
-    public IActionResult React() {
+    [HttpGet, Route("", Name = "HomeRoute"), Route("about"), Route("contact"), Route("login"), Route("register/{correlationId}", Name = "RegisterVerifyRoute"), Route("register")]
+    public IActionResult React(string correlationId) {
       string path = Path.GetFullPath(Path.Combine(ApplicationEnvironment.ApplicationBasePath, "wwwroot/app.html"));
       var contents = System.IO.File.ReadAllText(path);
       return Content(contents, "text/html");

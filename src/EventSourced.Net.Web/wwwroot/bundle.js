@@ -140,7 +140,7 @@
 	      _react2.default.createElement(_reactRouter.Route, { path: 'contact', component: _Contact2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _LoginForm2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: 'register', component: _RegisterForm2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: 'verify', component: _VerifyForm2.default })
+	      _react2.default.createElement(_reactRouter.Route, { path: 'register/:correlationId', component: _VerifyForm2.default })
 	    )
 	  )
 	), document.getElementById('app'));
@@ -26147,9 +26147,7 @@
 	  app: (0, _redux.combineReducers)({
 	    ui: (0, _redux.combineReducers)({
 	      login: (0, _reduxActions.handleActions)(_reducers.uiLogin, {}),
-	      register: (0, _reduxActions.handleActions)(_reducers2.uiRegister, {
-	        verify: {}
-	      })
+	      register: (0, _reduxActions.handleActions)(_extends({}, _reducers2.uiRegister, _reducers2.uiVerify), { verify: {} })
 	    }),
 	    data: (0, _redux.combineReducers)({
 	      server: (0, _reduxActions.handleActions)(dataServerInitialize, {
@@ -30680,8 +30678,8 @@
 	    receivedAt: Date.now()
 	  }));
 	  var returnUrl = response.headers.get("location");
-	  //dispatch(pushPath(returnUrl))
-	  return window.location = returnUrl;
+	  dispatch(_reduxSimpleRouter.routeActions.push(returnUrl));
+	  //return window.location = returnUrl
 	}
 
 /***/ },
@@ -30716,12 +30714,12 @@
 
 	'use strict';
 
-	var _uiRegister;
+	var _uiRegister, _uiVerify;
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.uiRegister = undefined;
+	exports.uiVerify = exports.uiRegister = undefined;
 
 	var _actions = __webpack_require__(303);
 
@@ -30748,6 +30746,33 @@
 	  }
 	}), _uiRegister);
 
+	var uiVerify = exports.uiVerify = (_uiVerify = {}, _defineProperty(_uiVerify, _actions.VERIFY_SENT, function (state, action) {
+	  return Object.assign({}, state, {
+	    verify: {
+	      submitting: true,
+	      serverErrors: undefined
+	    }
+	  });
+	}), _defineProperty(_uiVerify, _actions.VERIFY_DONE, {
+	  throw: function _throw(state, action) {
+	    return Object.assign({}, state, {
+	      verify: {
+	        submitting: false,
+	        serverErrors: action.payload.serverErrors,
+	        messages: action.payload.messages
+	      }
+	    });
+	  },
+	  next: function next(state, action) {
+	    return Object.assign({}, state, {
+	      verify: {
+	        submitting: false,
+	        serverErrors: undefined
+	      }
+	    });
+	  }
+	}), _uiVerify);
+
 /***/ },
 /* 303 */
 /***/ function(module, exports, __webpack_require__) {
@@ -30757,7 +30782,7 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.REGISTER_DONE = exports.REGISTER_SENT = undefined;
+	exports.VERIFY_DONE = exports.VERIFY_SENT = exports.REGISTER_DONE = exports.REGISTER_SENT = undefined;
 	exports.submitRegister = submitRegister;
 	exports.submitVerify = submitVerify;
 
@@ -30804,12 +30829,41 @@
 	  dispatch((0, _reduxActions.createAction)(REGISTER_DONE)({
 	    receivedAt: Date.now()
 	  }));
-	  //const returnUrl = response.headers.get("location")
-	  //dispatch(pushPath(returnUrl))
+	  var returnUrl = response.headers.get("location");
+	  dispatch(_reduxSimpleRouter.routeActions.push(returnUrl));
 	}
 
-	function submitVerify(dispatch, formInput) {
-	  return dispatch((0, _reduxActions.createAction)('VERIFY_SENT'));
+	var VERIFY_SENT = exports.VERIFY_SENT = 'REGISTER/VERIFY_SENT';
+	var VERIFY_DONE = exports.VERIFY_DONE = 'REGISTER/VERIFY_DONE';
+
+	function submitVerify(correlationId, formInput) {
+	  return (0, _actions.submitToApi)({
+	    method: 'POST',
+	    url: '/register/' + correlationId,
+	    formInput: formInput,
+	    send: sendVerify,
+	    fail: failVerify,
+	    done: receiveVerify
+	  });
+	}
+
+	function sendVerify(dispatch) {
+	  return dispatch((0, _reduxActions.createAction)(VERIFY_SENT)());
+	}
+
+	function failVerify(dispatch, context, response, serverErrors) {
+	  var error = new TypeError('Request failed.');
+	  error.serverErrors = serverErrors;
+	  error.messages = _validation.verifyMessages;
+	  return dispatch((0, _reduxActions.createAction)(VERIFY_DONE)(error));
+	}
+
+	function receiveVerify(dispatch, context, response, data) {
+	  dispatch((0, _reduxActions.createAction)(VERIFY_DONE)({
+	    receivedAt: Date.now()
+	  }));
+	  var returnUrl = response.headers.get("location");
+	  dispatch(_reduxSimpleRouter.routeActions.push(returnUrl));
 	}
 
 /***/ },
@@ -30828,7 +30882,7 @@
 	    alreadyExists: '**{emailOrPhone}** has already been registered. [Did you mean to log in](/login)?'
 	  },
 	  principal: {
-	    notEmpty: 'You are already logged in. Please log off to register a new user account.'
+	    notLoggedOff: 'You are already logged in as **{username}**. Please log off to register a new user account.'
 	  }
 	};
 
@@ -34623,6 +34677,8 @@
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
@@ -34683,7 +34739,7 @@
 	          var reason = (0, _humps.camelize)(serverError.reason);
 	          var message = 'An unexpected error occurred';
 	          if (messages && messages[field] && messages[field][reason]) {
-	            message = formatMessage(messages[field][reason], props);
+	            message = formatMessage(messages[field][reason], _extends({}, props, serverError.data));
 	          } else if (serverError.message) {
 	            message = serverError.message;
 	          }
@@ -34736,8 +34792,8 @@
 	        startIndex = i;
 	        endIndex = template.substr(startIndex).indexOf('}');
 	        token = template.substr(startIndex + 1, endIndex - 1);
-	        if (values && values[token] && values[token]) {
-	          tokenValue = values[token].trim();
+	        if (values && values[token]) {
+	          tokenValue = typeof values[token] === 'string' ? values[token].trim() : values[token].toString().trim();
 	          message += tokenValue;
 	          i = startIndex + endIndex;
 	          continue;
@@ -45760,17 +45816,15 @@
 	  _createClass(Verify, [{
 	    key: 'submit',
 	    value: function submit(formInput) {
+	      var _this2 = this;
+
 	      return new Promise(function (resolve, reject) {
-	        return reject({
-	          code: 'The server is not ready for you yet.'
+	        _this2.props.submitVerify(_this2.props.params.correlationId, formInput).then(function () {
+	          if (_this2.props.serverErrors) {
+	            return reject(_this2.props.serverErrors);
+	          }
+	          return resolve();
 	        });
-	        // this.props.submitVerify(this.props.dispatch, formInput)
-	        //   .then(() => {
-	        //     if (this.props.serverErrors) {
-	        //       return reject(this.props.serverErrors)
-	        //     }
-	        //     return resolve()
-	        //   })
 	      });
 	    }
 	  }, {
@@ -45836,6 +45890,7 @@
 	    get: function get() {
 	      return {
 	        parentUi: _react.PropTypes.arrayOf(_react.PropTypes.string).isRequired,
+	        params: _react.PropTypes.object.isRequired,
 	        submitting: _react.PropTypes.bool.isRequired,
 	        serverErrors: _react.PropTypes.object
 	      };
@@ -45869,7 +45924,7 @@
 	  _createClass(Container, [{
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement(ReduxForm, { formKey: form, parentUi: ['register'] });
+	      return _react2.default.createElement(ReduxForm, { formKey: form, parentUi: ['register'], params: this.props.params });
 	    }
 	  }]);
 

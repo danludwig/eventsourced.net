@@ -4,7 +4,7 @@ import { routeReducer } from 'redux-simple-router'
 import { handleActions } from 'redux-actions'
 import { INITIALIZE_DONE } from './actions'
 import { uiLogin, dataUserLogin } from '../Web/Users/Login/reducers'
-import { uiRegister } from '../Web/Users/Register/reducers'
+import { uiRegister, uiVerify } from '../Web/Users/Register/reducers'
 
 const dataServerInitialize = {
   [INITIALIZE_DONE]: {
@@ -27,9 +27,10 @@ export default combineReducers({
   app: combineReducers({
     ui: combineReducers({
       login: handleActions(uiLogin, { }),
-      register: handleActions(uiRegister, {
-        verify: {}
-      })
+      register: handleActions({
+        ...uiRegister,
+        ...uiVerify
+      }, { verify: { } })
     }),
     data: combineReducers({
       server: handleActions(dataServerInitialize, {

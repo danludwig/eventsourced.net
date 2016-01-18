@@ -25,7 +25,7 @@ namespace EventSourced.Net
 
     public void LoggedOff(IIdentity value, string key) {
       if (value?.AuthenticationType != null)
-        AddError(key, value, CommandRejectionReason.NotLoggedOff);
+        AddError(key, value.Name, CommandRejectionReason.NotLoggedOff, new { Username = value.Name });
     }
 
     public void Length(string value, string key, int minLength, int maxLength) {

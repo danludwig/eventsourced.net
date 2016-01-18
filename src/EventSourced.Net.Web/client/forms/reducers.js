@@ -22,7 +22,10 @@ const selectServerErrors = createSelector(
           let reason = camelize(serverError.reason)
           let message = 'An unexpected error occurred'
           if (messages && messages[field] && messages[field][reason]) {
-            message = formatMessage(messages[field][reason], props)
+            message = formatMessage(messages[field][reason], {
+              ...props,
+              ...serverError.data
+            })
           }
           else if (serverError.message) {
             message = serverError.message
@@ -63,8 +66,8 @@ const formatMessage = function(template, values) {
         startIndex = i
         endIndex = template.substr(startIndex).indexOf('}')
         token = template.substr(startIndex + 1, endIndex -1)
-        if (values && values[token] && values[token]) {
-          tokenValue = values[token].trim()
+        if (values && values[token]) {
+          tokenValue = typeof values[token] === 'string' ? values[token].trim() : values[token].toString().trim()
           message += tokenValue
           i = startIndex + endIndex
           continue

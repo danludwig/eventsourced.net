@@ -44,7 +44,7 @@ render(
         <Route path="contact" component={Contact} />
         <Route path="login" component={Login} />
         <Route path="register" component={Register} />
-        <Route path="verify" component={Verify} />
+        <Route path="register/:correlationId" component={Verify} />
       </Route>
     </Router>
   </Provider>,

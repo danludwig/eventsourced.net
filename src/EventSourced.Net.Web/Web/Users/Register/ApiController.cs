@@ -32,21 +32,21 @@ namespace EventSourced.Net.Web.Users.Register
         userIdByLogin, User)).ConfigureAwait(false);
 
       string location = Url.RouteUrl("RegisterVerifyRoute", new { correlationId });
-      return new CreatedResult(location, new { CorrelationId = correlationId, });
+      return new CreatedResult(location, new { correlationId, });
     }
 
     [HttpPost, Route("api/register/{correlationId}")]
-    public async Task<IActionResult> PostVerify(string correlationId, string code) {
+    public async Task<IActionResult> PostVerify(string correlationId, [FromBody] VerifyRequestModel model) {
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
       UserContactChallengeTokenData data = await Query.Execute(new UserContactChallengeTokenView(correlationGuid));
       if (data == null) return HttpNotFound();
 
-      await Command.SendAsync(new VerifyUserContactChallengeResponse(data.UserId, correlationGuid, code))
+      await Command.SendAsync(new VerifyUserContactChallengeResponse(data.UserId, correlationGuid, model.Code))
         .ConfigureAwait(false);
 
       var location = Url.RouteUrl("RegisterRedeemRoute", new { token = data.Token, });
-      return new CreatedResult(location, new { CorrelationId = correlationId, });
+      return new CreatedResult(location, new { correlationId, });
     }
 
     [HttpPost, Route("api/register/{correlationId}/redeem")]
