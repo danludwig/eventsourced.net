@@ -1,12 +1,12 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { createStore, applyMiddleware } from 'redux'
+import { compose, createStore, applyMiddleware } from 'redux'
 import { Provider } from 'react-redux';
 import thunkMiddleware from 'redux-thunk'
 import createLogger  from 'redux-logger'
 import { Router, Route, IndexRoute } from 'react-router'
 import { createHistory, useBasename } from 'history'
-import { syncReduxAndRouter } from 'redux-simple-router'
+import { syncHistory } from 'redux-simple-router'
 import reducer from './reducers'
 import { submitInitialize } from './actions'
 import App from './components/App';
@@ -16,19 +16,23 @@ import Contact  from './Home/Contact'
 import Login  from './Users/Login/LoginForm'
 import Register  from './Users/Register/RegisterForm'
 
-const loggerMiddleware = createLogger()
-const createStoreWithMiddleware = applyMiddleware(
-  thunkMiddleware,
-  loggerMiddleware
-)(createStore)
-
-const store = createStoreWithMiddleware(reducer);
-store.dispatch(submitInitialize())
 const history = useBasename(createHistory)({
   basename: '/'
 })
+const loggerMiddleware = createLogger()
+const reduxRouterMiddleware = syncHistory(history)
+const createFinalStoreWithMiddleware = compose(
+  applyMiddleware(
+    reduxRouterMiddleware,
+    thunkMiddleware,
+    loggerMiddleware
+  ),
+  window.devToolsExtension ? window.devToolsExtension() : f => f
+)(createStore)
 
-syncReduxAndRouter(history, store)
+const store = createFinalStoreWithMiddleware(reducer);
+reduxRouterMiddleware.listenForReplays(store)
+store.dispatch(submitInitialize())
 
 render(
   <Provider store={store}>
