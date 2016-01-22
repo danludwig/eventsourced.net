@@ -1,10 +1,10 @@
 import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
-import { verifyValidate as validate } from './validation'
+import { validateVerify as validate } from './validation'
 import { connect } from 'react-redux'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import { selectForm as select1 } from '../../../client/forms/reducers'
+import { selectForm as select } from '../../../client/forms/reducers'
 import ValidationSummary from '../../../client/forms/ValidationSummary'
 
 class Verify extends Component {
@@ -52,16 +52,11 @@ class Verify extends Component {
 
   static get propTypes() {
     return {
-      parentUi: PropTypes.arrayOf(PropTypes.string).isRequired,
       params: PropTypes.object.isRequired,
       submitting: PropTypes.bool.isRequired,
       serverErrors: PropTypes.object
     }
   }
-}
-
-function select(state) {
-  return { }
 }
 
 const form = 'verify'
@@ -70,12 +65,12 @@ const ReduxForm = reduxForm({
   form,
   fields,
   validate
-})(connect(select1, actions)(Verify))
+})(connect(select, actions)(Verify))
 
 export default class Container extends Component {
   render() {
     return (
-      <ReduxForm formKey={form} parentUi={['register']} params={this.props.params} />
+      <ReduxForm formKey={form} params={this.props.params} />
     )
   }
 }

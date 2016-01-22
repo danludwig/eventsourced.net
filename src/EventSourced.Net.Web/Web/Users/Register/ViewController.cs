@@ -31,7 +31,7 @@ namespace EventSourced.Net.Web.Users.Register
       return View("~/Web/Users/Register/Verify.cshtml", model);
     }
 
-    [HttpGet, Route("register/{correlationId}/redeem", Name = "RegisterRedeemRoute")]
+    [HttpGet, Route("register1/{correlationId}/redeem", Name = "RegisterRedeemRoute1")]
     public async Task<IActionResult> Redeem(string correlationId, string token) {
       if (User.IsSignedIn())
         return View("~/Web/Users/Register/AlreadyLoggedIn.cshtml");

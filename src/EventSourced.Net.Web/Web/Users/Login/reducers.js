@@ -1,6 +1,7 @@
+import { handleActions } from 'redux-actions'
 import { LOGIN_SENT, LOGIN_DONE } from './actions'
 
-export const uiLogin = {
+const ui = {
   [LOGIN_SENT]: (state, action) =>
     Object.assign({}, state, {
       submitting: true,
@@ -18,6 +19,8 @@ export const uiLogin = {
     })
   }
 }
+
+export const uiLogin = handleActions(ui, { })
 
 export const dataUserLogin = {
   [LOGIN_DONE]: {

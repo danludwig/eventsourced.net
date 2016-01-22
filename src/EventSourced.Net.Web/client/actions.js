@@ -9,7 +9,7 @@ export const INITIALIZE_DONE = 'INITIALIZE_DONE'
 export function submitInitialize(formInput) {
   return submitToApi({
     method: 'GET',
-    url: '/',
+    url: `${window.location.pathname}${window.location.search}`,
     send: sendInitialize,
     fail: failInitialize,
     done: receiveInitialize

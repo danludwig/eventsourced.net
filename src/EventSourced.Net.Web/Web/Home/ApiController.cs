@@ -1,25 +1,13 @@
-﻿using System.Security.Claims;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNet.Mvc;
 
 namespace EventSourced.Net.Web.Home
 {
   public class ApiController : Controller
   {
-    [HttpGet, Route("api")]
+    [HttpGet, Route("api"), Route("api/about"), Route("api/contact"), Route("api/login"), Route("api/register/{correlationId}"), Route("api/register")]
     public IActionResult GetInitialState() {
       //System.Threading.Thread.Sleep(3000);
-      string username = User.GetUserName();
-      return Ok(new {
-        Server = new {
-          Initialized = true,
-          Unavailable = false,
-        },
-        Data = new {
-          User = new {
-            Username = username,
-          },
-        },
-      });
+      return Ok(new ReduxStateResponse(User));
     }
   }
 }

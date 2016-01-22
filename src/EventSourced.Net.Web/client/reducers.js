@@ -4,7 +4,7 @@ import { routeReducer } from 'redux-simple-router'
 import { handleActions } from 'redux-actions'
 import { INITIALIZE_DONE } from './actions'
 import { uiLogin, dataUserLogin } from '../Web/Users/Login/reducers'
-import { uiRegister, uiVerify } from '../Web/Users/Register/reducers'
+import { uiRegister, uiVerify, uiRedeem } from '../Web/Users/Register/reducers'
 
 const dataServerInitialize = {
   [INITIALIZE_DONE]: {
@@ -12,7 +12,7 @@ const dataServerInitialize = {
       unavailable: true
     }),
     next: (state, action) => Object.assign({}, state,
-      action.payload.state.server)
+      action.payload.state.data.server)
   }
 }
 
@@ -26,11 +26,10 @@ const dataUserInitialize = {
 export default combineReducers({
   app: combineReducers({
     ui: combineReducers({
-      login: handleActions(uiLogin, { }),
-      register: handleActions({
-        ...uiRegister,
-        ...uiVerify
-      }, { verify: { } })
+      login: uiLogin,
+      register: uiRegister,
+      verify: uiVerify,
+      redeem: uiRedeem
     }),
     data: combineReducers({
       server: handleActions(dataServerInitialize, {

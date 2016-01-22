@@ -64,6 +64,7 @@ function failVerify(dispatch, context, response, serverErrors) {
 
 function receiveVerify(dispatch, context, response, data) {
   dispatch(createAction(VERIFY_DONE)({
+    data,
     receivedAt: Date.now()
   }))
   const returnUrl = response.headers.get("location")

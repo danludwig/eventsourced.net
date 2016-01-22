@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using EventSourced.Net.ReadModel.Users;
 using EventSourced.Net.Services.Web.Mvc;
 using EventSourced.Net.Services.Web.Sockets;
+using EventSourced.Net.Web.Home;
 using Microsoft.AspNet.Mvc;
 
 namespace EventSourced.Net.Web.Users.Register
@@ -19,6 +20,24 @@ namespace EventSourced.Net.Web.Users.Register
       Command = command;
       Query = query;
       WebSockets = webSockets;
+    }
+
+    [HttpGet, Route("api/register/{correlationId}/redeem")]
+    public async Task<IActionResult> GetInitialState(string correlationId, string token) {
+      Guid correlationGuid;
+      if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
+
+      UserRegistrationRedeemData data = await Query
+        .Execute(new UserRegistrationRedeemView(correlationGuid, token));
+      if (data == null) return HttpNotFound();
+      var payload = new ReduxStateResponse(User);
+      payload.Ui.Redeem = new RedeemPayload {
+        Data = new VerifyResponseModel {
+          ContactValue = data.ContactValue,
+          Purpose = data.Purpose,
+        },
+      };
+      return Ok(payload);
     }
 
     [HttpPost, Route("api/register")]
@@ -37,6 +56,7 @@ namespace EventSourced.Net.Web.Users.Register
 
     [HttpPost, Route("api/register/{correlationId}")]
     public async Task<IActionResult> PostVerify(string correlationId, [FromBody] VerifyRequestModel model) {
+      //await Task.Delay(1000);
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
       UserContactChallengeTokenData data = await Query.Execute(new UserContactChallengeTokenView(correlationGuid));
@@ -46,7 +66,10 @@ namespace EventSourced.Net.Web.Users.Register
         .ConfigureAwait(false);
 
       var location = Url.RouteUrl("RegisterRedeemRoute", new { token = data.Token, });
-      return new CreatedResult(location, new { correlationId, });
+      return new CreatedResult(location, new VerifyResponseModel {
+        ContactValue = data.ContactValue,
+        Purpose = data.Purpose,
+      });
     }
 
     [HttpPost, Route("api/register/{correlationId}/redeem")]

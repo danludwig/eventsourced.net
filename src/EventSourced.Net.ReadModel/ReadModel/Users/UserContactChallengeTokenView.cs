@@ -18,10 +18,14 @@ namespace EventSourced.Net.ReadModel.Users
   {
     public Guid UserId { get; }
     public string Token { get; }
+    public string ContactValue { get; }
+    public ContactChallengePurpose Purpose { get; }
 
-    internal UserContactChallengeTokenData(Guid userId, string token) {
+    internal UserContactChallengeTokenData(Guid userId, string token, string contactValue, ContactChallengePurpose purpose) {
       UserId = userId;
       Token = token;
+      ContactValue = contactValue;
+      Purpose = purpose;
     }
   }
 
@@ -39,7 +43,7 @@ namespace EventSourced.Net.ReadModel.Users
       UserDocument user = await Query.Execute(new UserDocumentByContactChallengeCorrelationId(view.CorrelationId));
       var challenge = user?.GetContactChallengeByCorrelationId(view.CorrelationId);
       if (challenge != null)
-        data = new UserContactChallengeTokenData(user.Id, challenge.Token);
+        data = new UserContactChallengeTokenData(user.Id, challenge.Token, challenge.ContactValue, challenge.Purpose);
       return data;
     }
   }

@@ -16,6 +16,7 @@ import Contact  from '../Web/Home/Contact'
 import Login  from '../Web/Users/Login/LoginForm'
 import Register  from '../Web/Users/Register/RegisterForm'
 import Verify  from '../Web/Users/Register/VerifyForm'
+import Redeem  from '../Web/Users/Register/RedeemForm'
 
 const history = useBasename(createHistory)({
   basename: '/'
@@ -45,6 +46,7 @@ render(
         <Route path="login" component={Login} />
         <Route path="register" component={Register} />
         <Route path="register/:correlationId" component={Verify} />
+        <Route path="register/:correlationId/redeem" component={Redeem} />
       </Route>
     </Router>
   </Provider>,

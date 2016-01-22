@@ -1,13 +1,7 @@
 import { camelize } from 'humps'
 import { createSelector } from 'reselect'
 
-const selectState = (state, props) => {
-  let formState = state.app.ui
-  if (props.parentUi)
-    for (let parentUi of props.parentUi)
-      formState = formState[parentUi]
-  return formState[props.formKey]
-}
+const selectState = (state, props) => state.app.ui[props.formKey]
 const selectValues = (state, props) => props.values
 const selectServerErrors = createSelector(
   selectState,
@@ -48,6 +42,7 @@ export const selectForm = createSelector(
   (state, serverErrors) => {
     return {
       submitting: state.submitting || false,
+      data: state.data,
       serverErrors
     }
   }

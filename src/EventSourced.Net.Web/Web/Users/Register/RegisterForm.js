@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
-import { registerValidate as validate } from './validation'
+import { validateRegister as validate } from './validation'
 import { connect } from 'react-redux'
 import * as actions from './actions'
 import Helmet from 'react-helmet'

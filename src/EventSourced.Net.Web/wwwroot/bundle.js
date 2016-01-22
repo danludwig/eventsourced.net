@@ -111,6 +111,10 @@
 
 	var _VerifyForm2 = _interopRequireDefault(_VerifyForm);
 
+	var _RedeemForm = __webpack_require__(463);
+
+	var _RedeemForm2 = _interopRequireDefault(_RedeemForm);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var history = (0, _history.useBasename)(_history.createHistory)({
@@ -140,7 +144,8 @@
 	      _react2.default.createElement(_reactRouter.Route, { path: 'contact', component: _Contact2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: 'login', component: _LoginForm2.default }),
 	      _react2.default.createElement(_reactRouter.Route, { path: 'register', component: _RegisterForm2.default }),
-	      _react2.default.createElement(_reactRouter.Route, { path: 'register/:correlationId', component: _VerifyForm2.default })
+	      _react2.default.createElement(_reactRouter.Route, { path: 'register/:correlationId', component: _VerifyForm2.default }),
+	      _react2.default.createElement(_reactRouter.Route, { path: 'register/:correlationId/redeem', component: _RedeemForm2.default })
 	    )
 	  )
 	), document.getElementById('app'));
@@ -26133,7 +26138,7 @@
 	    });
 	  },
 	  next: function next(state, action) {
-	    return Object.assign({}, state, action.payload.state.server);
+	    return Object.assign({}, state, action.payload.state.data.server);
 	  }
 	});
 
@@ -26146,8 +26151,10 @@
 	exports.default = (0, _redux.combineReducers)({
 	  app: (0, _redux.combineReducers)({
 	    ui: (0, _redux.combineReducers)({
-	      login: (0, _reduxActions.handleActions)(_reducers.uiLogin, {}),
-	      register: (0, _reduxActions.handleActions)(_extends({}, _reducers2.uiRegister, _reducers2.uiVerify), { verify: {} })
+	      login: _reducers.uiLogin,
+	      register: _reducers2.uiRegister,
+	      verify: _reducers2.uiVerify,
+	      redeem: _reducers2.uiRedeem
 	    }),
 	    data: (0, _redux.combineReducers)({
 	      server: (0, _reduxActions.handleActions)(dataServerInitialize, {
@@ -30071,7 +30078,7 @@
 	function submitInitialize(formInput) {
 	  return (0, _actions.submitToApi)({
 	    method: 'GET',
-	    url: '/',
+	    url: '' + window.location.pathname + window.location.search,
 	    send: sendInitialize,
 	    fail: failInitialize,
 	    done: receiveInitialize
@@ -30581,23 +30588,25 @@
 
 	'use strict';
 
-	var _uiLogin;
+	var _ui;
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	exports.dataUserLogin = exports.uiLogin = undefined;
 
+	var _reduxActions = __webpack_require__(283);
+
 	var _actions = __webpack_require__(300);
 
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var uiLogin = exports.uiLogin = (_uiLogin = {}, _defineProperty(_uiLogin, _actions.LOGIN_SENT, function (state, action) {
+	var ui = (_ui = {}, _defineProperty(_ui, _actions.LOGIN_SENT, function (state, action) {
 	  return Object.assign({}, state, {
 	    submitting: true,
 	    serverErrors: undefined
 	  });
-	}), _defineProperty(_uiLogin, _actions.LOGIN_DONE, {
+	}), _defineProperty(_ui, _actions.LOGIN_DONE, {
 	  throw: function _throw(state, action) {
 	    return Object.assign({}, state, {
 	      submitting: false,
@@ -30611,7 +30620,9 @@
 	      serverErrors: undefined
 	    });
 	  }
-	}), _uiLogin);
+	}), _ui);
+
+	var uiLogin = exports.uiLogin = (0, _reduxActions.handleActions)(ui, {});
 
 	var dataUserLogin = exports.dataUserLogin = _defineProperty({}, _actions.LOGIN_DONE, {
 	  next: function next(state, action) {
@@ -30714,23 +30725,27 @@
 
 	'use strict';
 
-	var _uiRegister, _uiVerify;
+	var _register, _verify;
 
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.uiVerify = exports.uiRegister = undefined;
+	exports.uiRedeem = exports.uiVerify = exports.uiRegister = undefined;
+
+	var _reduxActions = __webpack_require__(283);
 
 	var _actions = __webpack_require__(303);
 
+	var _actions2 = __webpack_require__(295);
+
 	function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-	var uiRegister = exports.uiRegister = (_uiRegister = {}, _defineProperty(_uiRegister, _actions.REGISTER_SENT, function (state, action) {
+	var register = (_register = {}, _defineProperty(_register, _actions.REGISTER_SENT, function (state, action) {
 	  return Object.assign({}, state, {
 	    submitting: true,
 	    serverErrors: undefined
 	  });
-	}), _defineProperty(_uiRegister, _actions.REGISTER_DONE, {
+	}), _defineProperty(_register, _actions.REGISTER_DONE, {
 	  throw: function _throw(state, action) {
 	    return Object.assign({}, state, {
 	      submitting: false,
@@ -30744,34 +30759,42 @@
 	      serverErrors: undefined
 	    });
 	  }
-	}), _uiRegister);
+	}), _register);
 
-	var uiVerify = exports.uiVerify = (_uiVerify = {}, _defineProperty(_uiVerify, _actions.VERIFY_SENT, function (state, action) {
+	var uiRegister = exports.uiRegister = (0, _reduxActions.handleActions)(register, {});
+
+	var verify = (_verify = {}, _defineProperty(_verify, _actions.VERIFY_SENT, function (state, action) {
 	  return Object.assign({}, state, {
-	    verify: {
-	      submitting: true,
-	      serverErrors: undefined
-	    }
+	    submitting: true,
+	    serverErrors: undefined
 	  });
-	}), _defineProperty(_uiVerify, _actions.VERIFY_DONE, {
+	}), _defineProperty(_verify, _actions.VERIFY_DONE, {
 	  throw: function _throw(state, action) {
 	    return Object.assign({}, state, {
-	      verify: {
-	        submitting: false,
-	        serverErrors: action.payload.serverErrors,
-	        messages: action.payload.messages
-	      }
+	      submitting: false,
+	      serverErrors: action.payload.serverErrors,
+	      messages: action.payload.messages
 	    });
 	  },
 	  next: function next(state, action) {
 	    return Object.assign({}, state, {
-	      verify: {
-	        submitting: false,
-	        serverErrors: undefined
-	      }
+	      submitting: false,
+	      serverErrors: undefined
 	    });
 	  }
-	}), _uiVerify);
+	}), _verify);
+
+	var uiVerify = exports.uiVerify = (0, _reduxActions.handleActions)(verify, {});
+
+	var redeem = _defineProperty({}, _actions2.INITIALIZE_DONE, {
+	  next: function next(state, action) {
+	    return Object.assign({}, state, {
+	      data: action.payload.state.ui && action.payload.state.ui.redeem ? action.payload.state.ui.redeem.data : undefined
+	    });
+	  }
+	});
+
+	var uiRedeem = exports.uiRedeem = (0, _reduxActions.handleActions)(redeem, {});
 
 /***/ },
 /* 303 */
@@ -30860,6 +30883,7 @@
 
 	function receiveVerify(dispatch, context, response, data) {
 	  dispatch((0, _reduxActions.createAction)(VERIFY_DONE)({
+	    data: data,
 	    receivedAt: Date.now()
 	  }));
 	  var returnUrl = response.headers.get("location");
@@ -30886,7 +30910,7 @@
 	  }
 	};
 
-	var registerValidate = exports.registerValidate = function registerValidate(values) {
+	var validateRegister = exports.validateRegister = function validateRegister(values) {
 	  var errors = {};
 	  if (!values.emailOrPhone) errors.emailOrPhone = registerMessages.emailOrPhone.empty;
 	  return errors;
@@ -30897,16 +30921,52 @@
 	    empty: 'Secret code is required.',
 	    unverified: 'Invalid code. You can try {codeAttemptsRemainingCount} more time(s).',
 	    maxAttempts: 'You have exceeded the maximum allowable secret code attempts.',
-	    stateConflict: 'Your code has already been validated. Please use the forward button on your browser and do not navigate back to this page.'
+	    alreadyApplied: 'Your code has already been validated. Please use the forward button on your browser and do not navigate back to this page.'
 	  },
 	  correlationId: {
 	    'null': 'Something went wrong. Please restart the registration process.'
 	  }
 	};
 
-	var verifyValidate = exports.verifyValidate = function verifyValidate(values) {
+	var validateVerify = exports.validateVerify = function validateVerify(values) {
 	  var errors = {};
 	  if (!values.code) errors.code = verifyMessages.code.empty;
+	  return errors;
+	};
+
+	var redeemMessages = exports.redeemMessages = {
+	  emailOrPhone: {
+	    alreadyExists: 'The login **{attemptedValue}** has already been registered. Did you forget your password?'
+	  },
+	  username: {
+	    empty: 'Username is required.',
+	    invalidFormat: 'Username can only contain letters, numbers, hyphens, underscores, dots, and must be between 2 and 12 characters long.',
+	    alreadyExists: 'Sorry, the username **{attemptedValue}** is already taken. Please choose a different username.',
+	    phoneNumber: 'You cannot use a phone number as your username.',
+	    success: 'You will also be able to login with the username above.'
+	  },
+	  password: {
+	    empty: 'Password is required.',
+	    notEqual: 'Passwords do not match.',
+	    invalidFormat: 'Password must contain at least {minCharacters} characters.'
+	  },
+	  passwordConfirmation: {
+	    empty: 'Password confirmation is required.'
+	  },
+	  token: {
+	    stateConflict: 'Your password has already been created. Please use the forward button on your browser and do not navigate back to this page.',
+	    unverified: 'Your opportunity to complete registration has expired. Please restart the registration process.'
+	  },
+	  correlationId: {
+	    'null': 'Something went wrong. Please restart the registration process.'
+	  }
+	};
+
+	var validateRedeem = exports.validateRedeem = function validateRedeem(values) {
+	  var errors = {};
+	  if (!values.username) errors.username = redeemMessages.username.empty;
+	  if (!values.password) errors.password = redeemMessages.password.empty;
+	  if (!values.passwordConfirmation) errors.passwordConfirmation = redeemMessages.passwordConfirmation.empty;
 	  return errors;
 	};
 
@@ -34689,33 +34749,7 @@
 	var _reselect = __webpack_require__(397);
 
 	var selectState = function selectState(state, props) {
-	  var formState = state.app.ui;
-	  if (props.parentUi) {
-	    var _iteratorNormalCompletion = true;
-	    var _didIteratorError = false;
-	    var _iteratorError = undefined;
-
-	    try {
-	      for (var _iterator = props.parentUi[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	        var parentUi = _step.value;
-
-	        formState = formState[parentUi];
-	      }
-	    } catch (err) {
-	      _didIteratorError = true;
-	      _iteratorError = err;
-	    } finally {
-	      try {
-	        if (!_iteratorNormalCompletion && _iterator.return) {
-	          _iterator.return();
-	        }
-	      } finally {
-	        if (_didIteratorError) {
-	          throw _iteratorError;
-	        }
-	      }
-	    }
-	  }return formState[props.formKey];
+	  return state.app.ui[props.formKey];
 	};
 	var selectValues = function selectValues(state, props) {
 	  return props.values;
@@ -34727,13 +34761,13 @@
 	  if (serverErrors) {
 	    for (var field in serverErrors) {
 	      if (!serverErrors.hasOwnProperty(field) || !serverErrors[field]) continue;
-	      var _iteratorNormalCompletion2 = true;
-	      var _didIteratorError2 = false;
-	      var _iteratorError2 = undefined;
+	      var _iteratorNormalCompletion = true;
+	      var _didIteratorError = false;
+	      var _iteratorError = undefined;
 
 	      try {
-	        for (var _iterator2 = serverErrors[field][Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-	          var serverError = _step2.value;
+	        for (var _iterator = serverErrors[field][Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	          var serverError = _step.value;
 
 	          if (errors[field]) break;
 	          var reason = (0, _humps.camelize)(serverError.reason);
@@ -34750,16 +34784,16 @@
 	          }
 	        }
 	      } catch (err) {
-	        _didIteratorError2 = true;
-	        _iteratorError2 = err;
+	        _didIteratorError = true;
+	        _iteratorError = err;
 	      } finally {
 	        try {
-	          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-	            _iterator2.return();
+	          if (!_iteratorNormalCompletion && _iterator.return) {
+	            _iterator.return();
 	          }
 	        } finally {
-	          if (_didIteratorError2) {
-	            throw _iteratorError2;
+	          if (_didIteratorError) {
+	            throw _iteratorError;
 	          }
 	        }
 	      }
@@ -34771,6 +34805,7 @@
 	var selectForm = exports.selectForm = (0, _reselect.createSelector)([selectState, selectServerErrors], function (state, serverErrors) {
 	  return {
 	    submitting: state.submitting || false,
+	    data: state.data,
 	    serverErrors: serverErrors
 	  };
 	});
@@ -45732,7 +45767,7 @@
 	var ReduxForm = (0, _reduxForm.reduxForm)({
 	  form: form,
 	  fields: fields,
-	  validate: _validation.registerValidate
+	  validate: _validation.validateRegister
 	})((0, _reactRedux.connect)(_reducers.selectForm, actions)(Register));
 
 	var Container = function (_Component2) {
@@ -45889,7 +45924,6 @@
 	    key: 'propTypes',
 	    get: function get() {
 	      return {
-	        parentUi: _react.PropTypes.arrayOf(_react.PropTypes.string).isRequired,
 	        params: _react.PropTypes.object.isRequired,
 	        submitting: _react.PropTypes.bool.isRequired,
 	        serverErrors: _react.PropTypes.object
@@ -45900,16 +45934,12 @@
 	  return Verify;
 	}(_react.Component);
 
-	function select(state) {
-	  return {};
-	}
-
 	var form = 'verify';
 	var fields = ['code'];
 	var ReduxForm = (0, _reduxForm.reduxForm)({
 	  form: form,
 	  fields: fields,
-	  validate: _validation.verifyValidate
+	  validate: _validation.validateVerify
 	})((0, _reactRedux.connect)(_reducers.selectForm, actions)(Verify));
 
 	var Container = function (_Component2) {
@@ -45924,7 +45954,287 @@
 	  _createClass(Container, [{
 	    key: 'render',
 	    value: function render() {
-	      return _react2.default.createElement(ReduxForm, { formKey: form, parentUi: ['register'], params: this.props.params });
+	      return _react2.default.createElement(ReduxForm, { formKey: form, params: this.props.params });
+	    }
+	  }]);
+
+	  return Container;
+	}(_react.Component);
+
+	exports.default = Container;
+
+/***/ },
+/* 463 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reduxForm = __webpack_require__(236);
+
+	var _validation = __webpack_require__(304);
+
+	var _reactRedux = __webpack_require__(169);
+
+	var _actions = __webpack_require__(303);
+
+	var actions = _interopRequireWildcard(_actions);
+
+	var _reactHelmet = __webpack_require__(312);
+
+	var _reactHelmet2 = _interopRequireDefault(_reactHelmet);
+
+	var _reducers = __webpack_require__(395);
+
+	var _ValidationSummary = __webpack_require__(398);
+
+	var _ValidationSummary2 = _interopRequireDefault(_ValidationSummary);
+
+	function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var Redeem = function (_Component) {
+	  _inherits(Redeem, _Component);
+
+	  function Redeem() {
+	    _classCallCheck(this, Redeem);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Redeem).apply(this, arguments));
+	  }
+
+	  _createClass(Redeem, [{
+	    key: 'submit',
+	    value: function submit(formInput) {
+	      console.log('submit method invoked');
+	      // return new Promise((resolve, reject) => {
+	      //   this.props.submitRedeem(this.props.params.correlationId, formInput)
+	      //     .then(() => {
+	      //       if (this.props.serverErrors) {
+	      //         return reject(this.props.serverErrors)
+	      //       }
+	      //       return resolve()
+	      //     })
+	      // })
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      var _props = this.props;
+	      var _props$fields = _props.fields;
+	      var username = _props$fields.username;
+	      var password = _props$fields.password;
+	      var passwordConfirmation = _props$fields.passwordConfirmation;
+	      var submitRedeem = _props.submitRedeem;
+	      var handleSubmit = _props.handleSubmit;
+	      var submitting = _props.submitting;
+
+	      var displayNone = { display: 'none' };
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_reactHelmet2.default, { title: 'Create login' }),
+	        _react2.default.createElement(
+	          'h2',
+	          null,
+	          'Create login.'
+	        ),
+	        _react2.default.createElement(
+	          'form',
+	          { method: 'post', className: 'form-horizontal', role: 'form', onSubmit: handleSubmit(this.submit.bind(this)) },
+	          _react2.default.createElement(
+	            'h4',
+	            null,
+	            'Choose a username and password.'
+	          ),
+	          _react2.default.createElement('hr', null),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group has-success' },
+	            this.props.data.purpose === 'CreateUserFromEmail' ? _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-6' },
+	              _react2.default.createElement(
+	                'label',
+	                { className: 'control-label sr-only' },
+	                'Email address:'
+	              ),
+	              _react2.default.createElement('input', { type: 'email', name: 'emailOrPhone', className: 'form-control', value: this.props.data.contactValue, disabled: 'disabled' }),
+	              _react2.default.createElement(
+	                'p',
+	                { className: 'help-block' },
+	                'You will be able to login using your email address above.'
+	              )
+	            ) : _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-6' },
+	              _react2.default.createElement(
+	                'label',
+	                { className: 'control-label sr-only' },
+	                'Phone number:'
+	              ),
+	              _react2.default.createElement('input', { type: 'tel', name: 'emailOrPhone', className: 'form-control', value: this.props.data.phoneNumberFormatted, disabled: 'disabled' }),
+	              _react2.default.createElement(
+	                'p',
+	                { className: 'help-block' },
+	                'You will be able to login using your phone number above.'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-6' },
+	              _react2.default.createElement(
+	                'label',
+	                { className: 'control-label sr-only' },
+	                'Username'
+	              ),
+	              _react2.default.createElement(
+	                'div',
+	                { className: 'input-group' },
+	                _react2.default.createElement('input', _extends({ type: 'text', name: 'username', className: 'form-control', placeholder: 'Choose a username', disabled: submitting }, username)),
+	                _react2.default.createElement(
+	                  'span',
+	                  { className: 'input-group-btn input-group-btn-right', style: { left: '1px' } },
+	                  _react2.default.createElement(
+	                    'button',
+	                    { type: 'button', className: 'btn btn-default' },
+	                    'Check availability',
+	                    ' ',
+	                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-search text-info', 'aria-hidden': 'true' }),
+	                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-remove text-danger', 'aria-hidden': 'true', style: displayNone }),
+	                    _react2.default.createElement('span', { className: 'glyphicon glyphicon-ok text-success', 'aria-hidden': 'true', style: displayNone })
+	                  )
+	                )
+	              )
+	            ),
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-12' },
+	              _react2.default.createElement(
+	                'p',
+	                { className: 'help-block help-info default' },
+	                'Use between 2 and 12 numbers, letters, hypens, underscores, and dots.'
+	              ),
+	              _react2.default.createElement(
+	                'p',
+	                { className: 'help-block help-info checking-availability', style: displayNone },
+	                'Checking availability...'
+	              ),
+	              _react2.default.createElement('p', { className: 'help-block help-result', style: displayNone })
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-6' },
+	              _react2.default.createElement(
+	                'label',
+	                { className: 'control-label sr-only' },
+	                'Password'
+	              ),
+	              _react2.default.createElement('input', _extends({ type: 'password', name: 'password', className: 'form-control', placeholder: 'Create a password', disabled: submitting }, password)),
+	              _react2.default.createElement(
+	                'p',
+	                { className: 'help-block' },
+	                'Must be at least 8 characters long.'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-6' },
+	              _react2.default.createElement(
+	                'label',
+	                { className: 'control-label sr-only' },
+	                'Confirm Password'
+	              ),
+	              _react2.default.createElement('input', _extends({ type: 'password', name: 'passwordConfirmation', className: 'form-control', placeholder: 'Enter same password as above', disabled: submitting }, passwordConfirmation)),
+	              _react2.default.createElement(
+	                'p',
+	                { className: 'help-block' },
+	                'Make double sure you typed it correctly.'
+	              )
+	            )
+	          ),
+	          _react2.default.createElement(
+	            'div',
+	            { className: 'form-group' },
+	            _react2.default.createElement(
+	              'div',
+	              { className: 'col-md-10' },
+	              _react2.default.createElement('input', { type: 'hidden', name: 'token', value: this.props.params.token }),
+	              _react2.default.createElement(
+	                'button',
+	                { type: 'submit', className: 'btn btn-default', disabled: submitting, onClick: handleSubmit(this.submit.bind(this)) },
+	                'Create login'
+	              )
+	            )
+	          ),
+	          username.touched && password.touched && passwordConfirmation.touched && _react2.default.createElement(_ValidationSummary2.default, { form: this.props })
+	        )
+	      );
+	    }
+	  }], [{
+	    key: 'propTypes',
+	    get: function get() {
+	      return {
+	        params: _react.PropTypes.object.isRequired,
+	        submitting: _react.PropTypes.bool.isRequired,
+	        serverErrors: _react.PropTypes.object
+	      };
+	    }
+	  }]);
+
+	  return Redeem;
+	}(_react.Component);
+
+	var form = 'redeem';
+	var fields = ['username', 'password', 'passwordConfirmation'];
+	var ReduxForm = (0, _reduxForm.reduxForm)({
+	  form: form,
+	  fields: fields,
+	  validate: _validation.validateRedeem
+	})((0, _reactRedux.connect)(_reducers.selectForm, actions)(Redeem));
+
+	var Container = function (_Component2) {
+	  _inherits(Container, _Component2);
+
+	  function Container() {
+	    _classCallCheck(this, Container);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Container).apply(this, arguments));
+	  }
+
+	  _createClass(Container, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(ReduxForm, { formKey: form, params: _extends({}, this.props.params, this.props.location.query) });
 	    }
 	  }]);
 
