@@ -1,0 +1,6 @@
+﻿@using React.AspNet
+@model EventSourced.Net.Web.ReduxServerRenderState
+@Html.React("ServerRender.App",
+  new { serverState = Model },
+  containerId: "app"
+)

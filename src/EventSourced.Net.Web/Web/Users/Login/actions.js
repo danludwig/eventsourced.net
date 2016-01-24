@@ -1,16 +1,16 @@
-import fetch from 'isomorphic-fetch'
 import { routeActions } from 'redux-simple-router'
 import { messages } from './validation'
-import { submitToApi } from '../../../client/forms/actions'
 import { createAction } from 'redux-actions'
+import { SEND_WEBAPI } from '../../Shared/actions'
 
 export const LOGIN_SENT = 'LOGIN_SENT'
 export const LOGIN_DONE = 'LOGIN_DONE'
 
-export function submitLogin(formInput) {
-  return submitToApi({
+export function submitLogin(formInput, returnUrl) {
+  const search = returnUrl ? `?returnUrl=${returnUrl}` : ''
+  return createAction(SEND_WEBAPI)({
     method: 'POST',
-    url: '/login',
+    url: `/login${search}`,
     formInput: formInput,
     send: sendLogin,
     fail: failLogin,
@@ -18,8 +18,8 @@ export function submitLogin(formInput) {
   })
 }
 
-function sendLogin(dispatch) {
-  return dispatch(createAction(LOGIN_SENT)())
+function sendLogin() {
+  return createAction(LOGIN_SENT)()
 }
 
 function failLogin(dispatch, context, response, serverErrors) {

@@ -17,6 +17,7 @@
   <ItemGroup>
     <DnxInvisibleContent Include="bower.json" />
     <DnxInvisibleContent Include=".bowerrc" />
+    <DnxInvisibleContent Include="EventSourced.Net.Web.xproj.DotSettings" />
     <DnxInvisibleContent Include="package.json" />
   </ItemGroup>
   <ItemGroup>

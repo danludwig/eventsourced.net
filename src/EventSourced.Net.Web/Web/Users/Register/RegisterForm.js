@@ -4,13 +4,18 @@ import { validateRegister as validate } from './validation'
 import { connect } from 'react-redux'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import { selectForm as select } from '../../../client/forms/reducers'
-import ValidationSummary from '../../../client/forms/ValidationSummary'
+import { selectForm as select } from '../../Shared/selectors'
+import ValidationSummary from '../../Shared/ValidationSummary'
 
 class Register extends Component {
-  submit(formInput) {
+  static propTypes = {
+    submitting: PropTypes.bool.isRequired,
+    serverErrors: PropTypes.object
+  };
+
+  submit = (formInput, dispatch) => {
     return new Promise((resolve, reject) => {
-      this.props.submitRegister(formInput)
+      return dispatch(this.props.submitRegister(formInput))
         .then(() => {
           if (this.props.serverErrors) {
             return reject(this.props.serverErrors)
@@ -18,19 +23,15 @@ class Register extends Component {
           return resolve()
         })
     })
-  }
+  };
 
   render() {
-    const {
-      fields: { emailOrPhone },
-      submitRegister, handleSubmit, submitting
-    } = this.props
-
+    const { fields: { emailOrPhone }, handleSubmit, submitting } = this.props
     return(
       <div>
         <Helmet title="Register" />
         <h2>Register.</h2>
-        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit.bind(this))}>
+        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit)}>
           <h4>Create a new account.</h4>
           <hr />
           <div className="form-group">
@@ -41,20 +42,13 @@ class Register extends Component {
           </div>
           <div className="form-group">
             <div className="col-md-10">
-              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit.bind(this))}>Register</button>
+              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit)}>Register</button>
             </div>
           </div>
           { emailOrPhone.touched && <ValidationSummary form={this.props} /> }
         </form>
       </div>
     )
-  }
-
-  static get propTypes() {
-    return {
-      submitting: PropTypes.bool.isRequired,
-      serverErrors: PropTypes.object
-    }
   }
 }
 

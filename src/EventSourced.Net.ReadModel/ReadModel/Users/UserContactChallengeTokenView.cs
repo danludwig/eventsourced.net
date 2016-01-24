@@ -14,18 +14,13 @@ namespace EventSourced.Net.ReadModel.Users
     }
   }
 
-  public class UserContactChallengeTokenData
+  public class UserContactChallengeTokenData : UserContactChallengeRedeemData
   {
-    public Guid UserId { get; }
     public string Token { get; }
-    public string ContactValue { get; }
-    public ContactChallengePurpose Purpose { get; }
 
-    internal UserContactChallengeTokenData(Guid userId, string token, string contactValue, ContactChallengePurpose purpose) {
-      UserId = userId;
+    internal UserContactChallengeTokenData(Guid userId, string token, string contactValue, ContactChallengePurpose purpose)
+      : base(userId, contactValue, purpose) {
       Token = token;
-      ContactValue = contactValue;
-      Purpose = purpose;
     }
   }
 

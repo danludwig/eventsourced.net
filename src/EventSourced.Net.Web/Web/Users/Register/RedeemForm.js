@@ -4,34 +4,38 @@ import { validateRedeem as validate } from './validation'
 import { connect } from 'react-redux'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import { selectForm as select } from '../../../client/forms/reducers'
-import ValidationSummary from '../../../client/forms/ValidationSummary'
+import { selectForm as select } from '../../Shared/selectors'
+import ValidationSummary from '../../Shared/ValidationSummary'
 
 class Redeem extends Component {
-  submit(formInput) {
+  static propTypes = {
+    params: PropTypes.object.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    serverErrors: PropTypes.object
+  };
+
+  submit = (formInput, dispatch) => {
     console.log('submit method invoked')
-    // return new Promise((resolve, reject) => {
-    //   this.props.submitRedeem(this.props.params.correlationId, formInput)
-    //     .then(() => {
-    //       if (this.props.serverErrors) {
-    //         return reject(this.props.serverErrors)
-    //       }
-    //       return resolve()
-    //     })
-    // })
-  }
+    return new Promise((resolve, reject) => {
+      return dispatch(this.props.submitVerify(this.props.params.correlationId, formInput))
+        .then(() => {
+          if (this.props.serverErrors) {
+            return reject(this.props.serverErrors)
+          }
+          return resolve()
+        })
+    })
+  };
 
   render() {
-    const {
-      fields: { username, password, passwordConfirmation },
-      submitRedeem, handleSubmit, submitting
-    } = this.props
+    const { fields: { username, password, passwordConfirmation },
+      submitRedeem, handleSubmit, submitting } = this.props
     const displayNone = { display: 'none' }
     return(
       <div>
         <Helmet title="Create login" />
         <h2>Create login.</h2>
-        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit.bind(this))}>
+        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit)}>
           <h4>Choose a username and password.</h4>
           <hr />
           <div className="form-group has-success">
@@ -88,21 +92,13 @@ class Redeem extends Component {
           <div className="form-group">
             <div className="col-md-10">
               <input type="hidden" name="token" value={this.props.params.token} />
-              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit.bind(this))}>Create login</button>
+              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit)}>Create login</button>
             </div>
           </div>
           { username.touched && password.touched && passwordConfirmation.touched && <ValidationSummary form={this.props} /> }
         </form>
       </div>
     )
-  }
-
-  static get propTypes() {
-    return {
-      params: PropTypes.object.isRequired,
-      submitting: PropTypes.bool.isRequired,
-      serverErrors: PropTypes.object
-    }
   }
 }
 

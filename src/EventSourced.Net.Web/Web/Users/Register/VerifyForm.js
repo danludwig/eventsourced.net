@@ -4,13 +4,19 @@ import { validateVerify as validate } from './validation'
 import { connect } from 'react-redux'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import { selectForm as select } from '../../../client/forms/reducers'
-import ValidationSummary from '../../../client/forms/ValidationSummary'
+import { selectForm as select } from '../../Shared/selectors'
+import ValidationSummary from '../../Shared/ValidationSummary'
 
 class Verify extends Component {
-  submit(formInput) {
+  static propTypes = {
+    params: PropTypes.object.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    serverErrors: PropTypes.object
+  };
+
+  submit = (formInput, dispatch) => {
     return new Promise((resolve, reject) => {
-      this.props.submitVerify(this.props.params.correlationId, formInput)
+      return dispatch(this.props.submitVerify(this.props.params.correlationId, formInput))
         .then(() => {
           if (this.props.serverErrors) {
             return reject(this.props.serverErrors)
@@ -18,19 +24,15 @@ class Verify extends Component {
           return resolve()
         })
     })
-  }
+  };
 
   render() {
-    const {
-      fields: { code },
-      submitVerify, handleSubmit, submitting
-    } = this.props
-
+    const { fields: { code }, handleSubmit, submitting } = this.props
     return(
       <div>
         <Helmet title="Verify" />
         <h2>Verify.</h2>
-        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit.bind(this))}>
+        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit)}>
           <h4>Confirm your contact information.</h4>
           <hr />
           <div className="form-group">
@@ -41,21 +43,13 @@ class Verify extends Component {
           </div>
           <div className="form-group">
             <div className="col-md-10">
-              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit.bind(this))}>Verify</button>
+              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit)}>Verify</button>
             </div>
           </div>
           { code.touched && <ValidationSummary form={this.props} /> }
         </form>
       </div>
     )
-  }
-
-  static get propTypes() {
-    return {
-      params: PropTypes.object.isRequired,
-      submitting: PropTypes.bool.isRequired,
-      serverErrors: PropTypes.object
-    }
   }
 }
 

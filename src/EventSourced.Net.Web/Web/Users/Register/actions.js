@@ -1,14 +1,13 @@
-import fetch from 'isomorphic-fetch'
 import { routeActions } from 'redux-simple-router'
 import { registerMessages, verifyMessages } from './validation'
-import { submitToApi } from '../../../client/forms/actions'
 import { createAction } from 'redux-actions'
+import { SEND_WEBAPI } from '../../Shared/actions'
 
 export const REGISTER_SENT = 'REGISTER_SENT'
 export const REGISTER_DONE = 'REGISTER_DONE'
 
 export function submitRegister(formInput) {
-  return submitToApi({
+  return createAction(SEND_WEBAPI)({
     method: 'POST',
     url: '/register',
     formInput: formInput,
@@ -19,7 +18,7 @@ export function submitRegister(formInput) {
 }
 
 function sendRegister(dispatch) {
-  return dispatch(createAction(REGISTER_SENT)())
+  return createAction(REGISTER_SENT)()
 }
 
 function failRegister(dispatch, context, response, serverErrors) {
@@ -41,7 +40,7 @@ export const VERIFY_SENT = 'REGISTER/VERIFY_SENT'
 export const VERIFY_DONE = 'REGISTER/VERIFY_DONE'
 
 export function submitVerify(correlationId, formInput) {
-  return submitToApi({
+  return createAction(SEND_WEBAPI)({
     method: 'POST',
     url: `/register/${correlationId}`,
     formInput: formInput,
@@ -52,7 +51,7 @@ export function submitVerify(correlationId, formInput) {
 }
 
 function sendVerify(dispatch) {
-  return dispatch(createAction(VERIFY_SENT)())
+  return createAction(VERIFY_SENT)()
 }
 
 function failVerify(dispatch, context, response, serverErrors) {

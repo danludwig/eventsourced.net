@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions'
 import { REGISTER_SENT, REGISTER_DONE, VERIFY_SENT, VERIFY_DONE } from './actions'
-import { INITIALIZE_DONE } from '../../../client/actions'
+import { INITIALIZE_STATE } from '../../Shared/actions'
 
 const register = {
   [REGISTER_SENT]: (state, action) =>
@@ -45,11 +45,17 @@ const verify = {
 export const uiVerify = handleActions(verify, { })
 
 const redeem = {
-  [INITIALIZE_DONE]: {
+  [INITIALIZE_STATE]: (state, action) =>
+    Object.assign({}, state, {
+      data: action.payload.app.ui
+         && action.payload.app.ui.redeem
+          ? action.payload.app.ui.redeem.data : undefined
+    }),
+  [VERIFY_DONE]: {
     next: (state, action) => Object.assign({}, state, {
-      data: action.payload.state.ui
-         && action.payload.state.ui.redeem
-          ? action.payload.state.ui.redeem.data : undefined
+      submitting: false,
+      data: action.payload.data,
+      serverErrors: undefined
     })
   }
 }

@@ -4,32 +4,33 @@ import validate from './validation'
 import { connect } from 'react-redux'
 import * as actions from './actions'
 import Helmet from 'react-helmet'
-import { selectForm as select } from '../../../client/forms/reducers'
-import ValidationSummary from '../../../client/forms/ValidationSummary'
+import { selectForm as select } from '../../Shared/selectors'
+import ValidationSummary from '../../Shared/ValidationSummary'
 
 class Login extends Component {
-  submit(formInput) {
+  static propTypes = {
+    params: PropTypes.object.isRequired,
+    submitting: PropTypes.bool.isRequired,
+    serverErrors: PropTypes.object
+  };
+
+  submit = (formInput, dispatch) => {
     return new Promise((resolve, reject) => {
-      this.props.submitLogin(formInput)
+      const { submitLogin, params, serverErrors } = this.props
+      return dispatch(submitLogin(formInput, params.returnUrl))
         .then(() => {
-          if (this.props.serverErrors) {
-            return reject(this.props.serverErrors)
-          }
-          return resolve()
+          return serverErrors ? reject(serverErrors) : resolve()
         })
     })
-  }
+  };
 
   render() {
-    const {
-      fields: { login, password },
-      submitLogin, handleSubmit, submitting
-    } = this.props
+    const { fields: { login, password }, handleSubmit, submitting } = this.props
     return (
       <div>
         <Helmet title="Log in" />
         <h2>Log in.</h2>
-        <form id="login_form" action="/api/login" method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit.bind(this))}>
+        <form id="login_form" action="/api/login" method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit)}>
           <h4>Use a local account to log in.</h4>
           <hr />
           <div className="form-group">
@@ -46,20 +47,13 @@ class Login extends Component {
           </div>
           <div className="form-group">
             <div className="col-md-10">
-              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit.bind(this))}>Log in</button>
+              <button type="submit" className="btn btn-default" disabled={submitting} onClick={handleSubmit(this.submit)}>Log in</button>
             </div>
           </div>
           { login.touched && password.touched && <ValidationSummary form={this.props} /> }
         </form>
       </div>
     )
-  }
-
-  static get propTypes() {
-    return {
-      submitting: PropTypes.bool.isRequired,
-      serverErrors: PropTypes.object
-    }
   }
 }
 
@@ -74,7 +68,7 @@ const ReduxForm = reduxForm({
 export default class Container extends Component {
   render() {
     return (
-      <ReduxForm formKey={form} />
+      <ReduxForm formKey={form} params={this.props.location.query} />
     )
   }
 }

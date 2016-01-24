@@ -9,8 +9,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using React.AspNet;
 using SimpleInjector;
 using SimpleInjector.Extensions.ExecutionContextScoping;
 using SimpleInjector.Packaging;
@@ -51,6 +53,7 @@ namespace EventSourced.Net.Web
         .AddInstance<IControllerActivator>(new Services.Web.Mvc.SimpleInjectorControllerActivator(Container))
         .AddScoped<ISecurityStampValidator, Services.Web.Mvc.SecurityStampValidator>()
         .AddExternalCookieAuthentication()
+        .AddReact()
         .AddMvc()
           .AddJsonOptions(x => {
             x.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -64,6 +67,17 @@ namespace EventSourced.Net.Web
       ComposeRoot(app.ApplicationServices);
       app
         .UseIISPlatformHandler()
+        .UseReact(config => {
+          var jsonSerializerSettings = new JsonSerializerSettings {
+            ContractResolver = new CamelCasePropertyNamesContractResolver(),
+          };
+          jsonSerializerSettings.Converters.Add(new StringEnumConverter());
+          config
+            .SetLoadBabel(false)
+            .AddScriptWithoutTransform("~/bundle.server.js")
+            .SetJsonSerializerSettings(jsonSerializerSettings)
+          ;
+        })
         .UseStaticFiles()
         .UseExecutionContextScope()
         .UseAuthentication()
