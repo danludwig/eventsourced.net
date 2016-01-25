@@ -17,8 +17,9 @@ class Redeem extends Component {
 
   submit = (formInput, dispatch) => {
     console.log('submit method invoked')
+    const { params: { correlationId, token }, submitCreateLogin } = this.props
     return new Promise((resolve, reject) => {
-      return dispatch(this.props.submitVerify(this.props.params.correlationId, formInput))
+      return dispatch(submitCreateLogin(correlationId, token, formInput))
         .then(() => {
           if (this.props.serverErrors) {
             return reject(this.props.serverErrors)
@@ -82,13 +83,26 @@ class Redeem extends Component {
   }
 }
 
+function customSelect(state, props) {
+  let selection = select(state, props)
+  if (selection.serverErrors) {
+    const { _error, ...rest } = selection.serverErrors
+    if (_error) selection.error = _error
+    selection.errors = {
+      ...props.errors,
+      ...rest,
+    }
+  }
+  return selection
+}
+
 const form = 'redeem'
 const fields = ['username', 'password', 'passwordConfirmation']
 const ReduxForm = reduxForm({
   form,
   fields,
   validate
-})(connect(select, actions)(Redeem))
+})(connect(customSelect, actions)(Redeem))
 
 export default class Container extends Component {
   render() {

@@ -115,7 +115,7 @@ class CheckUsernameField extends Component {
       { submitting ?
         <p className="help-block help-info">Checking availability...</p> :
         data ?
-        <p className="help-block"><Markdown>{message}</Markdown></p> :
+        <div className="help-block"><Markdown className="help-block">{message}</Markdown></div> :
         <p className="help-block help-info">Use between 2 and 12 numbers, letters, hypens, underscores, and dots.</p>
       }
       </div>

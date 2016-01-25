@@ -35,7 +35,7 @@ export const validateVerify = values => {
 
 export const redeemMessages = {
   emailOrPhone: {
-    alreadyExists: 'The login **{attemptedValue}** has already been registered. Did you forget your password?'
+    alreadyExists: 'The login **{emailOrPhone}** has already been registered. Did you forget your password?'
   },
   username: {
     empty: 'Username is required.',

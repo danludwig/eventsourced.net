@@ -51,6 +51,7 @@ namespace EventSourced.Net.Web.Users.Register
 
     [HttpPost, Route("api/register/{correlationId}")]
     public async Task<IActionResult> PostVerify(string correlationId, [FromBody] PostVerifyRequest model) {
+      if (model == null) return HttpBadRequest(new object());
       //await Task.Delay(1000);
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
@@ -78,32 +79,20 @@ namespace EventSourced.Net.Web.Users.Register
       return this.ServerRenderedView("Create login", model);
     }
 
-    [HttpGet, Route("api/register/{correlationId}/redeem")]
-    public async Task<IActionResult> GetRedeem(string correlationId, string token) {
-      Guid correlationGuid;
-      if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
-
-      UserContactChallengeRedeemData data = await Query
-        .Execute(new UserContactChallengeRedeemView(correlationGuid, token));
-      if (data == null) return HttpNotFound();
-      var payload = new ReduxAppState(User);
-      payload.Ui.Redeem = new ReduxUiRedeemState(data);
-      return Ok(payload);
-    }
-
     [HttpPost, Route("api/register/{correlationId}/redeem")]
-    public async Task<IActionResult> PostRedeem(string correlationId, string token, string username, string password, string passwordConfirmation) {
+    public async Task<IActionResult> PostRedeem(string correlationId, string token, [FromBody] PostRedeemRequest model) {
+      if (model == null) return HttpBadRequest(new object());
       Guid correlationGuid;
       if (!ShortGuid.TryParseGuid(correlationId, out correlationGuid)) return HttpNotFound();
 
       UserContactChallengeRedeemData data = await Query
         .Execute(new UserContactChallengeRedeemView(correlationGuid, token));
       if (data == null) return HttpNotFound();
-      Guid? userIdByUsername = await Query.Execute(new UserIdByLogin(username));
+      Guid? userIdByUsername = await Query.Execute(new UserIdByLogin(model.Username));
       Guid? userIdByContact = await Query.Execute(new UserIdByLogin(data.ContactValue));
 
       await Command.SendAsync(new RedeemUserRegistrationChallenge(data.UserId, correlationGuid, token,
-        data.ContactValue, userIdByContact, username, userIdByUsername, password, passwordConfirmation))
+        data.ContactValue, userIdByContact, model.Username, userIdByUsername, model.Password, model.PasswordConfirmation))
           .ConfigureAwait(false);
 
       WebSockets.AddCorrelationService(correlationId);

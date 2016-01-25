@@ -28103,6 +28103,29 @@
 	      serverErrors: undefined
 	    });
 	  }
+	}), _defineProperty(_redeem, _actions.CREATE_LOGIN_SENT, function (state, action) {
+	  return Object.assign({}, state, {
+	    submitting: true
+	  });
+	}), _defineProperty(_redeem, _actions.CREATE_LOGIN_DONE, {
+	  throw: function _throw(state, action) {
+	    return Object.assign({}, state, {
+	      submitting: false,
+	      serverErrors: action.payload.serverErrors,
+	      messages: action.payload.messages
+	    });
+	  },
+	  next: function next(state, action) {
+	    return Object.assign({}, state, {
+	      serverErrors: undefined
+	    });
+	  }
+	}), _defineProperty(_redeem, _actions.CREATE_LOGIN_REVERSED, function (state, action) {
+	  return Object.assign({}, state, {
+	    submitting: false,
+	    serverErrors: action.payload.serverErrors,
+	    messages: action.payload.messages
+	  });
 	}), _redeem);
 
 	var uiRedeem = exports.uiRedeem = (0, _reduxActions.handleActions)(redeem, {});
@@ -28116,9 +28139,10 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
-	exports.VERIFY_DONE = exports.VERIFY_SENT = exports.REGISTER_DONE = exports.REGISTER_SENT = undefined;
+	exports.CREATE_LOGIN_REVERSED = exports.CREATE_LOGIN_CONCLUDED = exports.CREATE_LOGIN_DONE = exports.CREATE_LOGIN_SENT = exports.VERIFY_DONE = exports.VERIFY_SENT = exports.REGISTER_DONE = exports.REGISTER_SENT = undefined;
 	exports.submitRegister = submitRegister;
 	exports.submitVerify = submitVerify;
+	exports.submitCreateLogin = submitCreateLogin;
 
 	var _reduxSimpleRouter = __webpack_require__(214);
 
@@ -28195,6 +28219,80 @@
 	  dispatch(_reduxSimpleRouter.routeActions.push(returnUrl));
 	}
 
+	var CREATE_LOGIN_SENT = exports.CREATE_LOGIN_SENT = 'REGISTER/CREATE_LOGIN_SENT';
+	var CREATE_LOGIN_DONE = exports.CREATE_LOGIN_DONE = 'REGISTER/CREATE_LOGIN_DONE';
+	var CREATE_LOGIN_CONCLUDED = exports.CREATE_LOGIN_CONCLUDED = 'REGISTER/CREATE_LOGIN_CONCLUDED';
+	var CREATE_LOGIN_REVERSED = exports.CREATE_LOGIN_REVERSED = 'REGISTER/CREATE_LOGIN_REVERSED';
+
+	function submitCreateLogin(correlationId, token, formInput) {
+	  return (0, _reduxActions.createAction)(_actions.SEND_WEBAPI)({
+	    method: 'POST',
+	    url: '/register/' + correlationId + '/redeem?token=' + encodeURIComponent(token),
+	    formInput: formInput,
+	    send: sendCreateLogin,
+	    fail: failCreateLogin,
+	    done: receiveCreateLogin
+	  });
+	}
+
+	function sendCreateLogin() {
+	  return (0, _reduxActions.createAction)(CREATE_LOGIN_SENT)();
+	}
+
+	function failCreateLogin(dispatch, context, response, serverErrors) {
+	  var error = new TypeError('Request failed.');
+	  error.serverErrors = serverErrors;
+	  error.messages = _validation.redeemMessages;
+	  return dispatch((0, _reduxActions.createAction)(CREATE_LOGIN_DONE)(error));
+	}
+
+	function receiveCreateLogin(dispatch, context, response, data) {
+	  var returnUrl = response.headers.get("location");
+	  var socketUrl = response.headers.get('x-correlation-socket');
+	  var socket = new WebSocket(socketUrl);
+	  var isConstraintViolated = false;
+	  socket.onmessage = function (socketMessage) {
+	    if (isConstraintViolated) return;
+	    var messageData = { type: 'unknown' };
+	    try {
+	      messageData = JSON.parse(socketMessage.data);
+	    } catch (ex) {}
+	    if (messageData.isComplete) {
+	      dispatch((0, _reduxActions.createAction)(CREATE_LOGIN_CONCLUDED)());
+	      return dispatch(_reduxSimpleRouter.routeActions.push(returnUrl));
+	    }
+
+	    if (messageData.isComplete === false) {
+	      isConstraintViolated = true;
+	      // parse out server errors
+	      var serverErrors = {};
+	      if (messageData.duplicateUsername) {
+	        serverErrors.username = [{
+	          reason: 'alreadyExists'
+	        }];
+	      }
+	      if (messageData.duplicateContact) {
+	        serverErrors.emailOrPhone = [{
+	          reason: 'alreadyExists',
+	          data: {
+	            emailOrPhone: messageData.duplicateContact
+	          }
+	        }];
+	      }
+	      return dispatch((0, _reduxActions.createAction)(CREATE_LOGIN_REVERSED)({
+	        serverErrors: serverErrors,
+	        messages: _validation.redeemMessages
+	      }));
+	    }
+	  };
+	  return dispatch((0, _reduxActions.createAction)(CREATE_LOGIN_DONE)({
+	    data: data,
+	    receivedAt: Date.now()
+	  }));
+	  //const returnUrl = response.headers.get("location")
+	  //dispatch(routeActions.push(returnUrl))
+	}
+
 /***/ },
 /* 277 */
 /***/ function(module, exports) {
@@ -28241,7 +28339,7 @@
 
 	var redeemMessages = exports.redeemMessages = {
 	  emailOrPhone: {
-	    alreadyExists: 'The login **{attemptedValue}** has already been registered. Did you forget your password?'
+	    alreadyExists: 'The login **{emailOrPhone}** has already been registered. Did you forget your password?'
 	  },
 	  username: {
 	    empty: 'Username is required.',
@@ -28476,11 +28574,11 @@
 	          { className: 'help-block help-info' },
 	          'Checking availability...'
 	        ) : data ? _react2.default.createElement(
-	          'p',
+	          'div',
 	          { className: 'help-block' },
 	          _react2.default.createElement(
 	            _reactRemarkable2.default,
-	            null,
+	            { className: 'help-block' },
 	            message
 	          )
 	        ) : _react2.default.createElement(
@@ -46116,6 +46214,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
+
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -46138,8 +46238,14 @@
 
 	    return _ret = (_temp = (_this = _possibleConstructorReturn(this, (_Object$getPrototypeO = Object.getPrototypeOf(Redeem)).call.apply(_Object$getPrototypeO, [this].concat(args))), _this), _this.submit = function (formInput, dispatch) {
 	      console.log('submit method invoked');
+	      var _this$props = _this.props;
+	      var _this$props$params = _this$props.params;
+	      var correlationId = _this$props$params.correlationId;
+	      var token = _this$props$params.token;
+	      var submitCreateLogin = _this$props.submitCreateLogin;
+
 	      return new Promise(function (resolve, reject) {
-	        return dispatch(_this.props.submitVerify(_this.props.params.correlationId, formInput)).then(function () {
+	        return dispatch(submitCreateLogin(correlationId, token, formInput)).then(function () {
 	          if (_this.props.serverErrors) {
 	            return reject(_this.props.serverErrors);
 	          }
@@ -46282,13 +46388,27 @@
 	  serverErrors: _react.PropTypes.object
 	};
 
+	function customSelect(state, props) {
+	  var selection = (0, _selectors.selectForm)(state, props);
+	  if (selection.serverErrors) {
+	    var _selection$serverErro = selection.serverErrors;
+	    var _error = _selection$serverErro._error;
+
+	    var rest = _objectWithoutProperties(_selection$serverErro, ['_error']);
+
+	    if (_error) selection.error = _error;
+	    selection.errors = _extends({}, props.errors, rest);
+	  }
+	  return selection;
+	}
+
 	var form = 'redeem';
 	var fields = ['username', 'password', 'passwordConfirmation'];
 	var ReduxForm = (0, _reduxForm.reduxForm)({
 	  form: form,
 	  fields: fields,
 	  validate: _validation.validateRedeem
-	})((0, _reactRedux.connect)(_selectors.selectForm, actions)(Redeem));
+	})((0, _reactRedux.connect)(customSelect, actions)(Redeem));
 
 	var Container = function (_Component2) {
 	  _inherits(Container, _Component2);
