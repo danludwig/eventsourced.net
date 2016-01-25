@@ -1,12 +1,10 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { compose, createStore, applyMiddleware } from 'redux'
-import { Provider } from 'react-redux'
 import thunkMiddleware from 'redux-thunk'
 import createLogger  from 'redux-logger'
 import webApiMiddleware from './Shared/webapi-middleware'
 import { createHistory, useBasename } from 'history'
-import { Router, Route, IndexRoute } from 'react-router'
 import { syncHistory } from 'redux-simple-router'
 import reducer from './Shared/reducers'
 import { initialize } from './Shared/actions'
@@ -20,8 +18,8 @@ const reduxRouterMiddleware = syncHistory(history)
 const loggerMiddleware = createLogger()
 const createFinalStoreWithMiddleware = compose(
   applyMiddleware(
-    webApiMiddleware,
     thunkMiddleware,
+    webApiMiddleware,
     loggerMiddleware,
     reduxRouterMiddleware
   ),

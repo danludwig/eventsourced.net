@@ -74,6 +74,7 @@ namespace EventSourced.Net.Web.Users.Register
       if (data == null) return HttpNotFound();
       var model = this.BuildServerRenderReduxState();
       model.App.Ui.Redeem = new ReduxUiRedeemState(data);
+      model.App.Ui.CheckUsername = new object();
       return this.ServerRenderedView("Create login", model);
     }
 
@@ -113,9 +114,10 @@ namespace EventSourced.Net.Web.Users.Register
     }
 
     [HttpPost, Route("api/check-username", Name = "CheckUsernameRoute")]
-    public async Task<IActionResult> PostCheckUsername(string username) {
-      Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(username));
-      ValidateUsername validation = new ValidateUsername(username, userIdByLogin);
+    public async Task<IActionResult> PostCheckUsername([FromBody] PostCheckUsernameRequest model) {
+      if (model == null) return HttpBadRequest(new object());
+      Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(model.Username));
+      ValidateUsername validation = new ValidateUsername(model.Username, userIdByLogin);
       CommandRejectionReason? reasonInvalid = validation.Errors
         .SelectMany(x => x.Value.Select(y => y.Reason))
         .Cast<CommandRejectionReason?>().FirstOrDefault();

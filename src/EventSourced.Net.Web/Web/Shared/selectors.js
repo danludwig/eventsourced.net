@@ -48,7 +48,7 @@ export const selectForm = createSelector(
   }
 )
 
-const formatMessage = function(template, values) {
+export const formatMessage = function(template, values) {
   let message = '', startIndex, endIndex, token, tokenValue
   if (template.indexOf('{')) {
     for (let i = 0; i < template.length; i++) {

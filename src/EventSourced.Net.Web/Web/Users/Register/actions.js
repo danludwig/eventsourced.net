@@ -50,7 +50,7 @@ export function submitVerify(correlationId, formInput) {
   })
 }
 
-function sendVerify(dispatch) {
+function sendVerify() {
   return createAction(VERIFY_SENT)()
 }
 

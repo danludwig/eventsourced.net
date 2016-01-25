@@ -5,6 +5,7 @@ import { handleActions } from 'redux-actions'
 import { INITIALIZE_STATE } from './actions'
 import { uiLogin, dataUserLogin } from '../Users/Login/reducers'
 import { uiRegister, uiVerify, uiRedeem } from '../Users/Register/reducers'
+import { handlers as uiCheckUsername } from '../Users/Register/CheckUsernameField'
 
 const dataUserInitialize = {
   [INITIALIZE_STATE]: (state, action) =>
@@ -18,7 +19,8 @@ export default combineReducers({
       login: uiLogin,
       register: uiRegister,
       verify: uiVerify,
-      redeem: uiRedeem
+      redeem: uiRedeem,
+      checkUsername: uiCheckUsername
     }),
     data: combineReducers({
       server: handleActions({}, {

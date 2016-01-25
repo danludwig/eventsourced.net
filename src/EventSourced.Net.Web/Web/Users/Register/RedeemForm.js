@@ -6,6 +6,7 @@ import * as actions from './actions'
 import Helmet from 'react-helmet'
 import { selectForm as select } from '../../Shared/selectors'
 import ValidationSummary from '../../Shared/ValidationSummary'
+import CheckUsernameField from './CheckUsernameField'
 
 class Redeem extends Component {
   static propTypes = {
@@ -29,7 +30,7 @@ class Redeem extends Component {
 
   render() {
     const { fields: { username, password, passwordConfirmation },
-      submitRedeem, handleSubmit, submitting } = this.props
+      submitRedeem, handleSubmit, submitting, dispatch } = this.props
     const displayNone = { display: 'none' }
     return(
       <div>
@@ -53,39 +54,18 @@ class Redeem extends Component {
             </div>
             }
           </div>
-          <div className="form-group">
-            <div className="col-md-6">
-              <label className="control-label sr-only">Username</label>
-              <div className="input-group">
-                <input type="text" name="username" className="form-control" placeholder="Choose a username" disabled={submitting} {...username} />
-                <span className="input-group-btn input-group-btn-right" style={{left: '1px'}}>
-                  <button type="button" className="btn btn-default">
-                    Check availability
-                    {' '}
-                    <span className="glyphicon glyphicon-search text-info" aria-hidden="true"></span>
-                    <span className="glyphicon glyphicon-remove text-danger" aria-hidden="true" style={displayNone}></span>
-                    <span className="glyphicon glyphicon-ok text-success" aria-hidden="true" style={displayNone}></span>
-                  </button>
-                </span>
-              </div>
-            </div>
-            <div className="col-md-12">
-              <p className="help-block help-info default">Use between 2 and 12 numbers, letters, hypens, underscores, and dots.</p>
-              <p className="help-block help-info checking-availability" style={displayNone}>Checking availability...</p>
-              <p className="help-block help-result" style={displayNone}></p>
-            </div>
-          </div>
+          <CheckUsernameField field={username} dispatch={dispatch} />
           <div className="form-group">
             <div className="col-md-6">
               <label className="control-label sr-only">Password</label>
-              <input type="password" name="password" className="form-control" placeholder="Create a password" disabled={submitting} {...password} />
+              <input type="password" className="form-control" placeholder="Create a password" disabled={submitting} {...password} />
               <p className="help-block">Must be at least 8 characters long.</p>
             </div>
           </div>
           <div className="form-group">
             <div className="col-md-6">
               <label className="control-label sr-only">Confirm Password</label>
-              <input type="password" name="passwordConfirmation" className="form-control" placeholder="Enter same password as above" disabled={submitting} {...passwordConfirmation} />
+              <input type="password" className="form-control" placeholder="Enter same password as above" disabled={submitting} {...passwordConfirmation} />
               <p className="help-block">Make double sure you typed it correctly.</p>
             </div>
           </div>
