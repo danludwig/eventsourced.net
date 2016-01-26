@@ -4,6 +4,7 @@ import { compose, createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import createLogger  from 'redux-logger'
 import webApiMiddleware from './Shared/webapi-middleware'
+import { apiMiddleware } from 'redux-api-middleware'
 import { createHistory, useBasename } from 'history'
 import { syncHistory } from 'redux-simple-router'
 import reducer from './Shared/reducers'
@@ -19,6 +20,7 @@ const loggerMiddleware = createLogger()
 const createFinalStoreWithMiddleware = compose(
   applyMiddleware(
     thunkMiddleware,
+    apiMiddleware,
     webApiMiddleware,
     loggerMiddleware,
     reduxRouterMiddleware

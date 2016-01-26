@@ -30,7 +30,7 @@ class Login extends Component {
       <div>
         <Helmet title="Log in" />
         <h2>Log in.</h2>
-        <form id="login_form" action="/api/login" method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit)}>
+        <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit(this.submit)}>
           <h4>Use a local account to log in.</h4>
           <hr />
           <div className="form-group">

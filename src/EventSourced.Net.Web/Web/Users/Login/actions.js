@@ -1,5 +1,5 @@
 import { routeActions } from 'redux-simple-router'
-import { messages } from './validation'
+import { messages } from '../../Login/validation'
 import { createAction } from 'redux-actions'
 import { SEND_WEBAPI } from '../../Shared/actions'
 

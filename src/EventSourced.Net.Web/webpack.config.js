@@ -1,4 +1,5 @@
 module.exports = {
+  devtool: 'source-map',
   entry: {
     client: './Web/index.js',
     server: './Web/index-server.js'

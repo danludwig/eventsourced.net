@@ -201,3 +201,6 @@ project.lock.json
 # Development databases
 /devdbs
 **/client/babel/
+
+# source maps
+*.js.map

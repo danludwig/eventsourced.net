@@ -5,7 +5,7 @@ using EventSourced.Net.ReadModel.Users;
 using Microsoft.AspNet.Http.Authentication;
 using Microsoft.AspNet.Identity;
 
-namespace EventSourced.Net.Web.Users.Login
+namespace EventSourced.Net.Web.Login
 {
   public class LogUserIn : ICommand
   {

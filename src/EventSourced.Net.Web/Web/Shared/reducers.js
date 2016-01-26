@@ -6,6 +6,7 @@ import { INITIALIZE_STATE } from './actions'
 import { uiLogin, dataUserLogin } from '../Users/Login/reducers'
 import { uiRegister, uiVerify, uiRedeem } from '../Users/Register/reducers'
 import { handlers as uiCheckUsername } from '../Users/Register/CheckUsernameField'
+import { login, logoff } from '../Login/reducers'
 
 const dataUserInitialize = {
   [INITIALIZE_STATE]: (state, action) =>
@@ -15,6 +16,8 @@ const dataUserInitialize = {
 
 export default combineReducers({
   app: combineReducers({
+    login: login,
+    logoff: logoff,
     ui: combineReducers({
       login: uiLogin,
       register: uiRegister,

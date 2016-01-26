@@ -53,7 +53,7 @@
   </environment>
   @* ReSharper restore Html.TagNotResolved *@
 
-  <script>
+  @*<script>
     var heartbeat = new WebSocket("ws://localhost:3000/heartbeat");
     heartbeat.onopen = function (e) {
       console.log('WebSockets: Heartbeat ' + e.type);
@@ -61,7 +61,7 @@
     heartbeat.onmessage = function (message) {
       console.log('WebSockets: ' + message.data);
     }
-  </script>
+  </script>*@
 
 </body>
 </html>

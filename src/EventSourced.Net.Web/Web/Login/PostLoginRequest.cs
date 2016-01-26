@@ -1,4 +1,4 @@
-﻿namespace EventSourced.Net.Web.Users.Login
+﻿namespace EventSourced.Net.Web.Login
 {
   public class PostLoginRequest
   {

@@ -6,7 +6,7 @@ using EventSourced.Net.ReadModel.Users;
 using EventSourced.Net.Services.Web.Mvc;
 using Microsoft.AspNet.Mvc;
 
-namespace EventSourced.Net.Web.Users.Login
+namespace EventSourced.Net.Web.Login
 {
   [Return400BadRequstIfCommandRejected]
   public class Controller : Microsoft.AspNet.Mvc.Controller
@@ -22,14 +22,13 @@ namespace EventSourced.Net.Web.Users.Login
     [HttpGet, Route("login", Name = "LoginRoute")]
     public IActionResult ViewLogin() {
       var model = this.BuildServerRenderReduxState();
-      model.App.Ui.Login = new object();
       return this.ServerRenderedView("Login", model);
     }
 
     [HttpPost, Route("api/login")]
     public async Task<IActionResult> PostLogin([FromBody] PostLoginRequest model, string returnUrl) {
       if (model == null) return HttpBadRequest();
-      //await Task.Delay(1000);
+      //await Task.Delay(500);
       await Command.SendAsync(new LogUserIn(model.Login, model.Password, HttpContext.Authentication));
       Response.Headers["Location"] = returnUrl ?? Url.RouteUrl("HomeRoute");
       Guid? userId = await Query.Execute(new UserIdByLogin(model.Login));
@@ -39,10 +38,11 @@ namespace EventSourced.Net.Web.Users.Login
       });
     }
 
-    [HttpPost, Route("logoff")]
-    public async Task<IActionResult> Logoff() {
+    [HttpPost, Route("api/logoff")]
+    public async Task<IActionResult> PostLogoff(string returnUrl) {
       await Command.SendAsync(new LogUserOff(HttpContext.Authentication));
-      return Redirect("~/");
+      Response.Headers["Location"] = returnUrl ?? Url.RouteUrl("HomeRoute");
+      return Ok(new PostLogoffResponse());
     }
   }
 }

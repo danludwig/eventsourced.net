@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
-import LoginNav from '../Users/Login/LoginNav'
+import LoginNav from '../Login/LoginNav'
 
 export default class TopNav extends Component {
   render() {
