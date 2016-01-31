@@ -45853,13 +45853,14 @@
 	      var handleSubmit = this.handleSubmit;
 	      var _props = this.props;
 	      var field = _props.field;
+	      var submitSent = _props.submitSent;
 	      var submittedValue = _props.submittedValue;
 	      var _props$form = _props.form;
 	      var errors = _props$form.errors;
 	      var asyncValidating = _props$form.asyncValidating;
 	      var submitting = _props$form.submitting;
 	
-	      var hasError = !!(errors[field.name] && field.touched && !asyncValidating);
+	      var hasError = !!(errors[field.name] && submitSent && !asyncValidating);
 	      var hasSuccess = !!(field.value && submittedValue && field.value.toLowerCase() === submittedValue.toLowerCase() && !asyncValidating && !hasError);
 	      var className = (0, _classnames2.default)({
 	        'form-group': true,
@@ -45885,16 +45886,21 @@
 	
 	Connector.propTypes = {
 	  form: React.PropTypes.object.isRequired,
-	  field: React.PropTypes.object.isRequired
+	  field: React.PropTypes.object.isRequired,
+	  submittedValue: React.PropTypes.string,
+	  submitSent: React.PropTypes.bool.isRequired
 	};
 	
 	var select = function select(state, props) {
 	  var apiCalls = _lodash2.default.get(state, 'app.register.validateUsername.apiCalls', []);
 	  var lastApiCall = apiCalls.length > 0 ? state.app.register.validateUsername.apiCalls[0] : {};
 	  var sent = lastApiCall.sent;
+	  var done = lastApiCall.done;
+	  var fail = lastApiCall.fail;
 	
 	  return {
-	    submittedValue: _lodash2.default.get(sent, 'formInput.username', undefined)
+	    submittedValue: _lodash2.default.get(sent, 'formInput.username', undefined),
+	    submitSent: !!sent
 	  };
 	};
 	

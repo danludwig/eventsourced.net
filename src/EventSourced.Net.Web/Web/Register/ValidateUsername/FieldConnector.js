@@ -10,6 +10,8 @@ class Connector extends React.Component {
   static propTypes = {
     form: React.PropTypes.object.isRequired,
     field: React.PropTypes.object.isRequired,
+    submittedValue: React.PropTypes.string,
+    submitSent: React.PropTypes.bool.isRequired,
   };
 
   handleSubmit = () => {
@@ -26,8 +28,8 @@ class Connector extends React.Component {
   };
 
   render() {
-    const { handleSubmit, props: { field, submittedValue, form: { errors, asyncValidating, submitting, }, }, } = this
-    const hasError = !!(errors[field.name] && field.touched && !asyncValidating)
+    const { handleSubmit, props: { field, submitSent, submittedValue, form: { errors, asyncValidating, submitting, }, }, } = this
+    const hasError = !!(errors[field.name] && submitSent && !asyncValidating)
     const hasSuccess = !!(field.value && submittedValue
       && field.value.toLowerCase() === submittedValue.toLowerCase()
       && !asyncValidating && !hasError)
@@ -56,9 +58,10 @@ const select = (state, props) => {
   const apiCalls =  _.get(state, 'app.register.validateUsername.apiCalls', [])
   const lastApiCall = apiCalls.length > 0 ?
     state.app.register.validateUsername.apiCalls[0] : {}
-  const { sent, } = lastApiCall
+  const { sent, done, fail, } = lastApiCall
   return {
     submittedValue: _.get(sent, 'formInput.username', undefined),
+    submitSent: !!sent,
   }
 }
 
