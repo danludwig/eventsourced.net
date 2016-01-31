@@ -8,9 +8,17 @@ export default (formInput, action, messages) => {
   const errors = fetchNetworkError(action)
   if (!_.isEmpty(errors)) return errors
   if (!action || !action.error || !action.payload || action.payload.status !== 400) return undefined
-  const { response } = action.payload
-  const _error = errorMessages.unexpected
-  if (!response) return { _error }
+  const { response, statusText } = action.payload
+  let _error = errorMessages.unknown
+  if (!response || _.isEmpty(response)) {
+    if (statusText) {
+      const camelizedStatusText = camelize(statusText)
+      if (errorMessages.api[camelizedStatusText]) {
+        _error = errorMessages.unexpected + ' ' + errorMessages.api[camelizedStatusText]
+      }
+    }
+    return { _error }
+  }
 
   for (const field in response) {
     if (!response.hasOwnProperty(field) || !response[field]) continue

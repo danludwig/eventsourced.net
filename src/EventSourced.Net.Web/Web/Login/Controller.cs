@@ -26,8 +26,8 @@ namespace EventSourced.Net.Web.Login
 
     [HttpPost, Route("api/login")]
     public async Task<IActionResult> PostApi([FromBody] PostApiRequest model, string returnUrl) {
-      if (model == null) return HttpBadRequest();
-      //await Task.Delay(500);
+      if (model == null) return HttpBadRequest(new object());
+      //await Task.Delay(1000);
       await Command.SendAsync(new LogUserIn(model.Login, model.Password, HttpContext.Authentication));
       Response.Headers["Location"] = returnUrl ?? Url.RouteUrl("HomeRoute");
       Guid? userId = await Query.Execute(new UserIdByLogin(model.Login));

@@ -24,7 +24,7 @@ namespace EventSourced.Net.Web.Register.ChallengeContact
 
     [HttpPost, Route("api/register")]
     public async Task<IActionResult> PostApi([FromBody] PostApiRequest model) {
-      if (model == null) return HttpBadRequest();
+      if (model == null) return HttpBadRequest(new object());
       //await Task.Delay(1000);
       ShortGuid correlationId = Guid.NewGuid();
       Guid? userIdByLogin = await Query.Execute(new UserIdByLogin(model.EmailOrPhone));

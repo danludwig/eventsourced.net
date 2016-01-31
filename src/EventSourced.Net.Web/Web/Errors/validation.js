@@ -4,5 +4,7 @@ export const messages = {
   api: {
     requestError: 'An unexpected *{message}* request error occurred.',
     failedToFetch: 'The server may currently be offline.',
+    badRequest: 'The server may not be configured to receive this request.',
+    notFound: 'The server may have returned an empty response.',
   },
 }

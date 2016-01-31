@@ -25094,10 +25094,20 @@
 	  var errors = (0, _fetchNetworkError2.default)(action);
 	  if (!_lodash2.default.isEmpty(errors)) return errors;
 	  if (!action || !action.error || !action.payload || action.payload.status !== 400) return undefined;
-	  var response = action.payload.response;
+	  var _action$payload = action.payload;
+	  var response = _action$payload.response;
+	  var statusText = _action$payload.statusText;
 	
-	  var _error = _validation.messages.unexpected;
-	  if (!response) return { _error: _error };
+	  var _error = _validation.messages.unknown;
+	  if (!response || _lodash2.default.isEmpty(response)) {
+	    if (statusText) {
+	      var camelizedStatusText = (0, _humps.camelize)(statusText);
+	      if (_validation.messages.api[camelizedStatusText]) {
+	        _error = _validation.messages.unexpected + ' ' + _validation.messages.api[camelizedStatusText];
+	      }
+	    }
+	    return { _error: _error };
+	  }
 	
 	  for (var field in response) {
 	    if (!response.hasOwnProperty(field) || !response[field]) continue;
@@ -43943,7 +43953,9 @@
 	  unknown: 'An unknown error occurred.',
 	  api: {
 	    requestError: 'An unexpected *{message}* request error occurred.',
-	    failedToFetch: 'The server may currently be offline.'
+	    failedToFetch: 'The server may currently be offline.',
+	    badRequest: 'The server may not be configured to receive this request.',
+	    notFound: 'The server may have returned an empty response.'
 	  }
 	};
 
@@ -43973,12 +43985,17 @@
 	
 	  if (error === true && payload.status !== 400) {
 	    var message = _validation.messages.unknown;
-	    if (payload && payload.name && payload.message) {
+	    if (payload && payload.statusText) {
+	      var template = _validation.messages.api[(0, _humps.camelize)(payload.statusText)];
+	      if (template) {
+	        message = _validation.messages.unexpected + ' ' + template;
+	      }
+	    } else if (payload && payload.name && payload.message) {
 	      var template = _validation.messages.api[(0, _humps.camelize)(payload.name)];
 	      if (template) {
 	        message = (0, _stringTemplate2.default)(template, payload);
 	        var camelizedMessage = (0, _humps.camelize)(payload.message);
-	        if (_validation.messages.api[camelizedMessage]) message += ' ' + _validation.messages.api[camelizedMessage];
+	        if (_validation.messages.api[camelizedMessage]) message = _validation.messages.unexpected + ' ' + _validation.messages.api[camelizedMessage];
 	      }
 	    }
 	    errors._error = message;
