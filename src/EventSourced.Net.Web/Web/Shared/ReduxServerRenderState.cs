@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using Microsoft.AspNet.Http;
-using Microsoft.AspNet.Mvc;
+﻿using Microsoft.AspNet.Mvc;
 
 namespace EventSourced.Net.Web
 {
@@ -15,25 +13,5 @@ namespace EventSourced.Net.Web
     public ReduxAppState App { get; }
     public string Location { get; }
     public ReduxRoutingState Routing { get; }
-  }
-
-  public class ReduxRoutingState
-  {
-    public ReduxRoutingState(HttpRequest request) {
-      Location = new ReduxRoutingLocationState(request);
-    }
-
-    public ReduxRoutingLocationState Location { get; }
-  }
-
-  public class ReduxRoutingLocationState
-  {
-    public ReduxRoutingLocationState(HttpRequest request) {
-      Query = request.Query.ToDictionary(x => x.Key, x => x.Value);
-      Search = request.QueryString.ToString();
-    }
-
-    public object Query { get; }
-    public string Search { get; }
   }
 }

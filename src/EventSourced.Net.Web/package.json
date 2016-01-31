@@ -11,6 +11,8 @@
     "babel-preset-react": "~6.3.13",
     "classnames": "^2.2.3",
     "css-loader": "^0.23.1",
+    "expose": "^0.1.4",
+    "expose-loader": "^0.7.1",
     "gulp": "3.8.11",
     "gulp-concat": "2.5.2",
     "gulp-cssmin": "0.1.7",

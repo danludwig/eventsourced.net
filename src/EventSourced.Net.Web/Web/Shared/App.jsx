@@ -5,10 +5,10 @@ import Layout from './Layout'
 import Home from '../Home/Home'
 import About from '../Home/About'
 import Contact  from '../Home/Contact'
-import Login  from '../Login/Login'
-import Register  from '../Users/Register/RegisterForm'
-import Verify  from '../Users/Register/VerifyForm'
-import Redeem  from '../Users/Register/RedeemForm'
+import Login  from '../Login/View'
+import Register  from '../Register/ChallengeContact/View'
+import RegisterVerify  from '../Register/ConfirmSecret/View'
+import RegisterRedeem  from '../Register/CreateLogin/View'
 import BadRequest  from '../Errors/400'
 import NotFound  from '../Errors/404'
 
@@ -29,8 +29,8 @@ export default class App extends Component {
             <Route path="contact" component={Contact} />
             <Route path="login" component={Login} />
             <Route path="register" component={Register} />
-            <Route path="register/:correlationId" component={Verify} />
-            <Route path="register/:correlationId/redeem" component={Redeem} />
+            <Route path="register/:correlationId" component={RegisterVerify} />
+            <Route path="register/:correlationId/redeem" component={RegisterRedeem} />
             <Route path="errors/400" component={BadRequest} />
             <Route path="*" component={NotFound} />
           </Route>

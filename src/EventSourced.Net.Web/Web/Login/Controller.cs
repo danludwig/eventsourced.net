@@ -20,29 +20,22 @@ namespace EventSourced.Net.Web.Login
     }
 
     [HttpGet, Route("login", Name = "LoginRoute")]
-    public IActionResult ViewLogin() {
+    public IActionResult GetView() {
       var model = this.BuildServerRenderReduxState();
       return this.ServerRenderedView("Login", model);
     }
 
     [HttpPost, Route("api/login")]
-    public async Task<IActionResult> PostLogin([FromBody] PostLoginRequest model, string returnUrl) {
+    public async Task<IActionResult> PostApi([FromBody] PostApiRequest model, string returnUrl) {
       if (model == null) return HttpBadRequest();
       //await Task.Delay(500);
       await Command.SendAsync(new LogUserIn(model.Login, model.Password, HttpContext.Authentication));
       Response.Headers["Location"] = returnUrl ?? Url.RouteUrl("HomeRoute");
       Guid? userId = await Query.Execute(new UserIdByLogin(model.Login));
       var claims = await Query.Execute(new ClaimsByUserId(userId.Value));
-      return Ok(new PostLoginResponse {
+      return Ok(new PostApiResponse {
         Username = claims.Single(x => x.Type == ClaimTypes.Name).Value,
       });
-    }
-
-    [HttpPost, Route("api/logoff")]
-    public async Task<IActionResult> PostLogoff(string returnUrl) {
-      await Command.SendAsync(new LogUserOff(HttpContext.Authentication));
-      Response.Headers["Location"] = returnUrl ?? Url.RouteUrl("HomeRoute");
-      return Ok(new PostLogoffResponse());
     }
   }
 }

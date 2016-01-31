@@ -6,7 +6,7 @@ export default class Footer extends Component {
       <div>
         <hr />
         <footer>
-          <p>&copy; 2017 - EventSourced.Net</p>
+          <p>&copy; 2016 - EventSourced.Net</p>
         </footer>
       </div>
     )

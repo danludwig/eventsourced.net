@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router'
-import LoginNav from '../Login/LoginNav'
+import LogoffNav from '../Logoff/Nav'
 
 export default class TopNav extends Component {
   render() {
@@ -22,7 +22,7 @@ export default class TopNav extends Component {
               <li><Link to="/about">About</Link></li>
               <li><Link to="/contact">Contact</Link></li>
             </ul>
-            <LoginNav />
+            <LogoffNav />
           </div>
         </div>
       </div>

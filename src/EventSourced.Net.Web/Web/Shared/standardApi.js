@@ -73,8 +73,10 @@ const reducers = {
   ),
 }
 
+const initialState = { apiCalls: [], }
 
 export default {
   createAction,
   reducers,
+  initialState,
 }

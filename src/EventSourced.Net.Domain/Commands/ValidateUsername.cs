@@ -13,13 +13,16 @@ namespace EventSourced.Net
       using (var validate = new CommandValidator(throwIfErrorsOnDispose: false)) {
         validate.NotEmpty(username, nameof(username));
         if (!validate.HasError(nameof(username), CommandRejectionReason.Empty)) {
-          validate.IsAvailable(username, nameof(username), () => !userIdByLogin.HasValue);
-          if (!validate.HasError(nameof(username), CommandRejectionReason.AlreadyExists)) {
-            validate.OnlyCharacters(username, nameof(username), AllowedCharacters);
-            if (!validate.HasError(nameof(username), CommandRejectionReason.InvalidFormat)) {
-              validate.Length(username, nameof(username), MinLength, MaxLength);
-            }
+
+          validate.OnlyCharacters(username, nameof(username), AllowedCharacters);
+          if (!validate.HasError(nameof(username), CommandRejectionReason.InvalidFormat)) {
+            validate.Length(username, nameof(username), MinLength, MaxLength);
+          }
+          if (!validate.HasError(nameof(username), CommandRejectionReason.InvalidFormat)) {
             validate.NotPhoneNumber(username, nameof(username));
+            if (!validate.HasError(nameof(username), CommandRejectionReason.PhoneNumber)) {
+              validate.IsAvailable(username, nameof(username), () => !userIdByLogin.HasValue);
+            }
           }
         }
         Errors = validate.Errors;
