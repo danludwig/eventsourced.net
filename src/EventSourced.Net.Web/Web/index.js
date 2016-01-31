@@ -1,14 +1,11 @@
-import React from 'react'
-import { render } from 'react-dom'
 import { compose, createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import createLogger  from 'redux-logger'
-import webApiMiddleware from './Shared/webapi-middleware'
 import { apiMiddleware } from 'redux-api-middleware'
 import { createHistory, useBasename } from 'history'
 import { syncHistory } from 'redux-simple-router'
-import reducer from './Shared/reducers'
-import { initialize } from './Shared/actions'
+import reducer from './reducer'
+import initializeState from './Shared/actions/initializeState'
 import App from './Shared/App'
 
 const history = useBasename(createHistory)({
@@ -21,8 +18,7 @@ const createFinalStoreWithMiddleware = compose(
   applyMiddleware(
     thunkMiddleware,
     apiMiddleware,
-    webApiMiddleware,
-    loggerMiddleware,
+    //loggerMiddleware,
     reduxRouterMiddleware
   ),
   window.devToolsExtension ? window.devToolsExtension() : f => f
@@ -30,9 +26,9 @@ const createFinalStoreWithMiddleware = compose(
 
 const store = createFinalStoreWithMiddleware(reducer)
 reduxRouterMiddleware.listenForReplays(store)
-store.dispatch(initialize())
+store.dispatch(initializeState())
 
-render(
+ReactDOM.render(
   <App store={store} history={history} />,
   document.getElementById('app')
 )

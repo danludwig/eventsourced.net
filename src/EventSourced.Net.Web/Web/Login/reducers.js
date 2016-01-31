@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions'
-import standardApi from '../Shared/standardApi'
-import { INITIALIZE_STATE } from '../Shared/actions'
+import standardApi from '../Shared/reducers/standardApi'
+import { INITIALIZE_STATE } from '../Shared/actions/initializeState'
 import { LOGIN } from './actions'
 import { LOGOFF } from '../Logoff/actions'
 
@@ -22,7 +22,7 @@ export default handleActions({
       username: undefined,
     }
   ),
-  [LOGIN.SENT]: standardApi.reducers.sent,
-  [LOGIN.FAIL]: standardApi.reducers.fail,
-  [LOGIN.DONE]: standardApi.reducers.done,
+  [LOGIN.SENT]: standardApi.sent,
+  [LOGIN.FAIL]: standardApi.fail,
+  [LOGIN.DONE]: standardApi.done,
 }, standardApi.initialState)

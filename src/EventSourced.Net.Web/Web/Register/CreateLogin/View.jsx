@@ -1,10 +1,9 @@
-import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import onSubmit from './actions'
 import Helmet from 'react-helmet'
 import Form from './Form'
 
-class View extends Component {
+class View extends React.Component {
 
   render() {
     const { props: { viewData, params, location: { query, }, }, } = this

@@ -1,9 +1,8 @@
-import React, { Component, PropTypes } from 'react'
 import Markdown from 'react-remarkable'
 
-export default class ValidationSummary extends Component {
+export default class ValidationSummary extends React.Component {
   static propTypes = {
-    form: PropTypes.object.isRequired
+    form: React.PropTypes.object.isRequired
   };
 
   summarize() {

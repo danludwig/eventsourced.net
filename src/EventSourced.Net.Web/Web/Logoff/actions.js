@@ -1,4 +1,4 @@
-import standardApi from '../Shared/standardApi'
+import standardApi from '../Shared/actions/standardApi'
 import { createAction } from 'redux-actions'
 import { routeActions } from 'redux-simple-router'
 import _ from 'lodash'
@@ -13,7 +13,7 @@ export const LOGOFF = {
 export default (formInput, dispatch) => (
   new Promise((resolve, reject) => {
     const { returnUrl } = formInput
-    return dispatch(standardApi.createAction({
+    return dispatch(standardApi({
       types: [LOGOFF.SENT, LOGOFF.DONE, LOGOFF.FAIL],
       method: 'POST',
       endpoint: `/api/logoff${returnUrl ? `?returnUrl=${returnUrl}` : ''}`,

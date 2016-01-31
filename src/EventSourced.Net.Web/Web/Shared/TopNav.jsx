@@ -1,8 +1,7 @@
-import React, { Component } from 'react'
 import { Link } from 'react-router'
 import LogoffNav from '../Logoff/Nav'
 
-export default class TopNav extends Component {
+export default class TopNav extends React.Component {
   render() {
     return (
       <div className="navbar navbar-inverse navbar-fixed-top">

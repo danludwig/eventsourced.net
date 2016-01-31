@@ -1,21 +1,18 @@
-import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
 import validate from './validation'
 import ValidationSummary from '../../Shared/ValidationSummary'
 
-class Form extends Component {
+class Form extends React.Component {
   static propTypes = {
-    fields: PropTypes.object.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired,
+    fields: React.PropTypes.object.isRequired,
+    handleSubmit: React.PropTypes.func.isRequired,
+    submitting: React.PropTypes.bool.isRequired,
   };
 
   render() {
     const { fields: { code }, handleSubmit, submitting, submitFailed } = this.props
     return(
       <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit}>
-        <h4>Confirm your contact information.</h4>
-        <hr />
         <div className="form-group">
           <div className="col-md-3">
             <label className="control-label sr-only">Secret code</label>

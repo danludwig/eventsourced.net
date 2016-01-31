@@ -1,11 +1,10 @@
-import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
 
-class Form extends Component {
+class Form extends React.Component {
   static propTypes = {
-    handleSubmit: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired,
-    username: PropTypes.string,
+    handleSubmit: React.PropTypes.func.isRequired,
+    submitting: React.PropTypes.bool.isRequired,
+    username: React.PropTypes.string,
   };
 
   render() {

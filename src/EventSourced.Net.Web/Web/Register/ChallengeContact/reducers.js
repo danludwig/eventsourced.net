@@ -1,9 +1,9 @@
 import { handleActions } from 'redux-actions'
-import standardApi from '../../Shared/standardApi'
+import standardApi from '../../Shared/reducers/standardApi'
 import { REGISTER } from './actions'
 
 export default handleActions({
-  [REGISTER.SENT]: standardApi.reducers.sent,
-  [REGISTER.FAIL]: standardApi.reducers.fail,
-  [REGISTER.DONE]: standardApi.reducers.done,
+  [REGISTER.SENT]: standardApi.sent,
+  [REGISTER.FAIL]: standardApi.fail,
+  [REGISTER.DONE]: standardApi.done,
 }, standardApi.initialState)

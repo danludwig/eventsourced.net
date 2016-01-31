@@ -1,4 +1,3 @@
-import React, { Component, PropTypes } from 'react'
 import { Provider } from 'react-redux'
 import { Router, Route, IndexRoute } from 'react-router'
 import Layout from './Layout'
@@ -12,10 +11,10 @@ import RegisterRedeem  from '../Register/CreateLogin/View'
 import BadRequest  from '../Errors/400'
 import NotFound  from '../Errors/404'
 
-export default class App extends Component {
+export default class App extends React.Component {
   static propTypes = {
-    store: PropTypes.object.isRequired,
-    history: PropTypes.object.isRequired
+    store: React.PropTypes.object.isRequired,
+    history: React.PropTypes.object.isRequired
   };
 
   render() {

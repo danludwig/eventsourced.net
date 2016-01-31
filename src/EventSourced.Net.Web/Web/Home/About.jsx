@@ -1,7 +1,6 @@
-﻿import React, { Component, PropTypes } from 'react'
 import Helmet from 'react-helmet'
 
-export default class About extends Component {
+export default class About extends React.Component {
   render() {
     return (
       <div>

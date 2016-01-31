@@ -1,21 +1,20 @@
-import React, { Component, PropTypes } from 'react'
 import validate, { messages } from './validation'
 import Markdown from 'react-remarkable'
 
-class Field extends Component {
+class Field extends React.Component {
   static propTypes = {
-    className: PropTypes.string.isRequired,
-    asyncValidating: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.bool
+    className: React.PropTypes.string.isRequired,
+    asyncValidating: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.bool
     ]).isRequired,
-    submitting: PropTypes.bool.isRequired,
-    hasError: PropTypes.bool.isRequired,
-    hasSuccess: PropTypes.bool.isRequired,
-    field: PropTypes.object.isRequired,
-    error: PropTypes.string,
-    success: PropTypes.string.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
+    submitting: React.PropTypes.bool.isRequired,
+    hasError: React.PropTypes.bool.isRequired,
+    hasSuccess: React.PropTypes.bool.isRequired,
+    field: React.PropTypes.object.isRequired,
+    error: React.PropTypes.string,
+    success: React.PropTypes.string.isRequired,
+    handleSubmit: React.PropTypes.func.isRequired,
   };
 
   render() {

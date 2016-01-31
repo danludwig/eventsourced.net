@@ -1,4 +1,4 @@
-import standardApi from '../../Shared/standardApi'
+import standardApi from '../../Shared/actions/standardApi'
 import { createAction } from 'redux-actions'
 import { routeActions } from 'redux-simple-router'
 import selectCommandRejectionErrors from '../../Shared/selectors/commandRejectionErrors'
@@ -17,7 +17,7 @@ export default (formInput, dispatch) => {
   return new Promise((resolve, reject) => {
 
     const { correlationId, token, ...body } = formInput
-    return dispatch(standardApi.createAction({
+    return dispatch(standardApi({
       types: [REDEEM.SENT, REDEEM.DONE, REDEEM.FAIL],
       method: 'POST',
       endpoint: `/api/register/${correlationId}/redeem?token=${encodeURIComponent(token)}`,

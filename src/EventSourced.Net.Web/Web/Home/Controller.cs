@@ -6,17 +6,17 @@ namespace EventSourced.Net.Web.Home
   {
     [HttpGet, Route("", Name = "HomeRoute")]
     public IActionResult Home() {
-      return this.ServerRenderedView("Home");
+      return new ServerRenderedAppViewResult(this, "Home");
     }
 
     [HttpGet, Route("about")]
     public IActionResult About() {
-      return this.ServerRenderedView("About");
+      return new ServerRenderedAppViewResult(this, "About");
     }
 
     [HttpGet, Route("contact")]
     public IActionResult Contact() {
-      return this.ServerRenderedView("Contact");
+      return new ServerRenderedAppViewResult(this, "Contact");
     }
   }
 }

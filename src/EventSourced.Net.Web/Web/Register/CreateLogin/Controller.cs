@@ -28,9 +28,10 @@ namespace EventSourced.Net.Web.Register.CreateLogin
       UserContactChallengeRedeemData data = await Query
         .Execute(new UserContactChallengeRedeemView(correlationGuid, token));
       if (data == null) return HttpNotFound();
-      var model = this.BuildServerRenderReduxState();
-      model.App.Register = new Register.ReduxState(data);
-      return this.ServerRenderedView("Create login", model);
+      var model = new ReduxServerRenderState(this, new ReduxAppState(User) {
+        Register = new Register.ReduxState(data),
+      });
+      return new ServerRenderedAppViewResult(this, "Create login", model);
     }
 
     [HttpPost, Route("api/register/{correlationId}/redeem")]

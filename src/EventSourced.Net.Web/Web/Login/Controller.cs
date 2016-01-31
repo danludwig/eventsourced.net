@@ -21,8 +21,7 @@ namespace EventSourced.Net.Web.Login
 
     [HttpGet, Route("login", Name = "LoginRoute")]
     public IActionResult GetView() {
-      var model = this.BuildServerRenderReduxState();
-      return this.ServerRenderedView("Login", model);
+      return new ServerRenderedAppViewResult(this, "Login");
     }
 
     [HttpPost, Route("api/login")]

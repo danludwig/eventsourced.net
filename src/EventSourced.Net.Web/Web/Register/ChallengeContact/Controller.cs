@@ -19,8 +19,7 @@ namespace EventSourced.Net.Web.Register.ChallengeContact
 
     [HttpGet, Route("register")]
     public IActionResult GetView() {
-      var model = this.BuildServerRenderReduxState();
-      return this.ServerRenderedView("Register", model);
+      return new ServerRenderedAppViewResult(this, "Register");
     }
 
     [HttpPost, Route("api/register")]

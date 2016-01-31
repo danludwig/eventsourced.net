@@ -1,7 +1,6 @@
-import React, { Component, PropTypes } from 'react'
 import Helmet from 'react-helmet'
 
-export default class Home extends Component {
+export default class Home extends React.Component {
   render() {
     return (
       <div>
@@ -107,15 +106,3 @@ export default class Home extends Component {
     )
   }
 }
-
-// Home.propTypes = {
-//   title: PropTypes.string.isRequired
-// }
-
-// function select(state) {
-//   return {
-//     title: state.getIn(['viewTitles', 'home'])
-//   }
-// }
-//
-// export default connect(select)(Home)

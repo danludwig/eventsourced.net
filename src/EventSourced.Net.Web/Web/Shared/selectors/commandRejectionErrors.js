@@ -16,10 +16,10 @@ export default (formInput, action, messages) => {
       const reason = camelize(commandRejection.reason)
       let message = _error
       if (messages && messages[field] && messages[field][reason]) {
-        message = format(messages[field][reason], {
-          ...formInput,
-          ...commandRejection.data
-        })
+        const tokens = { ...formInput, ...commandRejection.data, }
+        if (!tokens[field] && commandRejection.value)
+          tokens[field] = commandRejection.value
+        message = format(messages[field][reason], tokens)
       }
       else if (commandRejection.message) {
         message = commandRejection.message

@@ -1,4 +1,4 @@
-import standardApi from '../../Shared/standardApi'
+import standardApi from '../../Shared/actions/standardApi'
 import { createAction } from 'redux-actions'
 import { routeActions } from 'redux-simple-router'
 import _ from 'lodash'
@@ -13,7 +13,7 @@ export const REGISTER = {
 
 export default (formInput, dispatch) => (
   new Promise((resolve, reject) => (
-    dispatch(standardApi.createAction({
+    dispatch(standardApi({
       types: [REGISTER.SENT, REGISTER.DONE, REGISTER.FAIL],
       method: 'POST',
       endpoint: `/api/register`,

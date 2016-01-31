@@ -22,8 +22,7 @@ namespace EventSourced.Net.Web.Register.ConfirmSecret
 
     [HttpGet, Route("register/{correlationId}", Name = "RegisterVerifyRoute")]
     public IActionResult GetView() {
-      var model = this.BuildServerRenderReduxState();
-      return this.ServerRenderedView("Verify", model);
+      return new ServerRenderedAppViewResult(this, "Verify");
     }
 
     [HttpPost, Route("api/register/{correlationId}")]

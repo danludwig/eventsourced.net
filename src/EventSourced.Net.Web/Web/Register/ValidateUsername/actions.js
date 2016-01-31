@@ -1,4 +1,4 @@
-import standardApi from '../../Shared/standardApi'
+import standardApi from '../../Shared/actions/standardApi'
 import selectReasonInvalidError from '../../Shared/selectors/reasonInvalidError'
 import { messages } from './validation'
 
@@ -11,7 +11,7 @@ export const VALIDATE_USERNAME = {
 export default (formInput, dispatch) => {
   return new Promise((resolve, reject) => {
     const { username, ...rest } = formInput
-    return dispatch(standardApi.createAction({
+    return dispatch(standardApi({
       types: [VALIDATE_USERNAME.SENT, VALIDATE_USERNAME.DONE, VALIDATE_USERNAME.FAIL],
       method: 'POST',
       endpoint: `/api/validate-username`,

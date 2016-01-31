@@ -1,6 +1,6 @@
 import { handleActions } from 'redux-actions'
-import standardApi from '../../Shared/standardApi'
-import { INITIALIZE_STATE } from '../../Shared/actions'
+import standardApi from '../../Shared/reducers/standardApi'
+import { INITIALIZE_STATE } from '../../Shared/actions/initializeState'
 import { VERIFY } from '../ConfirmSecret/actions'
 import { REDEEM } from './actions'
 import _ from 'lodash'
@@ -16,17 +16,8 @@ export default handleActions({
       viewData: action.payload,
     }
   ),
-  [REDEEM.SENT]: standardApi.reducers.sent,
-  [REDEEM.FAIL]: standardApi.reducers.fail,
-  [REDEEM.DONE]: standardApi.reducers.done,
-  [REDEEM.OVER]: (state, action) =>
-    Object.assign({}, state, {
-      apiCalls: [
-        Object.assign({}, state.apiCalls[0], {
-          over: { ...action.payload, },
-        }),
-        ...state.apiCalls.slice(1)
-      ],
-    }
-  ),
+  [REDEEM.SENT]: standardApi.sent,
+  [REDEEM.FAIL]: standardApi.fail,
+  [REDEEM.DONE]: standardApi.done,
+  [REDEEM.OVER]: standardApi.over,
 }, standardApi.initialState)

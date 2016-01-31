@@ -1,11 +1,10 @@
-import React, { Component, PropTypes } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 import Logoff from './View'
 
-class LoginNav extends Component {
+class LoginNav extends React.Component {
   static propTypes = {
-    username: PropTypes.string
+    username: React.PropTypes.string
   };
 
   render() {

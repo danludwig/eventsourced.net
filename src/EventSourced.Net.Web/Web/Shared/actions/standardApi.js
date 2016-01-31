@@ -1,7 +1,7 @@
 import CALL_API from 'redux-api-middleware/lib/CALL_API'
 import { getJSON } from 'redux-api-middleware/lib/util'
 
-const createAction = config => ({
+export default config => ({
   [CALL_API]: {
     types: [
       {
@@ -37,46 +37,3 @@ const createAction = config => ({
     credentials: 'same-origin',
   }
 })
-
-const reducers = {
-  sent: (state, action) =>
-    Object.assign({}, state, {
-      apiCalls: [{
-          sent: action.payload,
-        },
-        ...state.apiCalls,
-      ],
-    }
-  ),
-  fail: (state, action) =>
-    Object.assign({}, state, {
-      apiCalls: [
-        Object.assign({}, state.apiCalls[0], {
-          fail: {
-            status: action.payload.status,
-            response: action.payload.response,
-          },
-        }),
-        ...state.apiCalls.slice(1)
-      ],
-    }
-  ),
-  done: (state, action) =>
-    Object.assign({}, state, {
-      apiCalls: [
-        Object.assign({}, state.apiCalls[0], {
-          done: { ...action.payload, },
-        }),
-        ...state.apiCalls.slice(1)
-      ],
-    }
-  ),
-}
-
-const initialState = { apiCalls: [], }
-
-export default {
-  createAction,
-  reducers,
-  initialState,
-}

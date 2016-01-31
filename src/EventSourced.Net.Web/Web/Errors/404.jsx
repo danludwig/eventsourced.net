@@ -1,7 +1,6 @@
-import React, { Component, PropTypes } from 'react'
 import Helmet from 'react-helmet'
 
-export default class NotFound404 extends Component {
+export default class NotFound404 extends React.Component {
   render() {
     return(
       <div>

@@ -1,4 +1,3 @@
-import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import validate, { messages } from './validation'
 import { blur, startAsyncValidation, stopAsyncValidation } from '../../Shared/actions/reduxForm'
@@ -7,10 +6,10 @@ import Field from './FieldComponent'
 import _ from 'lodash'
 import classNames from 'classnames'
 
-class Connector extends Component {
+class Connector extends React.Component {
   static propTypes = {
-    form: PropTypes.object.isRequired,
-    field: PropTypes.object.isRequired,
+    form: React.PropTypes.object.isRequired,
+    field: React.PropTypes.object.isRequired,
   };
 
   handleSubmit = () => {

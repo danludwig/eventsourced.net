@@ -1,7 +1,6 @@
-import React, { Component, PropTypes } from 'react'
 import Helmet from 'react-helmet'
 
-export default class BadRequest400 extends Component {
+export default class BadRequest400 extends React.Component {
   render() {
     return(
       <div>

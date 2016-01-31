@@ -1,4 +1,3 @@
-import React, { Component, PropTypes } from 'react'
 import { reduxForm } from 'redux-form'
 import ValidateUsernameField from '../ValidateUsername/FieldConnector'
 import validate, { messages } from './validation'
@@ -12,12 +11,12 @@ const reduxFormConfig = {
   validate,
 }
 
-class Form extends Component {
+class Form extends React.Component {
   static propTypes = {
-    viewData: PropTypes.object.isRequired,
-    fields: PropTypes.object.isRequired,
-    handleSubmit: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired,
+    viewData: React.PropTypes.object.isRequired,
+    fields: React.PropTypes.object.isRequired,
+    handleSubmit: React.PropTypes.func.isRequired,
+    submitting: React.PropTypes.bool.isRequired,
   };
 
   render() {

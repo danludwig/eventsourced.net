@@ -6,12 +6,12 @@ namespace EventSourced.Net.Web.Errors
   {
     [HttpGet, Route("errors/404")]
     public IActionResult Error404() {
-      return this.ServerRenderedView("404 Not Found");
+      return new ServerRenderedAppViewResult(this, "404 Not Found");
     }
 
     [HttpGet, Route("errors/400")]
     public IActionResult Error400() {
-      return this.ServerRenderedView("400 Bad Request");
+      return new ServerRenderedAppViewResult(this, "400 Bad Request");
     }
   }
 }

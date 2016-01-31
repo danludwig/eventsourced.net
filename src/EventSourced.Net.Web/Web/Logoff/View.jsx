@@ -1,9 +1,8 @@
-import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 import onSubmit from './actions'
 import Form from './Form'
 
-class View extends Component {
+class View extends React.Component {
   render() {
     const { username } = this.props
     return(
