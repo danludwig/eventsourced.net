@@ -1,13 +1,23 @@
 const reducers = {
-  sent: (state, action) =>
-    Object.assign({}, state, {
-      apiCalls: [{
-          sent: action.payload,
-        },
-        ...state.apiCalls,
-      ],
-    }
-  ),
+  sent: {
+    next: (state, action) =>
+      Object.assign({}, state, {
+        apiCalls: [{
+            sent: action.payload,
+          },
+          ...state.apiCalls,
+        ],
+      }),
+    throw: (state, action) =>
+      Object.assign({}, state, {
+        apiCalls: [
+          Object.assign({}, state.apiCalls[0], {
+            fail: action.payload,
+          }),
+          ...state.apiCalls.slice(1)
+        ],
+      }),
+  },
   fail: (state, action) =>
     Object.assign({}, state, {
       apiCalls: [

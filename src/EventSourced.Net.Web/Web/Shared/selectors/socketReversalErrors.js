@@ -1,11 +1,11 @@
-import { createSelector } from 'reselect'
 import { camelize } from 'humps'
 import format from 'string-template'
+import { messages as errorMessages } from '../../Errors/validation'
 
 export default (formInput, action, messages) => {
   if (!action || !action.payload || !action.payload.errors) return undefined
   const { errors } = action.payload
-  const _error = "An unexpected error occurred."
+  const _error = errorMessages.unexpected
   if (!errors) return { _error }
 
   const formErrors = {}

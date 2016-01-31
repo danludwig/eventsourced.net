@@ -25072,24 +25072,33 @@
 	  value: true
 	});
 	
-	var _reselect = __webpack_require__(211);
-	
 	var _humps = __webpack_require__(212);
 	
 	var _stringTemplate = __webpack_require__(213);
 	
 	var _stringTemplate2 = _interopRequireDefault(_stringTemplate);
 	
+	var _validation = __webpack_require__(427);
+	
+	var _fetchNetworkError = __webpack_require__(428);
+	
+	var _fetchNetworkError2 = _interopRequireDefault(_fetchNetworkError);
+	
+	var _lodash = __webpack_require__(208);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function (formInput, action, messages) {
+	  var errors = (0, _fetchNetworkError2.default)(action);
+	  if (!_lodash2.default.isEmpty(errors)) return errors;
 	  if (!action || !action.error || !action.payload || action.payload.status !== 400) return undefined;
 	  var response = action.payload.response;
 	
-	  var _error = "An unexpected error occurred.";
+	  var _error = _validation.messages.unexpected;
 	  if (!response) return { _error: _error };
 	
-	  var errors = {};
 	  for (var field in response) {
 	    if (!response.hasOwnProperty(field) || !response[field]) continue;
 	    var _iteratorNormalCompletion = true;
@@ -25135,122 +25144,7 @@
 	};
 
 /***/ },
-/* 211 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	exports.__esModule = true;
-	exports.defaultMemoize = defaultMemoize;
-	exports.createSelectorCreator = createSelectorCreator;
-	exports.createSelector = createSelector;
-	exports.createStructuredSelector = createStructuredSelector;
-	
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-	
-	function defaultEqualityCheck(a, b) {
-	  return a === b;
-	}
-	
-	function defaultMemoize(func) {
-	  var equalityCheck = arguments.length <= 1 || arguments[1] === undefined ? defaultEqualityCheck : arguments[1];
-	
-	  var lastArgs = null;
-	  var lastResult = null;
-	  return function () {
-	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	      args[_key] = arguments[_key];
-	    }
-	
-	    if (lastArgs !== null && args.every(function (value, index) {
-	      return equalityCheck(value, lastArgs[index]);
-	    })) {
-	      return lastResult;
-	    }
-	    lastArgs = args;
-	    lastResult = func.apply(undefined, args);
-	    return lastResult;
-	  };
-	}
-	
-	function getDependencies(funcs) {
-	  var dependencies = Array.isArray(funcs[0]) ? funcs[0] : funcs;
-	
-	  if (!dependencies.every(function (dep) {
-	    return typeof dep === 'function';
-	  })) {
-	    var dependencyTypes = dependencies.map(function (dep) {
-	      return typeof dep;
-	    }).join(', ');
-	    throw new Error('Selector creators expect all input-selectors to be functions, ' + ('instead received the following types: [' + dependencyTypes + ']'));
-	  }
-	
-	  return dependencies;
-	}
-	
-	function createSelectorCreator(memoize) {
-	  for (var _len2 = arguments.length, memoizeOptions = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-	    memoizeOptions[_key2 - 1] = arguments[_key2];
-	  }
-	
-	  return function () {
-	    for (var _len3 = arguments.length, funcs = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-	      funcs[_key3] = arguments[_key3];
-	    }
-	
-	    var recomputations = 0;
-	    var resultFunc = funcs.pop();
-	    var dependencies = getDependencies(funcs);
-	
-	    var memoizedResultFunc = memoize.apply(undefined, [function () {
-	      recomputations++;
-	      return resultFunc.apply(undefined, arguments);
-	    }].concat(memoizeOptions));
-	
-	    var selector = function selector(state, props) {
-	      for (var _len4 = arguments.length, args = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
-	        args[_key4 - 2] = arguments[_key4];
-	      }
-	
-	      var params = dependencies.map(function (dependency) {
-	        return dependency.apply(undefined, [state, props].concat(args));
-	      });
-	      return memoizedResultFunc.apply(undefined, _toConsumableArray(params));
-	    };
-	
-	    selector.recomputations = function () {
-	      return recomputations;
-	    };
-	    return selector;
-	  };
-	}
-	
-	function createSelector() {
-	  return createSelectorCreator(defaultMemoize).apply(undefined, arguments);
-	}
-	
-	function createStructuredSelector(selectors) {
-	  var selectorCreator = arguments.length <= 1 || arguments[1] === undefined ? createSelector : arguments[1];
-	
-	  if (typeof selectors !== 'object') {
-	    throw new Error('createStructuredSelector expects first argument to be an object ' + ('where each property is a selector, instead received a ' + typeof selectors));
-	  }
-	  var objectKeys = Object.keys(selectors);
-	  return selectorCreator(objectKeys.map(function (key) {
-	    return selectors[key];
-	  }), function () {
-	    for (var _len5 = arguments.length, values = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-	      values[_key5] = arguments[_key5];
-	    }
-	
-	    return values.reduce(function (composition, value, index) {
-	      composition[objectKeys[index]] = value;
-	      return composition;
-	    }, {});
-	  });
-	}
-
-/***/ },
+/* 211 */,
 /* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -25702,6 +25596,10 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
+	var _actions = __webpack_require__(206);
+	
+	var _actions2 = _interopRequireDefault(_actions);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _objectWithoutProperties(obj, keys) { var target = {}; for (var i in obj) { if (keys.indexOf(i) >= 0) continue; if (!Object.prototype.hasOwnProperty.call(obj, i)) continue; target[i] = obj[i]; } return target; }
@@ -25739,7 +25637,10 @@
 	        } catch (ex) {}
 	        return dispatch((0, _reduxActions.createAction)(REDEEM.OVER)(messageData)).then(function (socketAction) {
 	          var socketErrors = (0, _socketReversalErrors2.default)(body, socketAction, _validation.messages);
-	          return socketErrors ? reject(socketErrors) : dispatch(_reduxSimpleRouter.routeActions.push(location));
+	          return socketErrors ? reject(socketErrors) : resolve((0, _actions2.default)({
+	            login: body.username,
+	            password: body.password
+	          }, dispatch));
 	        });
 	      };
 	    });
@@ -25758,13 +25659,13 @@
 	  value: true
 	});
 	
-	var _reselect = __webpack_require__(211);
-	
 	var _humps = __webpack_require__(212);
 	
 	var _stringTemplate = __webpack_require__(213);
 	
 	var _stringTemplate2 = _interopRequireDefault(_stringTemplate);
+	
+	var _validation = __webpack_require__(427);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -25772,7 +25673,7 @@
 	  if (!action || !action.payload || !action.payload.errors) return undefined;
 	  var errors = action.payload.errors;
 	
-	  var _error = "An unexpected error occurred.";
+	  var _error = _validation.messages.unexpected;
 	  if (!errors) return { _error: _error };
 	
 	  var formErrors = {};
@@ -25927,13 +25828,17 @@
 	  value: true
 	});
 	
-	var _reselect = __webpack_require__(211);
-	
 	var _humps = __webpack_require__(212);
 	
 	var _stringTemplate = __webpack_require__(213);
 	
 	var _stringTemplate2 = _interopRequireDefault(_stringTemplate);
+	
+	var _validation = __webpack_require__(427);
+	
+	var _fetchNetworkError = __webpack_require__(428);
+	
+	var _fetchNetworkError2 = _interopRequireDefault(_fetchNetworkError);
 	
 	var _lodash = __webpack_require__(208);
 	
@@ -25942,10 +25847,12 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function (formInput, action, messages) {
+	  var errors = (0, _fetchNetworkError2.default)(action);
+	  if (errors._error) return errors._error;
 	  if (!action || !action.error || !action.payload || action.payload.status !== 400) return undefined;
 	  var response = action.payload.response;
 	
-	  var _error = "An unexpected error occurred.";
+	  var _error = _validation.messages.unexpected;
 	  if (!response) return { _error: _error };
 	
 	  var reasonInvalid = response.reasonInvalid;
@@ -44021,6 +43928,63 @@
 		}
 	}());
 
+
+/***/ },
+/* 427 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var messages = exports.messages = {
+	  unexpected: 'An unexpected error occurred.',
+	  unknown: 'An unknown error occurred.',
+	  api: {
+	    requestError: 'An unexpected *{message}* request error occurred.',
+	    failedToFetch: 'The server may currently be offline.'
+	  }
+	};
+
+/***/ },
+/* 428 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _humps = __webpack_require__(212);
+	
+	var _stringTemplate = __webpack_require__(213);
+	
+	var _stringTemplate2 = _interopRequireDefault(_stringTemplate);
+	
+	var _validation = __webpack_require__(427);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (action) {
+	  var errors = {};var error = action.error;
+	  var payload = action.payload;
+	
+	  if (error === true && payload.status !== 400) {
+	    var message = _validation.messages.unknown;
+	    if (payload && payload.name && payload.message) {
+	      var template = _validation.messages.api[(0, _humps.camelize)(payload.name)];
+	      if (template) {
+	        message = (0, _stringTemplate2.default)(template, payload);
+	        var camelizedMessage = (0, _humps.camelize)(payload.message);
+	        if (_validation.messages.api[camelizedMessage]) message += ' ' + _validation.messages.api[camelizedMessage];
+	      }
+	    }
+	    errors._error = message;
+	  }
+	  return errors;
+	};
 
 /***/ }
 /******/ ]);

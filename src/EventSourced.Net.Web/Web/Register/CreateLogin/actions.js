@@ -5,6 +5,7 @@ import selectCommandRejectionErrors from '../../Shared/selectors/commandRejectio
 import selectSocketReversalErrors from '../../Shared/selectors/socketReversalErrors'
 import { messages } from './validation'
 import _ from 'lodash'
+import login from '../../Login/actions'
 
 export const REDEEM = {
   SENT: 'REGISTER/REDEEM_SENT',
@@ -38,7 +39,10 @@ export default (formInput, dispatch) => {
             const socketErrors = selectSocketReversalErrors(body, socketAction, messages)
             return socketErrors ?
               reject(socketErrors) :
-              dispatch(routeActions.push(location))
+              resolve(login({
+                login: body.username,
+                password: body.password,
+              }, dispatch))
           })
       }
     })
