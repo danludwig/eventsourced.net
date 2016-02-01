@@ -3,6 +3,8 @@ import standardApi from '../../Shared/reducers/standardApi'
 import { VALIDATE_USERNAME } from './actions'
 
 export default handleActions({
+  [VALIDATE_USERNAME.TOUCHED]: (state, action) =>
+    Object.assign({}, state, { touched: true, }),
   [VALIDATE_USERNAME.SENT]: standardApi.sent,
   [VALIDATE_USERNAME.FAIL]: standardApi.fail,
   [VALIDATE_USERNAME.DONE]: standardApi.done,

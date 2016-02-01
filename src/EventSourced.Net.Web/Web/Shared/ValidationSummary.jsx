@@ -1,39 +1,44 @@
 import Markdown from 'react-remarkable'
 
-export default class ValidationSummary extends React.Component {
+class Container extends React.Component {
   static propTypes = {
-    form: React.PropTypes.object.isRequired
+    errors: React.PropTypes.object.isRequired,
+    visible: React.PropTypes.bool.isRequired,
   };
 
-  summarize() {
-    const { form } = this.props, errors = []
-    if (form.submitting) return false
-    if (form.error) errors.push(form.error)
-    for (var field in form.errors) {
-      if (!form.errors.hasOwnProperty(field)) continue
-      if (!form.errors[field]) continue
-      errors.push(form.errors[field])
-    }
-    if (!errors.length) return false
-    return errors
-  }
+  static defaultProps = {
+    visible: true,
+  };
 
   render() {
-    const errors = this.summarize()
-    return errors && errors.length ? this.renderSummary(errors) : false
-  }
-
-  renderSummary(errors) {
+    const messages = [], { visible, errors, } = this.props
+    if (visible) {
+      for (const field in errors) {
+        if (!errors.hasOwnProperty(field) || !errors[field]) continue
+        messages.push(errors[field])
+      }
+    }
+    if (!messages.length) return false
     return(
-      <div className="text-danger form-errors">
-        <ul>
-          {errors.map((entry, i) =>
-            <li key={i}>
-              <Markdown>{entry}</Markdown>
-            </li>
-          )}
-        </ul>
-      </div>
+      <Component messages={messages} />
     )
   }
 }
+
+const Component = ({ messages }) => (
+  <div className="text-danger form-errors">
+    <ul>
+      {messages.map((entry, i) =>
+        <li key={i}>
+          <Markdown>{entry}</Markdown>
+        </li>
+      )}
+    </ul>
+  </div>
+)
+
+Component.propTypes = {
+  messages: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+}
+
+export default Container

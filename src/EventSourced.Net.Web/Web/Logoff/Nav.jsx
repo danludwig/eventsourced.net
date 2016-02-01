@@ -1,27 +1,23 @@
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
-import Logoff from './View'
+import onSubmitLogoff from './actions'
+import LogoffForm from './Form'
 
-class LoginNav extends React.Component {
-  static propTypes = {
-    username: React.PropTypes.string
-  };
+const LoginNav = ({ username }) => (
+  <div className="navbar-right">
+    { username ?
+    <LogoffForm onSubmit={onSubmitLogoff} username={username} />
+    :
+    <ul className="nav navbar-nav">
+      <li><Link to="/register">Register</Link></li>
+      <li><Link to="/login">Log in</Link></li>
+    </ul>
+    }
+  </div>
+)
 
-  render() {
-    const { username } = this.props
-    return (
-      <div className="navbar-right">
-        { username ?
-        <Logoff />
-        :
-        <ul className="nav navbar-nav">
-          <li><Link to="/register">Register</Link></li>
-          <li><Link to="/login">Log in</Link></li>
-        </ul>
-        }
-      </div>
-    )
-  }
+LoginNav.propTypes = {
+  username: React.PropTypes.string
 }
 
 const select = state => ({

@@ -26,6 +26,7 @@ namespace EventSourced.Net.Web.Login
 
     [HttpPost, Route("api/login")]
     public async Task<IActionResult> PostApi([FromBody] PostApiRequest model, string returnUrl) {
+      //return HttpNotFound();
       if (model == null) return HttpBadRequest(new object());
       //await Task.Delay(1000);
       await Command.SendAsync(new LogUserIn(model.Login, model.Password, HttpContext.Authentication));

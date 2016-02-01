@@ -3,23 +3,23 @@ import onSubmit from './actions'
 import Helmet from 'react-helmet'
 import Form from './Form'
 
-class View extends React.Component {
+const View = ({ viewData, params, location: { query, }, }) => (
+  <div>
+    <Helmet title="Create login" />
+    <h2>Create login.</h2>
+    <h4>Choose a username and password.</h4>
+    <hr />
+    <Form onSubmit={onSubmit}
+          initialValues={{ ...params, ...query }}
+          viewData={viewData}
+    />
+  </div>
+)
 
-  render() {
-    const { props: { viewData, params, location: { query, }, }, } = this
-    return(
-      <div>
-        <Helmet title="Create login" />
-        <h2>Create login.</h2>
-        <h4>Choose a username and password.</h4>
-        <hr />
-        <Form onSubmit={onSubmit}
-              initialValues={{ ...params, ...query }}
-              viewData={viewData}
-        />
-      </div>
-    )
-  }
+View.propTypes = {
+  viewData: React.PropTypes.object.isRequired,
+  params: React.PropTypes.object.isRequired,
+  location: React.PropTypes.object.isRequired,
 }
 
 const select = state => ({

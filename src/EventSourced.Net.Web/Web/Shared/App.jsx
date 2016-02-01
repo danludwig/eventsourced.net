@@ -11,30 +11,27 @@ import RegisterRedeem  from '../Register/CreateLogin/View'
 import BadRequest  from '../Errors/400'
 import NotFound  from '../Errors/404'
 
-export default class App extends React.Component {
-  static propTypes = {
-    store: React.PropTypes.object.isRequired,
-    history: React.PropTypes.object.isRequired
-  };
+const App = ({ store, history }) => (
+  <Provider store={store}>
+    <Router history={history}>
+      <Route path="/" component={Layout}>
+        <IndexRoute component={Home} />
+        <Route path="about" component={About} />
+        <Route path="contact" component={Contact} />
+        <Route path="login" component={Login} />
+        <Route path="register" component={Register} />
+        <Route path="register/:correlationId" component={RegisterVerify} />
+        <Route path="register/:correlationId/redeem" component={RegisterRedeem} />
+        <Route path="errors/400" component={BadRequest} />
+        <Route path="*" component={NotFound} />
+      </Route>
+    </Router>
+  </Provider>
+)
 
-  render() {
-    const { store, history } = this.props
-    return(
-      <Provider store={store}>
-        <Router history={history}>
-          <Route path="/" component={Layout}>
-            <IndexRoute component={Home} />
-            <Route path="about" component={About} />
-            <Route path="contact" component={Contact} />
-            <Route path="login" component={Login} />
-            <Route path="register" component={Register} />
-            <Route path="register/:correlationId" component={RegisterVerify} />
-            <Route path="register/:correlationId/redeem" component={RegisterRedeem} />
-            <Route path="errors/400" component={BadRequest} />
-            <Route path="*" component={NotFound} />
-          </Route>
-        </Router>
-      </Provider>
-    )
-  }
+App.propTypes = {
+  store: React.PropTypes.object.isRequired,
+  history: React.PropTypes.object.isRequired
 }
+
+export default App

@@ -3,6 +3,7 @@ import selectReasonInvalidError from '../../Shared/selectors/reasonInvalidError'
 import { messages } from './validation'
 
 export const VALIDATE_USERNAME = {
+  TOUCHED: 'VALIDATE_USERNAME_TOUCHED',
   SENT: 'VALIDATE_USERNAME_SENT',
   FAIL: 'VALIDATE_USERNAME_FAIL',
   DONE: 'VALIDATE_USERNAME_DONE',
