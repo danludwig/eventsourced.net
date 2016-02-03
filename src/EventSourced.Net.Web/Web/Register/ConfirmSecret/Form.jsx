@@ -1,12 +1,13 @@
 import { reduxForm } from 'redux-form'
 import validate from './validation'
 import ValidationSummary from '../../Shared/ValidationSummary'
+import ReduxFormPropTypes from '../../Shared/propTypes/reduxForm'
 
 const form = 'verify'
-const fields = ['code', 'correlationId']
+const fields = ['code', 'correlationId', 'returnUrl']
 const config = { form, fields, validate, }
 
-const Form = ({ fields: { code }, handleSubmit, submitting, submitFailed, error, errors, }) => (
+const Form = ({ handleSubmit, submitting, submitFailed, error, errors, fields: { code }, }) => (
   <form method="post" className="form-horizontal" role="form" onSubmit={handleSubmit}>
     <div className="form-group">
       <div className="col-md-3">
@@ -24,10 +25,19 @@ const Form = ({ fields: { code }, handleSubmit, submitting, submitFailed, error,
 )
 
 Form.propTypes = {
-  fields: React.PropTypes.object.isRequired,
-  handleSubmit: React.PropTypes.func.isRequired,
-  submitting: React.PropTypes.bool.isRequired,
-  formName: React.PropTypes.string.isRequired,
+  ...ReduxFormPropTypes.handleSubmit,
+  ...ReduxFormPropTypes.submitting,
+  ...ReduxFormPropTypes.submitFailed,
+  ...ReduxFormPropTypes.error,
+  ...ReduxFormPropTypes.formName,
+  errors: React.PropTypes.shape({
+    code: React.PropTypes.string,
+  }).isRequired,
+  fields: React.PropTypes.shape({
+    code: ReduxFormPropTypes.field.isRequired,
+    correlationId: ReduxFormPropTypes.field.isRequired,
+    returnUrl: ReduxFormPropTypes.field.isRequired,
+  }).isRequired,
 }
 
 const select = () => ({ formName: form, })

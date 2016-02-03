@@ -1,10 +1,11 @@
 import { reduxForm } from 'redux-form'
+import ReduxFormPropTypes from '../Shared/propTypes/reduxForm'
 
 const form = 'logoff'
 const fields = ['returnUrl']
 const config = { form, fields, }
 
-const Form = ({ username, handleSubmit, submitting }) => (
+const Form = ({ handleSubmit, submitting, username, }) => (
   <form method="post" onSubmit={handleSubmit}>
     <ul className="nav navbar-nav navbar-right">
       <li>
@@ -18,10 +19,10 @@ const Form = ({ username, handleSubmit, submitting }) => (
 )
 
 Form.propTypes = {
+  ...ReduxFormPropTypes.formName,
+  ...ReduxFormPropTypes.handleSubmit,
+  ...ReduxFormPropTypes.submitting,
   username: React.PropTypes.string.isRequired,
-  handleSubmit: React.PropTypes.func.isRequired,
-  submitting: React.PropTypes.bool.isRequired,
-  formName: React.PropTypes.string.isRequired,
 }
 
 const select = () => ({ formName: form, })

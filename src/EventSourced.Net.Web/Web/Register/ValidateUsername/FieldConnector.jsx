@@ -6,13 +6,23 @@ import { createAction } from 'redux-actions'
 import Field from './FieldComponent'
 import _ from 'lodash'
 import classNames from 'classnames'
+import ReduxFormPropTypes from '../../Shared/propTypes/reduxForm'
 
 class Connector extends React.Component {
   static propTypes = {
+    ...ReduxFormPropTypes.dispatch,
     submittedValue: React.PropTypes.string,
     touched: React.PropTypes.bool.isRequired,
-    form: React.PropTypes.object.isRequired,
-    field: React.PropTypes.object.isRequired,
+    form: React.PropTypes.shape({
+      ...ReduxFormPropTypes.formName,
+      ...ReduxFormPropTypes.formKey,
+      ...ReduxFormPropTypes.submitting,
+      ...ReduxFormPropTypes.asyncValidating,
+      errors: React.PropTypes.shape({
+        username: React.PropTypes.string,
+      }).isRequired,
+    }),
+    field: ReduxFormPropTypes.field.isRequired,
   };
 
   handleSubmit = () => {

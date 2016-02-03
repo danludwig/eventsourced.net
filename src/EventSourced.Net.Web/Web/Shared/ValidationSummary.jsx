@@ -2,7 +2,7 @@ import Markdown from 'react-remarkable'
 
 class Container extends React.Component {
   static propTypes = {
-    errors: React.PropTypes.object.isRequired,
+    errors: React.PropTypes.objectOf(React.PropTypes.string).isRequired,
     visible: React.PropTypes.bool.isRequired,
   };
 

@@ -1,7 +1,7 @@
 import TopNav from './TopNav'
 import Footer from './Footer'
 
-export default ({ children }) => (
+const Layout = ({ children }) => (
   <div>
     <TopNav />
     <div className="container body-content">
@@ -10,3 +10,9 @@ export default ({ children }) => (
     </div>
   </div>
 )
+
+Layout.propTypes = {
+  children: React.PropTypes.object.isRequired,
+}
+
+export default Layout

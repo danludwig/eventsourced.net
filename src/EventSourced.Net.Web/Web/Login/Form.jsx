@@ -1,6 +1,7 @@
 import { reduxForm } from 'redux-form'
 import validate from './validation'
 import ValidationSummary from '../Shared/ValidationSummary'
+import ReduxFormPropTypes from '../Shared/propTypes/reduxForm'
 
 const form = 'login'
 const fields = ['login', 'password', 'returnUrl']
@@ -30,13 +31,20 @@ const Form = ({ handleSubmit, submitting, submitFailed, error, errors, fields: {
 )
 
 Form.propTypes = {
-  handleSubmit: React.PropTypes.func.isRequired,
-  submitting: React.PropTypes.bool.isRequired,
-  submitFailed: React.PropTypes.bool.isRequired,
-  error: React.PropTypes.string,
-  errors: React.PropTypes.object.isRequired,
-  fields: React.PropTypes.object.isRequired,
-  formName: React.PropTypes.string.isRequired,
+  ...ReduxFormPropTypes.handleSubmit,
+  ...ReduxFormPropTypes.submitting,
+  ...ReduxFormPropTypes.submitFailed,
+  ...ReduxFormPropTypes.error,
+  ...ReduxFormPropTypes.formName,
+  errors: React.PropTypes.shape({
+    login: React.PropTypes.string,
+    password: React.PropTypes.string,
+  }).isRequired,
+  fields: React.PropTypes.shape({
+    login: ReduxFormPropTypes.field.isRequired,
+    password: ReduxFormPropTypes.field.isRequired,
+    returnUrl: ReduxFormPropTypes.field.isRequired,
+  }).isRequired,
 }
 
 const select = () => ({ formName: form, })

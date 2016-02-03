@@ -1,6 +1,7 @@
 import Markdown from 'react-remarkable'
+import ReduxFormPropTypes from '../../Shared/propTypes/reduxForm'
 
-const Field = ({ field, handleSubmit, submitting, className, asyncValidating, hasError, hasSuccess, error, success, }) => (
+const Field = ({ handleSubmit, submitting, asyncValidating, field, className, hasError, hasSuccess, error, success, }) => (
   <div className={className}>
     <div className="col-md-6">
       <label className="control-label sr-only">Username</label>
@@ -34,18 +35,15 @@ const Field = ({ field, handleSubmit, submitting, className, asyncValidating, ha
 )
 
 Field.propTypes = {
+  ...ReduxFormPropTypes.handleSubmit,
+  ...ReduxFormPropTypes.submitting,
+  ...ReduxFormPropTypes.asyncValidating,
+  ...ReduxFormPropTypes.error,
+  field: ReduxFormPropTypes.field.isRequired,
   className: React.PropTypes.string.isRequired,
-  asyncValidating: React.PropTypes.oneOfType([
-    React.PropTypes.string,
-    React.PropTypes.bool
-  ]).isRequired,
-  submitting: React.PropTypes.bool.isRequired,
   hasError: React.PropTypes.bool.isRequired,
   hasSuccess: React.PropTypes.bool.isRequired,
-  field: React.PropTypes.object.isRequired,
-  error: React.PropTypes.string,
   success: React.PropTypes.string.isRequired,
-  handleSubmit: React.PropTypes.func.isRequired,
 }
 
 export default Field

@@ -1,9 +1,10 @@
 import { reduxForm } from 'redux-form'
 import validate from './validation'
 import ValidationSummary from '../../Shared/ValidationSummary'
+import ReduxFormPropTypes from '../../Shared/propTypes/reduxForm'
 
 const form = 'register'
-const fields = ['emailOrPhone']
+const fields = ['emailOrPhone', 'returnUrl']
 const config = { form, fields, validate, }
 
 const Form = ({ handleSubmit, submitting, submitFailed, error, errors, fields: { emailOrPhone }, }) => (
@@ -24,12 +25,19 @@ const Form = ({ handleSubmit, submitting, submitFailed, error, errors, fields: {
 )
 
 Form.propTypes = {
-  handleSubmit: React.PropTypes.func.isRequired,
-  submitting: React.PropTypes.bool.isRequired,
-  submitFailed: React.PropTypes.bool.isRequired,
-  error: React.PropTypes.string,
-  errors: React.PropTypes.object.isRequired,
-  fields: React.PropTypes.object.isRequired,
+  ...ReduxFormPropTypes.handleSubmit,
+  ...ReduxFormPropTypes.submitting,
+  ...ReduxFormPropTypes.submitFailed,
+  ...ReduxFormPropTypes.error,
+  ...ReduxFormPropTypes.formName,
+  errors: React.PropTypes.shape({
+    emailOrPhone: React.PropTypes.string,
+  }).isRequired,
+  fields: React.PropTypes.shape({
+    emailOrPhone: ReduxFormPropTypes.field.isRequired,
+    returnUrl: ReduxFormPropTypes.field.isRequired,
+  }).isRequired,
 }
 
-export default reduxForm(config)(Form)
+const select = () => ({ formName: form, })
+export default reduxForm(config, select)(Form)

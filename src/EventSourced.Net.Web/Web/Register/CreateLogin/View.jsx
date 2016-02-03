@@ -17,9 +17,18 @@ const View = ({ viewData, params, location: { query, }, }) => (
 )
 
 View.propTypes = {
-  viewData: React.PropTypes.object.isRequired,
-  params: React.PropTypes.object.isRequired,
-  location: React.PropTypes.object.isRequired,
+  viewData: React.PropTypes.shape({
+    purpose: React.PropTypes.string.isRequired,
+    contactValue: React.PropTypes.string.isRequired,
+  }).isRequired,
+  params: React.PropTypes.shape({
+    correlationId: React.PropTypes.string.isRequired,
+  }).isRequired,
+  location: React.PropTypes.shape({
+    query: React.PropTypes.shape({
+      returnUrl: React.PropTypes.string,
+    }),
+  }),
 }
 
 const select = state => ({
