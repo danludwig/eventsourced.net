@@ -50,7 +50,7 @@
 	  value: true
 	});
 
-	var _ServerRenderedApp = __webpack_require__(426);
+	var _ServerRenderedApp = __webpack_require__(427);
 
 	var _ServerRenderedApp2 = _interopRequireDefault(_ServerRenderedApp);
 
@@ -25959,35 +25959,35 @@
 	
 	var _Home2 = _interopRequireDefault(_Home);
 	
-	var _About = __webpack_require__(347);
+	var _About = __webpack_require__(348);
 	
 	var _About2 = _interopRequireDefault(_About);
 	
-	var _Contact = __webpack_require__(348);
+	var _Contact = __webpack_require__(349);
 	
 	var _Contact2 = _interopRequireDefault(_Contact);
 	
-	var _View = __webpack_require__(349);
+	var _View = __webpack_require__(350);
 	
 	var _View2 = _interopRequireDefault(_View);
 	
-	var _View3 = __webpack_require__(414);
+	var _View3 = __webpack_require__(415);
 	
 	var _View4 = _interopRequireDefault(_View3);
 	
-	var _View5 = __webpack_require__(416);
+	var _View5 = __webpack_require__(417);
 	
 	var _View6 = _interopRequireDefault(_View5);
 	
-	var _View7 = __webpack_require__(418);
+	var _View7 = __webpack_require__(419);
 	
 	var _View8 = _interopRequireDefault(_View7);
 	
-	var _ = __webpack_require__(424);
+	var _ = __webpack_require__(425);
 	
 	var _2 = _interopRequireDefault(_);
 	
-	var _3 = __webpack_require__(425);
+	var _3 = __webpack_require__(426);
 	
 	var _4 = _interopRequireDefault(_3);
 	
@@ -29002,103 +29002,76 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
+	var _ReactBootstrap = ReactBootstrap;
+	var Carousel = _ReactBootstrap.Carousel;
+	var CarouselItem = _ReactBootstrap.CarouselItem;
+	
 	exports.default = function () {
 	  return React.createElement(
 	    "div",
 	    null,
 	    React.createElement(_reactHelmet2.default, { title: "Home" }),
 	    React.createElement(
-	      "div",
-	      { id: "myCarousel", className: "carousel slide", "data-ride": "carousel", "data-interval": "6000" },
+	      Carousel,
+	      null,
 	      React.createElement(
-	        "ol",
-	        { className: "carousel-indicators" },
-	        React.createElement("li", { "data-target": "#myCarousel", "data-slide-to": "0", className: "active" }),
-	        React.createElement("li", { "data-target": "#myCarousel", "data-slide-to": "1" }),
-	        React.createElement("li", { "data-target": "#myCarousel", "data-slide-to": "2" })
-	      ),
-	      React.createElement(
-	        "div",
-	        { className: "carousel-inner", role: "listbox" },
+	        CarouselItem,
+	        null,
+	        React.createElement("img", { src: "/images/Banner-01-EventSourced.png", alt: "EventSourced.Net", className: "img-responsive" }),
 	        React.createElement(
 	          "div",
-	          { className: "item active" },
-	          React.createElement("img", { src: "/images/Banner-01-EventSourced.png", alt: "EventSourced.Net", className: "img-responsive" }),
+	          { className: "carousel-caption" },
 	          React.createElement(
-	            "div",
-	            { className: "carousel-caption" },
+	            "p",
+	            null,
+	            "Get started using ASP.NET 5 with the event sourcing pattern, not Entity Framework.",
+	            ' ',
 	            React.createElement(
-	              "p",
-	              null,
-	              "Get started using ASP.NET 5 with the event sourcing pattern, not Entity Framework.",
-	              ' ',
-	              React.createElement(
-	                "a",
-	                { className: "btn btn-default btn-default", href: "https://github.com/danludwig/eventsourced.net" },
-	                "Learn More"
-	              )
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "item" },
-	          React.createElement("img", { src: "/images/ASP-NET-Banners-01.png", alt: "ASP.NET", className: "img-responsive" }),
-	          React.createElement(
-	            "div",
-	            { className: "carousel-caption" },
-	            React.createElement(
-	              "p",
-	              null,
-	              "Learn how to build ASP.NET apps that can run anywhere.",
-	              ' ',
-	              React.createElement(
-	                "a",
-	                { className: "btn btn-default btn-default", href: "http://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409" },
-	                "Learn More"
-	              )
-	            )
-	          )
-	        ),
-	        React.createElement(
-	          "div",
-	          { className: "item" },
-	          React.createElement("img", { src: "/images/ASP-NET-Banners-02.png", alt: "Package Management", className: "img-responsive" }),
-	          React.createElement(
-	            "div",
-	            { className: "carousel-caption" },
-	            React.createElement(
-	              "p",
-	              null,
-	              "Bring in libraries from NuGet, Bower, and npm, and automate tasks using Grunt or Gulp.",
-	              ' ',
-	              React.createElement(
-	                "a",
-	                { className: "btn btn-default btn-default", href: "http://go.microsoft.com/fwlink/?LinkID=525029&clcid=0x409" },
-	                "Learn More"
-	              )
+	              "a",
+	              { className: "btn btn-default btn-default", href: "https://github.com/danludwig/eventsourced.net" },
+	              "Learn More"
 	            )
 	          )
 	        )
 	      ),
 	      React.createElement(
-	        "a",
-	        { className: "left carousel-control", href: "#myCarousel", role: "button", "data-slide": "prev" },
-	        React.createElement("span", { className: "glyphicon glyphicon-chevron-left", "aria-hidden": "true" }),
+	        CarouselItem,
+	        null,
+	        React.createElement("img", { src: "/images/ASP-NET-Banners-01.png", alt: "ASP.NET", className: "img-responsive" }),
 	        React.createElement(
-	          "span",
-	          { className: "sr-only" },
-	          "Previous"
+	          "div",
+	          { className: "carousel-caption" },
+	          React.createElement(
+	            "p",
+	            null,
+	            "Learn how to build ASP.NET apps that can run anywhere.",
+	            ' ',
+	            React.createElement(
+	              "a",
+	              { className: "btn btn-default btn-default", href: "http://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409" },
+	              "Learn More"
+	            )
+	          )
 	        )
 	      ),
 	      React.createElement(
-	        "a",
-	        { className: "right carousel-control", href: "#myCarousel", role: "button", "data-slide": "next" },
-	        React.createElement("span", { className: "glyphicon glyphicon-chevron-right", "aria-hidden": "true" }),
+	        CarouselItem,
+	        null,
+	        React.createElement("img", { src: "/images/ASP-NET-Banners-02.png", alt: "Package Management", className: "img-responsive" }),
 	        React.createElement(
-	          "span",
-	          { className: "sr-only" },
-	          "Next"
+	          "div",
+	          { className: "carousel-caption" },
+	          React.createElement(
+	            "p",
+	            null,
+	            "Bring in libraries from NuGet, Bower, and npm, and automate tasks using Grunt or Gulp.",
+	            ' ',
+	            React.createElement(
+	              "a",
+	              { className: "btn btn-default btn-default", href: "http://go.microsoft.com/fwlink/?LinkID=525029&clcid=0x409" },
+	              "Learn More"
+	            )
+	          )
 	        )
 	      )
 	    ),
@@ -31788,7 +31761,8 @@
 	module.exports = exports["default"];
 
 /***/ },
-/* 347 */
+/* 347 */,
+/* 348 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -31823,7 +31797,7 @@
 	};
 
 /***/ },
-/* 348 */
+/* 349 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -31903,7 +31877,7 @@
 	};
 
 /***/ },
-/* 349 */
+/* 350 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31920,7 +31894,7 @@
 	
 	var _reactHelmet2 = _interopRequireDefault(_reactHelmet);
 	
-	var _Form = __webpack_require__(350);
+	var _Form = __webpack_require__(351);
 	
 	var _Form2 = _interopRequireDefault(_Form);
 	
@@ -31958,7 +31932,7 @@
 	exports.default = View;
 
 /***/ },
-/* 350 */
+/* 351 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -31975,7 +31949,7 @@
 	
 	var _validation2 = _interopRequireDefault(_validation);
 	
-	var _ValidationSummary = __webpack_require__(351);
+	var _ValidationSummary = __webpack_require__(352);
 	
 	var _ValidationSummary2 = _interopRequireDefault(_ValidationSummary);
 	
@@ -32064,7 +32038,7 @@
 	exports.default = (0, _reduxForm.reduxForm)(config, select)(Form);
 
 /***/ },
-/* 351 */
+/* 352 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -32075,7 +32049,7 @@
 	  value: true
 	});
 	
-	var _reactRemarkable = __webpack_require__(352);
+	var _reactRemarkable = __webpack_require__(353);
 	
 	var _reactRemarkable2 = _interopRequireDefault(_reactRemarkable);
 	
@@ -32155,7 +32129,7 @@
 	exports.default = Container;
 
 /***/ },
-/* 352 */
+/* 353 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32170,7 +32144,7 @@
 	
 	var _React2 = _interopRequireDefault(_React);
 	
-	var _Markdown = __webpack_require__(353);
+	var _Markdown = __webpack_require__(354);
 	
 	var _Markdown2 = _interopRequireDefault(_Markdown);
 	
@@ -32231,17 +32205,17 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 353 */
+/* 354 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	
-	module.exports = __webpack_require__(354);
+	module.exports = __webpack_require__(355);
 
 
 /***/ },
-/* 354 */
+/* 355 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32250,21 +32224,21 @@
 	 * Local dependencies
 	 */
 	
-	var assign       = __webpack_require__(355).assign;
-	var Renderer     = __webpack_require__(357);
-	var ParserCore   = __webpack_require__(359);
-	var ParserBlock  = __webpack_require__(377);
-	var ParserInline = __webpack_require__(392);
-	var Ruler        = __webpack_require__(360);
+	var assign       = __webpack_require__(356).assign;
+	var Renderer     = __webpack_require__(358);
+	var ParserCore   = __webpack_require__(360);
+	var ParserBlock  = __webpack_require__(378);
+	var ParserInline = __webpack_require__(393);
+	var Ruler        = __webpack_require__(361);
 	
 	/**
 	 * Preset configs
 	 */
 	
 	var config = {
-	  'default':    __webpack_require__(411),
-	  'full':       __webpack_require__(412),
-	  'commonmark': __webpack_require__(413)
+	  'default':    __webpack_require__(412),
+	  'full':       __webpack_require__(413),
+	  'commonmark': __webpack_require__(414)
 	};
 	
 	/**
@@ -32438,11 +32412,11 @@
 	 * rendering.
 	 */
 	
-	module.exports.utils = __webpack_require__(355);
+	module.exports.utils = __webpack_require__(356);
 
 
 /***/ },
-/* 355 */
+/* 356 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -32529,7 +32503,7 @@
 	
 	var NAMED_ENTITY_RE   = /&([a-z#][a-z0-9]{1,31});/gi;
 	var DIGITAL_ENTITY_TEST_RE = /^#((?:x[a-f0-9]{1,8}|[0-9]{1,8}))/i;
-	var entities = __webpack_require__(356);
+	var entities = __webpack_require__(357);
 	
 	function replaceEntityPattern(match, name) {
 	  var code = 0;
@@ -32589,7 +32563,7 @@
 
 
 /***/ },
-/* 356 */
+/* 357 */
 /***/ function(module, exports) {
 
 	// List of valid entities
@@ -34729,7 +34703,7 @@
 
 
 /***/ },
-/* 357 */
+/* 358 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34738,8 +34712,8 @@
 	 * Local dependencies
 	 */
 	
-	var utils = __webpack_require__(355);
-	var rules = __webpack_require__(358);
+	var utils = __webpack_require__(356);
+	var rules = __webpack_require__(359);
 	
 	/**
 	 * Expose `Renderer`
@@ -34810,7 +34784,7 @@
 
 
 /***/ },
-/* 358 */
+/* 359 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -34819,10 +34793,10 @@
 	 * Local dependencies
 	 */
 	
-	var has             = __webpack_require__(355).has;
-	var unescapeMd      = __webpack_require__(355).unescapeMd;
-	var replaceEntities = __webpack_require__(355).replaceEntities;
-	var escapeHtml      = __webpack_require__(355).escapeHtml;
+	var has             = __webpack_require__(356).has;
+	var unescapeMd      = __webpack_require__(356).unescapeMd;
+	var replaceEntities = __webpack_require__(356).replaceEntities;
+	var escapeHtml      = __webpack_require__(356).escapeHtml;
 	
 	/**
 	 * Renderer rules cache
@@ -35242,7 +35216,7 @@
 
 
 /***/ },
-/* 359 */
+/* 360 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -35251,22 +35225,22 @@
 	 * Local dependencies
 	 */
 	
-	var Ruler = __webpack_require__(360);
+	var Ruler = __webpack_require__(361);
 	
 	/**
 	 * Core parser `rules`
 	 */
 	
 	var _rules = [
-	  [ 'block',          __webpack_require__(361)          ],
-	  [ 'abbr',           __webpack_require__(362)           ],
-	  [ 'references',     __webpack_require__(365)     ],
-	  [ 'inline',         __webpack_require__(370)         ],
-	  [ 'footnote_tail',  __webpack_require__(371)  ],
-	  [ 'abbr2',          __webpack_require__(372)          ],
-	  [ 'replacements',   __webpack_require__(373)   ],
-	  [ 'smartquotes',    __webpack_require__(374)    ],
-	  [ 'linkify',        __webpack_require__(375)        ]
+	  [ 'block',          __webpack_require__(362)          ],
+	  [ 'abbr',           __webpack_require__(363)           ],
+	  [ 'references',     __webpack_require__(366)     ],
+	  [ 'inline',         __webpack_require__(371)         ],
+	  [ 'footnote_tail',  __webpack_require__(372)  ],
+	  [ 'abbr2',          __webpack_require__(373)          ],
+	  [ 'replacements',   __webpack_require__(374)   ],
+	  [ 'smartquotes',    __webpack_require__(375)    ],
+	  [ 'linkify',        __webpack_require__(376)        ]
 	];
 	
 	/**
@@ -35306,7 +35280,7 @@
 
 
 /***/ },
-/* 360 */
+/* 361 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35585,7 +35559,7 @@
 
 
 /***/ },
-/* 361 */
+/* 362 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35608,7 +35582,7 @@
 
 
 /***/ },
-/* 362 */
+/* 363 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Parse abbreviation definitions, i.e. `*[abbr]: description`
@@ -35617,8 +35591,8 @@
 	'use strict';
 	
 	
-	var StateInline    = __webpack_require__(363);
-	var parseLinkLabel = __webpack_require__(364);
+	var StateInline    = __webpack_require__(364);
+	var parseLinkLabel = __webpack_require__(365);
 	
 	
 	function parseAbbr(str, parserInline, options, env) {
@@ -35684,7 +35658,7 @@
 
 
 /***/ },
-/* 363 */
+/* 364 */
 /***/ function(module, exports) {
 
 	// Inline parser state
@@ -35772,7 +35746,7 @@
 
 
 /***/ },
-/* 364 */
+/* 365 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -35837,17 +35811,17 @@
 
 
 /***/ },
-/* 365 */
+/* 366 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	
-	var StateInline          = __webpack_require__(363);
-	var parseLinkLabel       = __webpack_require__(364);
-	var parseLinkDestination = __webpack_require__(366);
-	var parseLinkTitle       = __webpack_require__(368);
-	var normalizeReference   = __webpack_require__(369);
+	var StateInline          = __webpack_require__(364);
+	var parseLinkLabel       = __webpack_require__(365);
+	var parseLinkDestination = __webpack_require__(367);
+	var parseLinkTitle       = __webpack_require__(369);
+	var normalizeReference   = __webpack_require__(370);
 	
 	
 	function parseReference(str, parser, options, env) {
@@ -35941,14 +35915,14 @@
 
 
 /***/ },
-/* 366 */
+/* 367 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	
-	var normalizeLink = __webpack_require__(367);
-	var unescapeMd    = __webpack_require__(355).unescapeMd;
+	var normalizeLink = __webpack_require__(368);
+	var unescapeMd    = __webpack_require__(356).unescapeMd;
 	
 	/**
 	 * Parse link destination
@@ -36031,12 +36005,12 @@
 
 
 /***/ },
-/* 367 */
+/* 368 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var replaceEntities = __webpack_require__(355).replaceEntities;
+	var replaceEntities = __webpack_require__(356).replaceEntities;
 	
 	module.exports = function normalizeLink(url) {
 	  var normalized = replaceEntities(url);
@@ -36050,13 +36024,13 @@
 
 
 /***/ },
-/* 368 */
+/* 369 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	
-	var unescapeMd = __webpack_require__(355).unescapeMd;
+	var unescapeMd = __webpack_require__(356).unescapeMd;
 	
 	/**
 	 * Parse link title
@@ -36102,7 +36076,7 @@
 
 
 /***/ },
-/* 369 */
+/* 370 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36116,7 +36090,7 @@
 
 
 /***/ },
-/* 370 */
+/* 371 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36135,7 +36109,7 @@
 
 
 /***/ },
-/* 371 */
+/* 372 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -36236,7 +36210,7 @@
 
 
 /***/ },
-/* 372 */
+/* 373 */
 /***/ function(module, exports) {
 
 	// Enclose abbreviations in <abbr> tags
@@ -36330,7 +36304,7 @@
 
 
 /***/ },
-/* 373 */
+/* 374 */
 /***/ function(module, exports) {
 
 	// Simple typographical replacements
@@ -36400,7 +36374,7 @@
 
 
 /***/ },
-/* 374 */
+/* 375 */
 /***/ function(module, exports) {
 
 	// Convert straight quotation marks to typographic ones
@@ -36519,7 +36493,7 @@
 
 
 /***/ },
-/* 375 */
+/* 376 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Replace link-like texts with link nodes.
@@ -36529,7 +36503,7 @@
 	'use strict';
 	
 	
-	var Autolinker = __webpack_require__(376);
+	var Autolinker = __webpack_require__(377);
 	
 	
 	var LINK_SCAN_RE = /www|@|\:\/\//;
@@ -36686,7 +36660,7 @@
 
 
 /***/ },
-/* 376 */
+/* 377 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;(function (root, factory) {
@@ -39015,7 +38989,7 @@
 
 
 /***/ },
-/* 377 */
+/* 378 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39024,26 +38998,26 @@
 	 * Local dependencies
 	 */
 	
-	var Ruler      = __webpack_require__(360);
-	var StateBlock = __webpack_require__(378);
+	var Ruler      = __webpack_require__(361);
+	var StateBlock = __webpack_require__(379);
 	
 	/**
 	 * Parser rules
 	 */
 	
 	var _rules = [
-	  [ 'code',       __webpack_require__(379) ],
-	  [ 'fences',     __webpack_require__(380),     [ 'paragraph', 'blockquote', 'list' ] ],
-	  [ 'blockquote', __webpack_require__(381), [ 'paragraph', 'blockquote', 'list' ] ],
-	  [ 'hr',         __webpack_require__(382),         [ 'paragraph', 'blockquote', 'list' ] ],
-	  [ 'list',       __webpack_require__(383),       [ 'paragraph', 'blockquote' ] ],
-	  [ 'footnote',   __webpack_require__(384),   [ 'paragraph' ] ],
-	  [ 'heading',    __webpack_require__(385),    [ 'paragraph', 'blockquote' ] ],
-	  [ 'lheading',   __webpack_require__(386) ],
-	  [ 'htmlblock',  __webpack_require__(387),  [ 'paragraph', 'blockquote' ] ],
-	  [ 'table',      __webpack_require__(389),      [ 'paragraph' ] ],
-	  [ 'deflist',    __webpack_require__(390),    [ 'paragraph' ] ],
-	  [ 'paragraph',  __webpack_require__(391) ]
+	  [ 'code',       __webpack_require__(380) ],
+	  [ 'fences',     __webpack_require__(381),     [ 'paragraph', 'blockquote', 'list' ] ],
+	  [ 'blockquote', __webpack_require__(382), [ 'paragraph', 'blockquote', 'list' ] ],
+	  [ 'hr',         __webpack_require__(383),         [ 'paragraph', 'blockquote', 'list' ] ],
+	  [ 'list',       __webpack_require__(384),       [ 'paragraph', 'blockquote' ] ],
+	  [ 'footnote',   __webpack_require__(385),   [ 'paragraph' ] ],
+	  [ 'heading',    __webpack_require__(386),    [ 'paragraph', 'blockquote' ] ],
+	  [ 'lheading',   __webpack_require__(387) ],
+	  [ 'htmlblock',  __webpack_require__(388),  [ 'paragraph', 'blockquote' ] ],
+	  [ 'table',      __webpack_require__(390),      [ 'paragraph' ] ],
+	  [ 'deflist',    __webpack_require__(391),    [ 'paragraph' ] ],
+	  [ 'paragraph',  __webpack_require__(392) ]
 	];
 	
 	/**
@@ -39176,7 +39150,7 @@
 
 
 /***/ },
-/* 378 */
+/* 379 */
 /***/ function(module, exports) {
 
 	// Parser state class
@@ -39340,7 +39314,7 @@
 
 
 /***/ },
-/* 379 */
+/* 380 */
 /***/ function(module, exports) {
 
 	// Code block (4 spaces padded)
@@ -39382,7 +39356,7 @@
 
 
 /***/ },
-/* 380 */
+/* 381 */
 /***/ function(module, exports) {
 
 	// fences (``` lang, ~~~ lang)
@@ -39479,7 +39453,7 @@
 
 
 /***/ },
-/* 381 */
+/* 382 */
 /***/ function(module, exports) {
 
 	// Block quotes
@@ -39618,7 +39592,7 @@
 
 
 /***/ },
-/* 382 */
+/* 383 */
 /***/ function(module, exports) {
 
 	// Horizontal rule
@@ -39669,7 +39643,7 @@
 
 
 /***/ },
-/* 383 */
+/* 384 */
 /***/ function(module, exports) {
 
 	// Lists
@@ -39941,7 +39915,7 @@
 
 
 /***/ },
-/* 384 */
+/* 385 */
 /***/ function(module, exports) {
 
 	// Process footnote reference list
@@ -40014,7 +39988,7 @@
 
 
 /***/ },
-/* 385 */
+/* 386 */
 /***/ function(module, exports) {
 
 	// heading (#, ##, ...)
@@ -40078,7 +40052,7 @@
 
 
 /***/ },
-/* 386 */
+/* 387 */
 /***/ function(module, exports) {
 
 	// lheading (---, ===)
@@ -40139,7 +40113,7 @@
 
 
 /***/ },
-/* 387 */
+/* 388 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// HTML block
@@ -40147,7 +40121,7 @@
 	'use strict';
 	
 	
-	var block_names = __webpack_require__(388);
+	var block_names = __webpack_require__(389);
 	
 	
 	var HTML_TAG_OPEN_RE = /^<([a-zA-Z]{1,15})[\s\/>]/;
@@ -40219,7 +40193,7 @@
 
 
 /***/ },
-/* 388 */
+/* 389 */
 /***/ function(module, exports) {
 
 	// List of valid html blocks names, accorting to commonmark spec
@@ -40287,7 +40261,7 @@
 
 
 /***/ },
-/* 389 */
+/* 390 */
 /***/ function(module, exports) {
 
 	// GFM table, non-standard
@@ -40427,7 +40401,7 @@
 
 
 /***/ },
-/* 390 */
+/* 391 */
 /***/ function(module, exports) {
 
 	// Definition lists
@@ -40640,7 +40614,7 @@
 
 
 /***/ },
-/* 391 */
+/* 392 */
 /***/ function(module, exports) {
 
 	// Paragraph
@@ -40705,7 +40679,7 @@
 
 
 /***/ },
-/* 392 */
+/* 393 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40714,31 +40688,31 @@
 	 * Local dependencies
 	 */
 	
-	var Ruler       = __webpack_require__(360);
-	var StateInline = __webpack_require__(363);
-	var utils       = __webpack_require__(355);
+	var Ruler       = __webpack_require__(361);
+	var StateInline = __webpack_require__(364);
+	var utils       = __webpack_require__(356);
 	
 	/**
 	 * Inline Parser `rules`
 	 */
 	
 	var _rules = [
-	  [ 'text',            __webpack_require__(393) ],
-	  [ 'newline',         __webpack_require__(394) ],
-	  [ 'escape',          __webpack_require__(395) ],
-	  [ 'backticks',       __webpack_require__(396) ],
-	  [ 'del',             __webpack_require__(397) ],
-	  [ 'ins',             __webpack_require__(398) ],
-	  [ 'mark',            __webpack_require__(399) ],
-	  [ 'emphasis',        __webpack_require__(400) ],
-	  [ 'sub',             __webpack_require__(401) ],
-	  [ 'sup',             __webpack_require__(402) ],
-	  [ 'links',           __webpack_require__(403) ],
-	  [ 'footnote_inline', __webpack_require__(404) ],
-	  [ 'footnote_ref',    __webpack_require__(405) ],
-	  [ 'autolink',        __webpack_require__(406) ],
-	  [ 'htmltag',         __webpack_require__(408) ],
-	  [ 'entity',          __webpack_require__(410) ]
+	  [ 'text',            __webpack_require__(394) ],
+	  [ 'newline',         __webpack_require__(395) ],
+	  [ 'escape',          __webpack_require__(396) ],
+	  [ 'backticks',       __webpack_require__(397) ],
+	  [ 'del',             __webpack_require__(398) ],
+	  [ 'ins',             __webpack_require__(399) ],
+	  [ 'mark',            __webpack_require__(400) ],
+	  [ 'emphasis',        __webpack_require__(401) ],
+	  [ 'sub',             __webpack_require__(402) ],
+	  [ 'sup',             __webpack_require__(403) ],
+	  [ 'links',           __webpack_require__(404) ],
+	  [ 'footnote_inline', __webpack_require__(405) ],
+	  [ 'footnote_ref',    __webpack_require__(406) ],
+	  [ 'autolink',        __webpack_require__(407) ],
+	  [ 'htmltag',         __webpack_require__(409) ],
+	  [ 'entity',          __webpack_require__(411) ]
 	];
 	
 	/**
@@ -40872,7 +40846,7 @@
 
 
 /***/ },
-/* 393 */
+/* 394 */
 /***/ function(module, exports) {
 
 	// Skip text characters for text token, place those to pending buffer
@@ -40931,7 +40905,7 @@
 
 
 /***/ },
-/* 394 */
+/* 395 */
 /***/ function(module, exports) {
 
 	// Proceess '\n'
@@ -40985,7 +40959,7 @@
 
 
 /***/ },
-/* 395 */
+/* 396 */
 /***/ function(module, exports) {
 
 	// Proceess escaped chars and hardbreaks
@@ -41040,7 +41014,7 @@
 
 
 /***/ },
-/* 396 */
+/* 397 */
 /***/ function(module, exports) {
 
 	// Parse backticks
@@ -41092,7 +41066,7 @@
 
 
 /***/ },
-/* 397 */
+/* 398 */
 /***/ function(module, exports) {
 
 	// Process ~~deleted text~~
@@ -41182,7 +41156,7 @@
 
 
 /***/ },
-/* 398 */
+/* 399 */
 /***/ function(module, exports) {
 
 	// Process ++inserted text++
@@ -41272,7 +41246,7 @@
 
 
 /***/ },
-/* 399 */
+/* 400 */
 /***/ function(module, exports) {
 
 	// Process ==highlighted text==
@@ -41362,7 +41336,7 @@
 
 
 /***/ },
-/* 400 */
+/* 401 */
 /***/ function(module, exports) {
 
 	// Process *this* and _that_
@@ -41517,7 +41491,7 @@
 
 
 /***/ },
-/* 401 */
+/* 402 */
 /***/ function(module, exports) {
 
 	// Process ~subscript~
@@ -41581,7 +41555,7 @@
 
 
 /***/ },
-/* 402 */
+/* 403 */
 /***/ function(module, exports) {
 
 	// Process ^superscript^
@@ -41645,17 +41619,17 @@
 
 
 /***/ },
-/* 403 */
+/* 404 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Process [links](<to> "stuff")
 	
 	'use strict';
 	
-	var parseLinkLabel       = __webpack_require__(364);
-	var parseLinkDestination = __webpack_require__(366);
-	var parseLinkTitle       = __webpack_require__(368);
-	var normalizeReference   = __webpack_require__(369);
+	var parseLinkLabel       = __webpack_require__(365);
+	var parseLinkDestination = __webpack_require__(367);
+	var parseLinkTitle       = __webpack_require__(369);
+	var normalizeReference   = __webpack_require__(370);
 	
 	
 	module.exports = function links(state, silent) {
@@ -41816,14 +41790,14 @@
 
 
 /***/ },
-/* 404 */
+/* 405 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Process inline footnotes (^[...])
 	
 	'use strict';
 	
-	var parseLinkLabel = __webpack_require__(364);
+	var parseLinkLabel = __webpack_require__(365);
 	
 	
 	module.exports = function footnote_inline(state, silent) {
@@ -41875,7 +41849,7 @@
 
 
 /***/ },
-/* 405 */
+/* 406 */
 /***/ function(module, exports) {
 
 	// Process footnote references ([^...])
@@ -41943,15 +41917,15 @@
 
 
 /***/ },
-/* 406 */
+/* 407 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Process autolinks '<protocol:...>'
 	
 	'use strict';
 	
-	var url_schemas   = __webpack_require__(407);
-	var normalizeLink = __webpack_require__(367);
+	var url_schemas   = __webpack_require__(408);
+	var normalizeLink = __webpack_require__(368);
 	
 	
 	/*eslint max-len:0*/
@@ -42027,7 +42001,7 @@
 
 
 /***/ },
-/* 407 */
+/* 408 */
 /***/ function(module, exports) {
 
 	// List of valid url schemas, accorting to commonmark spec
@@ -42205,7 +42179,7 @@
 
 
 /***/ },
-/* 408 */
+/* 409 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Process html tags
@@ -42213,7 +42187,7 @@
 	'use strict';
 	
 	
-	var HTML_TAG_RE = __webpack_require__(409).HTML_TAG_RE;
+	var HTML_TAG_RE = __webpack_require__(410).HTML_TAG_RE;
 	
 	
 	function isLetter(ch) {
@@ -42260,7 +42234,7 @@
 
 
 /***/ },
-/* 409 */
+/* 410 */
 /***/ function(module, exports) {
 
 	// Regexps to match html elements
@@ -42325,17 +42299,17 @@
 
 
 /***/ },
-/* 410 */
+/* 411 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// Process html entity - &#123;, &#xAF;, &quot;, ...
 	
 	'use strict';
 	
-	var entities          = __webpack_require__(356);
-	var has               = __webpack_require__(355).has;
-	var isValidEntityCode = __webpack_require__(355).isValidEntityCode;
-	var fromCodePoint     = __webpack_require__(355).fromCodePoint;
+	var entities          = __webpack_require__(357);
+	var has               = __webpack_require__(356).has;
+	var isValidEntityCode = __webpack_require__(356).isValidEntityCode;
+	var fromCodePoint     = __webpack_require__(356).fromCodePoint;
 	
 	
 	var DIGITAL_RE = /^&#((?:x[a-f0-9]{1,8}|[0-9]{1,8}));/i;
@@ -42379,7 +42353,7 @@
 
 
 /***/ },
-/* 411 */
+/* 412 */
 /***/ function(module, exports) {
 
 	// Remarkable default options
@@ -42463,7 +42437,7 @@
 
 
 /***/ },
-/* 412 */
+/* 413 */
 /***/ function(module, exports) {
 
 	// Remarkable default options
@@ -42506,7 +42480,7 @@
 
 
 /***/ },
-/* 413 */
+/* 414 */
 /***/ function(module, exports) {
 
 	// Commonmark default options
@@ -42582,7 +42556,7 @@
 
 
 /***/ },
-/* 414 */
+/* 415 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42599,7 +42573,7 @@
 	
 	var _reactHelmet2 = _interopRequireDefault(_reactHelmet);
 	
-	var _Form = __webpack_require__(415);
+	var _Form = __webpack_require__(416);
 	
 	var _Form2 = _interopRequireDefault(_Form);
 	
@@ -42637,7 +42611,7 @@
 	exports.default = View;
 
 /***/ },
-/* 415 */
+/* 416 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42654,7 +42628,7 @@
 	
 	var _validation2 = _interopRequireDefault(_validation);
 	
-	var _ValidationSummary = __webpack_require__(351);
+	var _ValidationSummary = __webpack_require__(352);
 	
 	var _ValidationSummary2 = _interopRequireDefault(_ValidationSummary);
 	
@@ -42725,7 +42699,7 @@
 	exports.default = (0, _reduxForm.reduxForm)(config, select)(Form);
 
 /***/ },
-/* 416 */
+/* 417 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42744,7 +42718,7 @@
 	
 	var _reactHelmet2 = _interopRequireDefault(_reactHelmet);
 	
-	var _Form = __webpack_require__(417);
+	var _Form = __webpack_require__(418);
 	
 	var _Form2 = _interopRequireDefault(_Form);
 	
@@ -42786,7 +42760,7 @@
 	exports.default = View;
 
 /***/ },
-/* 417 */
+/* 418 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42803,7 +42777,7 @@
 	
 	var _validation2 = _interopRequireDefault(_validation);
 	
-	var _ValidationSummary = __webpack_require__(351);
+	var _ValidationSummary = __webpack_require__(352);
 	
 	var _ValidationSummary2 = _interopRequireDefault(_ValidationSummary);
 	
@@ -42875,7 +42849,7 @@
 	exports.default = (0, _reduxForm.reduxForm)(config, select)(Form);
 
 /***/ },
-/* 418 */
+/* 419 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42896,7 +42870,7 @@
 	
 	var _reactHelmet2 = _interopRequireDefault(_reactHelmet);
 	
-	var _Form = __webpack_require__(419);
+	var _Form = __webpack_require__(420);
 	
 	var _Form2 = _interopRequireDefault(_Form);
 	
@@ -42951,7 +42925,7 @@
 	exports.default = (0, _reactRedux.connect)(select)(View);
 
 /***/ },
-/* 419 */
+/* 420 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42964,7 +42938,7 @@
 	
 	var _reduxForm = __webpack_require__(134);
 	
-	var _FieldConnector = __webpack_require__(420);
+	var _FieldConnector = __webpack_require__(421);
 	
 	var _FieldConnector2 = _interopRequireDefault(_FieldConnector);
 	
@@ -42972,7 +42946,7 @@
 	
 	var _validation2 = _interopRequireDefault(_validation);
 	
-	var _ValidationSummary = __webpack_require__(351);
+	var _ValidationSummary = __webpack_require__(352);
 	
 	var _ValidationSummary2 = _interopRequireDefault(_ValidationSummary);
 	
@@ -43121,7 +43095,7 @@
 	exports.default = (0, _reduxForm.reduxForm)(config, select)(Form);
 
 /***/ },
-/* 420 */
+/* 421 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43140,7 +43114,7 @@
 	
 	var _validation2 = _interopRequireDefault(_validation);
 	
-	var _reduxForm = __webpack_require__(421);
+	var _reduxForm = __webpack_require__(422);
 	
 	var _actions = __webpack_require__(231);
 	
@@ -43148,7 +43122,7 @@
 	
 	var _reduxActions = __webpack_require__(192);
 	
-	var _FieldComponent = __webpack_require__(422);
+	var _FieldComponent = __webpack_require__(423);
 	
 	var _FieldComponent2 = _interopRequireDefault(_FieldComponent);
 	
@@ -43156,7 +43130,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _classnames = __webpack_require__(423);
+	var _classnames = __webpack_require__(424);
 	
 	var _classnames2 = _interopRequireDefault(_classnames);
 	
@@ -43273,7 +43247,7 @@
 	exports.default = (0, _reactRedux.connect)(select)(Connector);
 
 /***/ },
-/* 421 */
+/* 422 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43317,7 +43291,7 @@
 	};
 
 /***/ },
-/* 422 */
+/* 423 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -43328,7 +43302,7 @@
 	  value: true
 	});
 	
-	var _reactRemarkable = __webpack_require__(352);
+	var _reactRemarkable = __webpack_require__(353);
 	
 	var _reactRemarkable2 = _interopRequireDefault(_reactRemarkable);
 	
@@ -43419,7 +43393,7 @@
 	exports.default = Field;
 
 /***/ },
-/* 423 */
+/* 424 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -43473,7 +43447,7 @@
 
 
 /***/ },
-/* 424 */
+/* 425 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -43507,7 +43481,7 @@
 	};
 
 /***/ },
-/* 425 */
+/* 426 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -43541,14 +43515,14 @@
 	};
 
 /***/ },
-/* 426 */
+/* 427 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["ServerRender"] = __webpack_require__(427);
+	/* WEBPACK VAR INJECTION */(function(global) {module.exports = global["ServerRender"] = __webpack_require__(428);
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 427 */
+/* 428 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

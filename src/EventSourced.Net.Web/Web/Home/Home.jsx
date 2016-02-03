@@ -1,61 +1,47 @@
 import Helmet from 'react-helmet'
+const { Carousel, CarouselItem } = ReactBootstrap
 
 export default () => (
   <div>
     <Helmet title="Home" />
-    <div id="myCarousel" className="carousel slide" data-ride="carousel" data-interval="6000">
-      <ol className="carousel-indicators">
-        <li data-target="#myCarousel" data-slide-to="0" className="active"></li>
-        <li data-target="#myCarousel" data-slide-to="1"></li>
-        <li data-target="#myCarousel" data-slide-to="2"></li>
-      </ol>
-      <div className="carousel-inner" role="listbox">
-        <div className="item active">
-          <img src="/images/Banner-01-EventSourced.png" alt="EventSourced.Net" className="img-responsive" />
-          <div className="carousel-caption">
-            <p>
-              Get started using ASP.NET 5 with the event sourcing pattern, not Entity Framework.
-              {' '}
-              <a className="btn btn-default btn-default" href="https://github.com/danludwig/eventsourced.net">
-                Learn More
-              </a>
-            </p>
-          </div>
+    <Carousel>
+      <CarouselItem>
+        <img src="/images/Banner-01-EventSourced.png" alt="EventSourced.Net" className="img-responsive" />
+        <div className="carousel-caption">
+          <p>
+            Get started using ASP.NET 5 with the event sourcing pattern, not Entity Framework.
+            {' '}
+            <a className="btn btn-default btn-default" href="https://github.com/danludwig/eventsourced.net">
+              Learn More
+            </a>
+          </p>
         </div>
-        <div className="item">
-          <img src="/images/ASP-NET-Banners-01.png" alt="ASP.NET" className="img-responsive" />
-          <div className="carousel-caption">
-            <p>
-              Learn how to build ASP.NET apps that can run anywhere.
-              {' '}
-              <a className="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
-                Learn More
-              </a>
-            </p>
-          </div>
+      </CarouselItem>
+      <CarouselItem>
+        <img src="/images/ASP-NET-Banners-01.png" alt="ASP.NET" className="img-responsive" />
+        <div className="carousel-caption">
+          <p>
+            Learn how to build ASP.NET apps that can run anywhere.
+            {' '}
+            <a className="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525028&clcid=0x409">
+              Learn More
+            </a>
+          </p>
         </div>
-        <div className="item">
-          <img src="/images/ASP-NET-Banners-02.png" alt="Package Management" className="img-responsive" />
-          <div className="carousel-caption">
-            <p>
-              Bring in libraries from NuGet, Bower, and npm, and automate tasks using Grunt or Gulp.
-              {' '}
-              <a className="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525029&clcid=0x409">
-                Learn More
-              </a>
-            </p>
-          </div>
+      </CarouselItem>
+      <CarouselItem>
+        <img src="/images/ASP-NET-Banners-02.png" alt="Package Management" className="img-responsive" />
+        <div className="carousel-caption">
+          <p>
+            Bring in libraries from NuGet, Bower, and npm, and automate tasks using Grunt or Gulp.
+            {' '}
+            <a className="btn btn-default btn-default" href="http://go.microsoft.com/fwlink/?LinkID=525029&clcid=0x409">
+              Learn More
+            </a>
+          </p>
         </div>
-      </div>
-      <a className="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
-        <span className="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-        <span className="sr-only">Previous</span>
-      </a>
-      <a className="right carousel-control" href="#myCarousel" role="button" data-slide="next">
-        <span className="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-        <span className="sr-only">Next</span>
-      </a>
-    </div>
+      </CarouselItem>
+    </Carousel>
     <div className="row">
       <div className="col-md-3">
         <h2>Application uses</h2>

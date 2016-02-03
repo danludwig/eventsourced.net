@@ -74,6 +74,7 @@ namespace EventSourced.Net.Web
           jsonSerializerSettings.Converters.Add(new StringEnumConverter());
           config
             .SetLoadBabel(false)
+            .AddScriptWithoutTransform("~/lib/react-bootstrap/react-bootstrap.min.js")
             .AddScriptWithoutTransform("~/bundle.server.js")
             .SetJsonSerializerSettings(jsonSerializerSettings)
           ;

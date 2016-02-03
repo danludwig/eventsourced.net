@@ -23,6 +23,7 @@
     "lodash": "^4.0.1",
     "react": "~0.14.6",
     "react-addons-pure-render-mixin": "~0.14.6",
+    "react-bootstrap": "^0.28.2",
     "react-dom": "~0.14.6",
     "react-helmet": "~2.2.0",
     "react-redux": "~4.0.6",
